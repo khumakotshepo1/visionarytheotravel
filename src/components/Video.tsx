@@ -16,9 +16,9 @@ export default function Video({
   muted,
 }: videoType) {
   const videoClass = cn({
-    "w-full h-full": size === "large",
-    "w-1/2 h-1/2": size === "medium",
-    "w-1/4 h-1/4": size === "small",
+    "md:w-full md:h-full": size === "large",
+    "md:w-1/2 md:h-1/2": size === "medium",
+    "w-[300px] h-[150px]": size === "small",
   });
 
   return (

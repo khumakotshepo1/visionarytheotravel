@@ -50,7 +50,9 @@ export default function RootLayout({
         >
           <div className="min-h-screen container mx-auto flex flex-col justify-between font-sans">
             <Header />
-            <main className="flex-1 overflow-hidden mt-12">{children}</main>
+            <main className="flex-1 overflow-hidden flex flex-col gap-4 mt-12">
+              {children}
+            </main>
             <div className="md:hidden sticky bottom-0 left-0 right-0 p-3">
               <MobileNav />
             </div>

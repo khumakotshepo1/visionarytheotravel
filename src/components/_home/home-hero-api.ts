@@ -2,26 +2,26 @@ import { HeroCarouselType } from "../carousel/Carousel";
 
 export const homeHeroApi: HeroCarouselType[] = [
   {
-    title: "Cruises",
-    image: "/images/cruises/msc-hero.jpg",
+    title: "Christmas and New Year's cruises",
+    image: "/images/cruises/christmas.jpg",
     link: "/cruises",
     cta: "Explore",
   },
   {
-    title: "Packages",
-    image: "/images/packages/woman-skiing.jpg",
+    title: "Single Parent promotion",
+    image: "/images/cruises/single-promotion.png",
     link: "/packages",
     cta: "Explore",
   },
   {
-    title: "Packages",
-    image: "/images/packages/picnic-day.jpg",
+    title: "Hot Deals",
+    image: "/images/cruises/hot-deals.png",
     link: "/packages",
     cta: "Explore",
   },
   {
-    title: "Packages",
-    image: "/images/packages/tourism-day.jpg",
+    title: "SPRING MADNESS",
+    image: "/images/cruises/spring-madness.png",
     link: "/packages",
     cta: "Explore",
   },
