@@ -1,3 +1,5 @@
+import { CruiseSlug } from "@/components/_cruises/CruiseSlug";
+
 export default function CruiseSlugPage({
   params,
 }: {
@@ -5,5 +7,11 @@ export default function CruiseSlugPage({
 }) {
   const { cruiseSlug } = params;
 
-  return <div>{cruiseSlug}</div>;
+  console.log({ cruiseSlug });
+
+  return (
+    <>
+      <CruiseSlug />
+    </>
+  );
 }

@@ -18,11 +18,6 @@ export function HeroNoButton({ title, image }: heroNoButtonType) {
             sizes="100vw"
           />
           <div className="absolute inset-0 bg-gray-800/50 mix-blend-multiply" />
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
-            <h2 className="text-white text-5xl md:text-7xl font-black font-anton">
-              {title}
-            </h2>
-          </div>
         </div>
       </div>
     </div>
