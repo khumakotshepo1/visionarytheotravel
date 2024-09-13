@@ -1,9 +1,9 @@
-import { Cruise } from "@/components/_cruises/Cruise";
+import { Cruises } from "@/components/_cruises/Cruises";
 
 export default function CruisesPage() {
   return (
     <div>
-      <Cruise />
+      <Cruises />
     </div>
   );
 }

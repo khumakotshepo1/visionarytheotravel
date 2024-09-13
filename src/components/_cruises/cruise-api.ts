@@ -1,34 +1,164 @@
-type CruiseApiType = {
-  name: string;
-  slug: string;
-  description: string;
-  image: string;
-  price: number;
-};
+import { CruiseType } from "./Cruise";
 
-export const cruiseApi: CruiseApiType[] = [
+export const januaryCruiseApi: CruiseType[] = [
   {
-    name: "The Great Escape",
-    slug: "the-great-escape",
-    description:
-      "The Great Escape is a luxury cruise that takes you on a journey through the world's most beautiful and exotic destinations. You'll explore the most breathtaking landscapes, from the majestic mountains of the Himalayas to the serene beaches of Bali. With a focus on adventure and exploration, The Great Escape is the perfect way to experience the world's most remarkable destinations.",
-    image: "/images/the-great-escape.webp",
+    id: 1,
+    name: "Portuguese Island",
+    ship: "MSC Musica",
+    nights: "4 Nights, 5 Days",
+    date: "02 Jan 2025",
+    description: "Durban - Portuguese Island - Pomene",
+    image: "/images/cruises/msc-hero.jpg",
     price: 1000,
+    cruiseItenerary: [
+      {
+        day: "Day 1",
+        date: "02 Jan 2025",
+        location: "Durban",
+        arrive: "10:00",
+        depart: "11:00",
+      },
+      {
+        day: "Day 2",
+        date: "02 Jan 2025",
+        location: "Portuguese Island",
+        arrive: "10:00",
+        depart: "11:00",
+      },
+      {
+        day: "Day 3",
+        date: "02 Jan 2025",
+        location: "Pomene",
+        arrive: "10:00",
+        depart: "11:00",
+      },
+      {
+        day: "Day 4",
+        date: "02 Jan 2025",
+        location: "Durban",
+        arrive: "10:00",
+        depart: "11:00",
+      },
+    ],
   },
   {
-    name: "The Secret Life of Trees",
-    slug: "the-secret-life-of-trees",
-    description:
-      "The Secret Life of Trees is a luxury cruise that takes you on a journey through the world's most beautiful and exotic destinations. You'll explore the most breathtaking landscapes, from the majestic mountains of the Himalayas to the serene beaches of Bali. With a focus on adventure and exploration, The Great Escape is the perfect way to experience the world's most remarkable destinations.",
-    image: "/images/the-secret-life-of-trees.webp",
+    id: 2,
+    name: "Pomene",
+    ship: "MSC Musica",
+    nights: "4 Nights, 5 Days",
+    date: "02 Jan 2025",
+    description: "Durban - Portuguese Island - Pomene",
+    image: "/images/cruises/msc-hero.jpg",
     price: 1000,
+    cruiseItenerary: [
+      {
+        day: "Day 1",
+        date: "02 Jan 2025",
+        location: "Durban",
+        arrive: "10:00",
+        depart: "11:00",
+      },
+      {
+        day: "Day 2",
+        date: "02 Jan 2025",
+        location: "Portuguese Island",
+        arrive: "10:00",
+        depart: "11:00",
+      },
+      {
+        day: "Day 3",
+        date: "02 Jan 2025",
+        location: "Pomene",
+        arrive: "10:00",
+        depart: "11:00",
+      },
+      {
+        day: "Day 4",
+        date: "02 Jan 2025",
+        location: "Durban",
+        arrive: "10:00",
+        depart: "11:00",
+      },
+    ],
   },
   {
-    name: "The Secret Life of Trees",
-    slug: "the-secret-life-of-trees",
-    description:
-      "The Secret Life of Trees is a luxury cruise that takes you on a journey through the world's most beautiful and exotic destinations. You'll explore the most breathtaking landscapes, from the majestic mountains of the Himalayas to the serene beaches of Bali. With a focus on adventure and exploration, The Great Escape is the perfect way to experience the world's most remarkable destinations.",
-    image: "/images/the-secret-life-of-trees.webp",
-    price: 2000,
+    id: 3,
+    name: "Durban2Nowhere",
+    ship: "MSC Musica",
+    nights: "4 Nights, 5 Days",
+    date: "02 Jan 2025",
+    description: "Durban - Portuguese Island - Pomene",
+    image: "/images/cruises/msc-hero.jpg",
+    price: 1000,
+    cruiseItenerary: [
+      {
+        day: "Day 1",
+        date: "02 Jan 2025",
+        location: "Durban",
+        arrive: "10:00",
+        depart: "11:00",
+      },
+      {
+        day: "Day 2",
+        date: "02 Jan 2025",
+        location: "Portuguese Island",
+        arrive: "10:00",
+        depart: "11:00",
+      },
+      {
+        day: "Day 3",
+        date: "02 Jan 2025",
+        location: "Pomene",
+        arrive: "10:00",
+        depart: "11:00",
+      },
+      {
+        day: "Day 4",
+        date: "02 Jan 2025",
+        location: "Durban",
+        arrive: "10:00",
+        depart: "11:00",
+      },
+    ],
+  },
+  {
+    id: 4,
+    name: "Namibia",
+    ship: "MSC Musica",
+    nights: "4 Nights, 5 Days",
+    date: "02 Jan 2025",
+    description: "Durban - Portuguese Island - Pomene",
+    image: "/images/cruises/msc-hero.jpg",
+    price: 1000,
+    cruiseItenerary: [
+      {
+        day: "Day 1",
+        date: "02 Jan 2025",
+        location: "Durban",
+        arrive: "10:00",
+        depart: "11:00",
+      },
+      {
+        day: "Day 2",
+        date: "02 Jan 2025",
+        location: "Portuguese Island",
+        arrive: "10:00",
+        depart: "11:00",
+      },
+      {
+        day: "Day 3",
+        date: "02 Jan 2025",
+        location: "Pomene",
+        arrive: "10:00",
+        depart: "11:00",
+      },
+      {
+        day: "Day 4",
+        date: "02 Jan 2025",
+        location: "Durban",
+        arrive: "10:00",
+        depart: "11:00",
+      },
+    ],
   },
 ];
