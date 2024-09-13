@@ -6,7 +6,6 @@ import { useCallback, useState } from "react";
 
 export type CabinType = {
   name: string;
-
   image: string;
 };
 
@@ -39,7 +38,7 @@ export function Cabins({ cabins }: { cabins: CabinType[] }) {
         >
           {cabins.map((cabin) => (
             <div key={cabin.name} className="flex flex-shrink-0 w-screen">
-              <div className="flex flex-col gap-2 w-full">
+              <div className="flex flex-col gap-2 w-full relative">
                 <Image
                   src={cabin.image}
                   alt={cabin.name}
@@ -48,7 +47,9 @@ export function Cabins({ cabins }: { cabins: CabinType[] }) {
                   className="object-cover w-full h-auto"
                   loading="lazy"
                 />
-                <h3 className="text-lg font-semibold">{cabin.name}</h3>
+                <h3 className="text-lg font-semibold p-3 bg-background absolute left-0 bottom-0">
+                  {cabin.name}
+                </h3>
               </div>
             </div>
           ))}

@@ -51,7 +51,7 @@ export function CruiseSlug() {
               alt="msc-hero"
               width={120}
               height={40}
-              className=""
+              className="bg-lightElement rounded-xl p-4"
             />
           </div>
 
@@ -94,7 +94,7 @@ export function CruiseSlug() {
           </div>
         </article>
       </section>
-      <section className="py-20 font-anton">
+      <section className="py-20 px-4 font-anton">
         <h2 className="text-4xl py-4">Itenerary</h2>
         <div className="flex flex-col lg:flex-row gap-16 items-center">
           <TableDemo />
@@ -107,7 +107,7 @@ export function CruiseSlug() {
         </div>
       </section>
 
-      <section className="py-20 font-anton">
+      <section className="py-20 px-4 font-anton">
         <h2 className="text-4xl py-4">Cabins</h2>
         <Cabins cabins={cabinsApi} />
       </section>
