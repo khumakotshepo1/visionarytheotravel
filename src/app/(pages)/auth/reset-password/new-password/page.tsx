@@ -2,7 +2,7 @@ import React from "react";
 import { NewPasswordForm } from "./NewPasswordForm";
 
 import { redirect } from "next/navigation";
-import { getVerificationTokenByToken } from "@/server/auth.server";
+import { getVerificationTokenByToken } from "@/server/users.server";
 
 const NewPassword = async ({
   searchParams,

@@ -25,19 +25,18 @@ import { useRouter } from "next/navigation";
 
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
-
-import { resetPasswordAction } from "@/actions/auth.actions";
-import { resetPasswordType } from "@/types/zodTypes";
-import { resetPasswordSchema } from "@/lib/zod-schemas/auth.schema";
+import { ResetPasswordType } from "@/zod/types/auth.type";
+import { resetPasswordSchema } from "@/zod/schemas/auth.schema";
+import { resetPasswordAction } from "@/actions/auth.action";
 
 export const ResetPasswordForm = () => {
   const { push } = useRouter();
 
-  const form = useForm<resetPasswordType>({
+  const form = useForm<ResetPasswordType>({
     resolver: zodResolver(resetPasswordSchema),
   });
 
-  const processForm = async (data: resetPasswordType) => {
+  const processForm = async (data: ResetPasswordType) => {
     const res = await resetPasswordAction(data);
 
     console.log({ res: res });
