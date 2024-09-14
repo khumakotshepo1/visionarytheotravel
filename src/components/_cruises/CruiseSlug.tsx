@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { TableDemo } from "../Table";
 import { Cabins } from "./Cabins";
-import { cabinsApi } from "./cabins-api";
+
 import { CruiseType } from "./Cruise";
 
 export function CruiseSlug({ cruise }: { cruise: CruiseType }) {
@@ -108,7 +108,7 @@ export function CruiseSlug({ cruise }: { cruise: CruiseType }) {
 
       <section className="py-20 px-4 font-anton">
         <h2 className="text-4xl py-4">Cabins</h2>
-        <Cabins cabins={cabinsApi} />
+        <Cabins ship={cruise.ship} />
       </section>
     </>
   );

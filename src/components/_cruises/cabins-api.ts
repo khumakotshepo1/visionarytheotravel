@@ -1,6 +1,6 @@
 import { CabinType } from "./Cabins";
 
-export const cabinsApi: CabinType[] = [
+export const musicaCabinsApi: CabinType[] = [
   {
     name: "Inside",
     image: "/images/cruises/cabins/inside.jpg",

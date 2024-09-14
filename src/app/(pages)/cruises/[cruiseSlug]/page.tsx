@@ -9,8 +9,6 @@ export default function CruiseSlugPage({
 }) {
   const cruiseSlug = Number(params.cruiseSlug);
 
-  console.log({ cruiseSlug });
-
   const cruise = januaryCruiseApi.find(
     (cruise) => cruise.id === cruiseSlug
   ) as CruiseType;

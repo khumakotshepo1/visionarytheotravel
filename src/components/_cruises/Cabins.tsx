@@ -3,14 +3,21 @@
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useState } from "react";
+import { musicaCabinsApi } from "./cabins-api";
 
 export type CabinType = {
   name: string;
   image: string;
 };
 
-export function Cabins({ cabins }: { cabins: CabinType[] }) {
+export function Cabins({ ship }: { ship: string }) {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
+
+  let cabins: CabinType[] = [];
+
+  if (ship === "MSC Musica") {
+    cabins = musicaCabinsApi;
+  }
 
   const handlePrevious = useCallback(() => {
     setCurrentSlide((prevSlide) =>
