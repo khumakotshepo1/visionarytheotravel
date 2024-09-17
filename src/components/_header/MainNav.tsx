@@ -3,6 +3,7 @@ import { SignButton } from "../_auth/sign-button";
 import DesktopNav from "./DesktopNav";
 
 import { auth } from "@/auth";
+import MobileNav from "./MobileNav";
 
 export async function MainNavbar() {
   const session = await auth();
@@ -10,6 +11,7 @@ export async function MainNavbar() {
     <div className="flex items-center gap-4 md:gap-6">
       <DesktopNav />
       {session ? <Account /> : <SignButton />}
+      <MobileNav />
     </div>
   );
 }

@@ -1,6 +1,5 @@
 import {
   CreditCardIcon,
-  GaugeIcon,
   MapPinHouseIcon,
   SettingsIcon,
   ShoppingBasketIcon,
@@ -16,11 +15,6 @@ export type dashboardNavApiType = {
 };
 
 export const adminNavApi: dashboardNavApiType[] = [
-  {
-    name: "Dashboard",
-    href: "/dashboard",
-    icon: <GaugeIcon />,
-  },
   {
     name: "Orders",
     href: "/dashboard/admin/orders",
@@ -50,11 +44,6 @@ export const adminNavApi: dashboardNavApiType[] = [
 
 export const managerNavApi: dashboardNavApiType[] = [
   {
-    name: "Dashboard",
-    href: "/dashboard",
-    icon: <GaugeIcon />,
-  },
-  {
     name: "Orders",
     href: "/dashboard/manager/orders",
     icon: <ShoppingBasketIcon />,
@@ -77,11 +66,6 @@ export const managerNavApi: dashboardNavApiType[] = [
 ];
 
 export const userNavApi: dashboardNavApiType[] = [
-  {
-    name: "Dashboard",
-    href: "/dashboard",
-    icon: <GaugeIcon />,
-  },
   {
     name: "Orders",
     href: "/dashboard/user/orders",

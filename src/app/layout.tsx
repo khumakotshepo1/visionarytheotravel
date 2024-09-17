@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
+import localFont from "next/font/local";
+import type { Metadata } from "next";
 import { cn } from "@/lib/utils";
-import MobileNav from "@/components/_header/MobileNav";
 import { Header } from "@/components/_header/Header";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -36,7 +36,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "antialiased scroll-smooth",
+          "antialiased scroll-smooth bg-lightElement text-darkElement dark:bg-darkElement dark:text-lightElement font-anton",
           geistSans.variable,
           geistMono.variable,
           anton.variable
@@ -53,9 +53,8 @@ export default function RootLayout({
             <main className="flex-1 overflow-hidden flex flex-col gap-4 mt-12">
               {children}
             </main>
-            <div className="md:hidden sticky bottom-0 left-0 right-0 p-3">
-              <MobileNav />
-            </div>
+
+            <Toaster />
           </div>
         </ThemeProvider>
       </body>

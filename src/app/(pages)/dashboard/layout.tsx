@@ -29,9 +29,11 @@ export default async function RootLayout({
           </p>
         </article>
       )}
-      <div className="h-[80vh] flex">
+      <div className="h-[80vh] flex fixed w-full lg:relative font-anton container mx-auto">
         <DesktopNav session={session} />
-        <section className="flex-1 overflow-auto p-3">{children}</section>
+        <section className="overflow-auto p-3 w-[90%] ml-[10%] lg:flex-1 lg:w-auto lg:m-0">
+          {children}
+        </section>
       </div>
     </>
   );

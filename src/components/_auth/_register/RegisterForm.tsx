@@ -2,14 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { toast } from "sonner";
@@ -59,107 +52,97 @@ export function RegisterForm() {
   };
 
   return (
-    <Card className="mx-auto max-w-[500px] border-0">
-      <CardHeader>
-        <CardTitle className="text-2xl">Sign Up</CardTitle>
-        <CardDescription>
-          Enter your information to create an account
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(processForm)}
-            className="grid gap-4"
-          >
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <CustomInput
-                  control={form.control}
-                  name="first_name"
-                  label="First Name"
-                  placeholder="John"
-                  type="text"
-                />
-              </div>
-              <div className="grid gap-2">
-                <CustomInput
-                  control={form.control}
-                  name="last_name"
-                  label="Last Name"
-                  placeholder="Doe"
-                  type="text"
-                />
-              </div>
-            </div>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(processForm)}
+        className="space-y-8 max-w-[500px] mx-auto p-3"
+      >
+        <div className="grid grid-cols-2 gap-4">
+          <div className="grid gap-2">
+            <CustomInput
+              control={form.control}
+              name="first_name"
+              label="First Name"
+              placeholder="John"
+              type="text"
+            />
+          </div>
+          <div className="grid gap-2">
+            <CustomInput
+              control={form.control}
+              name="last_name"
+              label="Last Name"
+              placeholder="Doe"
+              type="text"
+            />
+          </div>
+        </div>
 
-            <div className="grid gap-2">
-              <CustomInput
-                control={form.control}
-                name="email"
-                label="Email"
-                placeholder="johndoe@example.com"
-                type="text"
-              />
-            </div>
-            <div className="grid gap-2">
-              <CustomInput
-                control={form.control}
-                name="phone"
-                label="Cellphone Number"
-                placeholder="070 123 4567"
-                type="text"
-              />
-            </div>
+        <div className="grid gap-2">
+          <CustomInput
+            control={form.control}
+            name="email"
+            label="Email"
+            placeholder="johndoe@example.com"
+            type="text"
+          />
+        </div>
+        <div className="grid gap-2">
+          <CustomInput
+            control={form.control}
+            name="phone"
+            label="Cellphone Number"
+            placeholder="070 123 4567"
+            type="text"
+          />
+        </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col space-y-1.5">
-                <CustomInput
-                  control={form.control}
-                  label="Password"
-                  name="password"
-                  placeholder="Password"
-                  type="password"
-                />
-                <PassStrength passStrength={passStrength} />
-              </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col space-y-1.5">
+            <CustomInput
+              control={form.control}
+              label="Password"
+              name="password"
+              placeholder="Password"
+              type="password"
+            />
+            <PassStrength passStrength={passStrength} />
+          </div>
 
-              <div className="flex flex-col space-y-1.5">
-                <CustomInput
-                  control={form.control}
-                  label="Confirm Password"
-                  name="confirm_password"
-                  placeholder="Confirm Password"
-                  type="password"
-                />
-              </div>
-            </div>
+          <div className="flex flex-col space-y-1.5">
+            <CustomInput
+              control={form.control}
+              label="Confirm Password"
+              name="confirm_password"
+              placeholder="Confirm Password"
+              type="password"
+            />
+          </div>
+        </div>
 
-            <Button
-              aria-label="Register user"
-              role="button"
-              type="submit"
-              className="w-full bg-highlightPath"
-            >
-              {form.formState.isSubmitting ? (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                "Register"
-              )}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-      <CardFooter className="mt-4 text-sm flex justify-start items-center gap-2 py-3">
-        <p>Already have an account?</p>
-        <Link
-          aria-label="Sign up"
-          href="/auth/login"
-          className="underline font-bold"
+        <Button
+          aria-label="Register user"
+          role="button"
+          type="submit"
+          className="w-full bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
         >
-          Login
-        </Link>
-      </CardFooter>
-    </Card>
+          {form.formState.isSubmitting ? (
+            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            "Register"
+          )}
+        </Button>
+        <div className="mt-4 text-sm flex justify-start items-center gap-2 py-3">
+          <p>Already have an account?</p>
+          <Link
+            aria-label="Sign up"
+            href="/auth/login"
+            className="underline font-bold"
+          >
+            Login
+          </Link>
+        </div>
+      </form>
+    </Form>
   );
 }

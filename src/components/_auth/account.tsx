@@ -12,12 +12,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { auth, signOut } from "@/auth";
-import {
-  adminNavApi,
-  dashboardNavApiType,
-  managerNavApi,
-  userNavApi,
-} from "../_dashboard/_dash-sidebar/dashboard-nav-api";
 
 export const Account = async () => {
   const session = await auth();
@@ -31,11 +25,13 @@ export const Account = async () => {
 
   const role = session?.user?.role;
 
-  let dashNavApi: dashboardNavApiType[] = [];
+  // let dashNavApi: dashboardNavApiType[] = [];
 
-  role === "ADMIN" && (dashNavApi = adminNavApi);
-  role === "MANAGER" && (dashNavApi = managerNavApi);
-  role === "USER" && (dashNavApi = userNavApi);
+  // role === "ADMIN" && (dashNavApi = adminNavApi);
+  // role === "MANAGER" && (dashNavApi = managerNavApi);
+  // role === "USER" && (dashNavApi = userNavApi);
+
+  const urlRole = role?.toLowerCase();
 
   return (
     <DropdownMenu>
@@ -48,18 +44,21 @@ export const Account = async () => {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        align="end"
-        className="bg-orangeElement dark:bg-orangeElement w-screen max-w-[500px] font-anton"
+        align="start"
+        className="bg-gray-400/10 dark:bg-gray-600/10 backdrop-blur-lg"
       >
         <DropdownMenuLabel>
           <span className="capitalize">{name}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {dashNavApi.map((item) => (
+        <Link href={`/dashboard/${urlRole}`} className="w-full">
+          <DropdownMenuItem>Dashboard</DropdownMenuItem>
+        </Link>
+        {/* {dashNavApi.map((item) => (
           <Link key={item.name} href={item.href} className="w-full">
             <DropdownMenuItem>{item.name}</DropdownMenuItem>
           </Link>
-        ))}
+        ))} */}
 
         <DropdownMenuSeparator />
         <DropdownMenuItem>

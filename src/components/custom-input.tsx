@@ -34,7 +34,12 @@ export const CustomInput = <T extends FieldValues>({
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input placeholder={placeholder} {...field} type={type} />
+            <Input
+              placeholder={placeholder}
+              {...field}
+              type={type}
+              className="dark:border-lightElement border-darkElement border-0 rounded-none border-b-2"
+            />
           </FormControl>
           <FormMessage />
         </FormItem>
