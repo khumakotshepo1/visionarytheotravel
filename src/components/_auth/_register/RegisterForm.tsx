@@ -55,7 +55,7 @@ export function RegisterForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(processForm)}
-        className="space-y-8 max-w-[500px] mx-auto p-3"
+        className="space-y-8 max-w-[500px] mx-auto p-6"
       >
         <div className="grid grid-cols-2 gap-4">
           <div className="grid gap-2">

@@ -47,7 +47,7 @@ export const LoginForm = () => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(processForm)}
-        className="space-y-8 max-w-[500px] mx-auto"
+        className="space-y-8 max-w-[500px] mx-auto p-8"
       >
         <div className="grid gap-2">
           <CustomInput

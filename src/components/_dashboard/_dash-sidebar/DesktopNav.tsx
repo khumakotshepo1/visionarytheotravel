@@ -97,8 +97,7 @@ export function DesktopNav({ session }: { session: Session | null }) {
 
         {role === "ADMIN" && (
           <div>
-            <Link
-              href={`/dashboard/${urlRole}/cruises-admin`}
+            <button
               className={cn(
                 "hover:text-orangeElement transition-all ease-in-out duration-300 uppercase font-semibold",
                 pathname === `/dashboard/${urlRole}/cruises-admin` &&
@@ -119,7 +118,7 @@ export function DesktopNav({ session }: { session: Session | null }) {
                   Cruises
                 </p>
               </span>
-            </Link>
+            </button>
             {cruisesLinks}
           </div>
         )}
@@ -169,8 +168,7 @@ export function DesktopNav({ session }: { session: Session | null }) {
 
         {role === "ADMIN" && (
           <div>
-            <Link
-              href={`/dashboard/${urlRole}/cruises-admin`}
+            <button
               className={cn(
                 "hover:text-orangeElement transition-all ease-in-out duration-300 uppercase font-semibold",
                 pathname === `/dashboard/${urlRole}/cruises-admin` &&
@@ -186,7 +184,7 @@ export function DesktopNav({ session }: { session: Session | null }) {
                   Cruises
                 </p>
               </span>
-            </Link>
+            </button>
             {cruisesLinks}
           </div>
         )}

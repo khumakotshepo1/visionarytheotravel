@@ -35,16 +35,16 @@ CREATE TABLE
 CREATE TABLE
   IF NOT EXISTS packages (
     package_id SERIAL PRIMARY KEY,
+    accommodation_id INTEGER REFERENCES accommodations (accommodation_id),
+    transportation_id INTEGER REFERENCES transportation (transportation_id),
+    package_itinerary_id INTEGER REFERENCES package_itineraries (package_itinerary_id),
+    excursion_id INTEGER REFERENCES excursions (excursion_id),
     name TEXT NOT NULL,
     description TEXT NOT NULL,
     duration VARCHAR(20) NOT NULL,
     departure_date DATE NOT NULL,
     arrival_date DATE NOT NULL,
     departure_port TEXT NOT NULL,
-    excursion_id INTEGER REFERENCES excursions (excursion_id),
-    accommodation_id INTEGER REFERENCES accommodations (accommodation_id),
-    transportation_id INTEGER REFERENCES transportation (transportation_id),
-    package_itinerary_id INTEGER REFERENCES package_itineraries (package_itinerary_id),
     price NUMERIC(10, 2) NOT NULL
   );
 
