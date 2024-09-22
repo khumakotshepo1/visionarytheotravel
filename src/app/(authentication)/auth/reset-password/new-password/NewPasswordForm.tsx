@@ -30,13 +30,11 @@ export const NewPasswordForm = ({ token }: { token: string }) => {
     resolver: zodResolver(newPasswordSchema),
   });
 
-  const [passStrength, setPassStrength] = useState<number>(0);
+  const [passStrength, setPassStrength] = useState(0);
 
   useEffect(() => {
     setPassStrength(passwordStrength(form.watch().password).id);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.watch().password]);
+  }, [form]);
 
   const processForm = async (data: NewPasswordType) => {
     const res = await newPasswordAction(token, data);
@@ -75,7 +73,7 @@ export const NewPasswordForm = ({ token }: { token: string }) => {
                   type="password"
                 />
 
-                <PassStrength strength={passStrength} />
+                <PassStrength passStrength={passStrength} />
               </div>
 
               <div className="flex flex-col space-y-1.5">

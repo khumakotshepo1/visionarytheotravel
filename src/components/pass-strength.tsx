@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 
-interface PassStrengthProps {
+type PassStrengthProps = {
   passStrength: number;
-}
+};
 
 export const PassStrength = ({ passStrength }: PassStrengthProps) => {
   return (
