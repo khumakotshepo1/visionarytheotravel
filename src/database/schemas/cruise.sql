@@ -14,14 +14,6 @@ CREATE TABLE
     image TEXT NOT NULL
   );
 
-INSERT INTO
-  cabins (name, image, ship_id)
-VALUES
-  ('Inside', 'path/to/inside_cabin.jpg', 1),
-  ('Oceanview', 'path/to/oceanview_cabin.jpg', 1),
-  ('Balcony', 'path/to/balcony_cabin.jpg', 1),
-  ('Suite', 'path/to/suite_cabin.jpg', 1);
-
 CREATE TABLE
   IF NOT EXISTS cruise_itineraries (
     cruise_itinerary_id SERIAL PRIMARY KEY,
