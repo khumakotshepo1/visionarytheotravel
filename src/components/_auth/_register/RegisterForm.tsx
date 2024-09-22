@@ -28,11 +28,11 @@ export function RegisterForm() {
 
   const [passStrength, setPassStrength] = useState<number>(0);
 
-  useEffect(() => {
-    setPassStrength(passwordStrength(form.watch().password).id);
+  const passwordValue = form.watch().password;
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.watch().password]);
+  useEffect(() => {
+    setPassStrength(passwordStrength(passwordValue).id);
+  }, [passwordValue]);
 
   const processForm = async (data: UserRegisterType) => {
     console.log({ data });

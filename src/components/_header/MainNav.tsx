@@ -11,7 +11,7 @@ export async function MainNavbar() {
     <div className="flex items-center gap-4 md:gap-6">
       <DesktopNav />
       {session ? <Account /> : <SignButton />}
-      <MobileNav />
+      <MobileNav session={session} />
     </div>
   );
 }

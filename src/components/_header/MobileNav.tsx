@@ -7,8 +7,10 @@ import { useState } from "react";
 import { mainNavApi } from "./main-nav-api";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import MobileDashNav from "../_dashboard/_dash-sidebar/MobileDashNav";
+import { Session } from "next-auth";
 
-export default function MobileNav() {
+export default function MobileNav({ session }: { session: Session | null }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const pathname = usePathname();
@@ -36,6 +38,13 @@ export default function MobileNav() {
               {item.name}
             </Link>
           ))}
+          {session && (
+            <MobileDashNav
+              session={session}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+            />
+          )}
         </div>
       </div>
     );

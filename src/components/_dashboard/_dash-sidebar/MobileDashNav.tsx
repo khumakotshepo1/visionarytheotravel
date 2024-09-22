@@ -1,29 +1,33 @@
 "use client";
 
+import { cn } from "@/lib/utils";
+import { GaugeIcon, ShipIcon } from "lucide-react";
+import { Session } from "next-auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+import React, { useState } from "react";
 import {
   adminNavApi,
   dashboardNavApiType,
   managerNavApi,
   userNavApi,
 } from "./dashboard-nav-api";
-import { Session } from "next-auth";
-import { GaugeIcon, ShipIcon } from "lucide-react";
-import { useState } from "react";
 import { cruisesNavApi } from "./cruises-nav-api";
 
-export function DesktopNav({ session }: { session: Session | null }) {
+export default function MobileDashNav({
+  session,
+  isOpen,
+  setIsOpen,
+}: {
+  session: Session | null;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}) {
+  const [openDash, setOpenDash] = useState(false);
   const [open, setOpen] = useState(false);
-  const [halfOpen, setHalfOpen] = useState(false);
-
   const pathname = usePathname();
   const role = session?.user?.role;
 
-  console.log({ open });
-
-  // Determine the appropriate navigation links based on user role
   const dashNavApi: dashboardNavApiType[] = (() => {
     switch (role) {
       case "ADMIN":
@@ -39,47 +43,46 @@ export function DesktopNav({ session }: { session: Session | null }) {
 
   const urlRole = role?.toLowerCase();
 
-  // Render cruise links if `open` is true
   const cruisesLinks = open ? (
     <div
       className={cn(
-        "flex flex-col gap-2 py-2 pl-8 bg-gray-400/15 dark:bg-gray-600/15 rounded-xl mt-4",
-        {
-          hidden: halfOpen,
-        }
+        "flex flex-col gap-2 py-2 pl-8 pr-36 bg-gray-400/15 dark:bg-gray-600/15 rounded-xl mt-4"
       )}
     >
       {cruisesNavApi.map((item) => (
         <Link
           key={item.name}
           href={item.href}
+          onClick={() => setIsOpen(!isOpen)}
           className={cn(
             "hover:text-highlightPath transition-all ease-in-out duration-300 uppercase font-semibold",
             pathname === item.href && "text-orangeElement"
           )}
-          onClick={() => setHalfOpen(!halfOpen)}
         >
-          <span className="flex items-center gap-2 text-sm">{item.name}</span>
+          <span className="flex items-center gap-2 text-xl">{item.name}</span>
         </Link>
       ))}
     </div>
   ) : null;
 
-  return (
-    <>
-      <aside
-        className={cn(
-          "hidden w-64 lg:flex flex-col bg-gray-400/15 dark:bg-gray-600/15 gap-4 p-3 rounded-xl"
-        )}
+  const dashMenu = openDash ? (
+    <nav className="fixed inset-0 z-50 flex flex-col bg-background">
+      <button
+        className="w-full py-4 font-anton text-3xl tracking-wide bg-orangeElement text-lightElement"
+        onClick={() => setOpenDash(!openDash)}
       >
+        main menu
+      </button>
+      <div className="flex flex-col gap-4 p-4 mt-12 ml-10 items-start">
         <Link
           href={`/dashboard/${urlRole}`}
+          onClick={() => setIsOpen(!isOpen)}
           className={cn(
-            "hover:text-orangeElement transition-all ease-in-out duration-300 uppercase font-semibold",
+            "font-anton text-3xl tracking-wide",
             pathname === `/dashboard/${urlRole}` && "text-orangeElement"
           )}
         >
-          <span className="flex items-center gap-2 text-sm">
+          <span className="flex items-center gap-2">
             <GaugeIcon />
             <p className={cn("transition-all ease-in-out duration-300")}>
               Dashboard
@@ -91,7 +94,7 @@ export function DesktopNav({ session }: { session: Session | null }) {
           <div>
             <button
               className={cn(
-                "hover:text-orangeElement transition-all ease-in-out duration-300 uppercase font-semibold",
+                "font-anton text-3xl tracking-wide",
                 pathname === `/dashboard/${urlRole}/cruises-admin` &&
                   "text-orangeElement"
               )}
@@ -99,7 +102,7 @@ export function DesktopNav({ session }: { session: Session | null }) {
                 setOpen(!open);
               }}
             >
-              <span className="flex items-center gap-2 text-sm">
+              <span className="flex items-center gap-2">
                 <ShipIcon />
                 <p className={cn("transition-all ease-in-out duration-300")}>
                   Cruises
@@ -114,12 +117,13 @@ export function DesktopNav({ session }: { session: Session | null }) {
           <Link
             key={item.name}
             href={item.href}
+            onClick={() => setIsOpen(!isOpen)}
             className={cn(
-              "hover:text-highlightPath transition-all ease-in-out duration-300 uppercase font-semibold",
+              "font-anton text-3xl tracking-wide",
               pathname === item.href && "text-orangeElement"
             )}
           >
-            <span className="flex items-center gap-2 text-sm">
+            <span className="flex items-center gap-2">
               {item.icon}
               <p className={cn("transition-all ease-in-out duration-300")}>
                 {item.name}
@@ -127,7 +131,19 @@ export function DesktopNav({ session }: { session: Session | null }) {
             </span>
           </Link>
         ))}
-      </aside>
+      </div>
+    </nav>
+  ) : null;
+
+  return (
+    <>
+      <button
+        className="font-anton text-3xl tracking-wide animate-pulse"
+        onClick={() => setOpenDash(!openDash)}
+      >
+        Open Dashboard
+      </button>
+      {dashMenu}
     </>
   );
 }

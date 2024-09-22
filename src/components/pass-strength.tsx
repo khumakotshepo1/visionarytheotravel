@@ -1,7 +1,10 @@
 import { cn } from "@/lib/utils";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const PassStrength = ({ passStrength }: any) => {
+interface PassStrengthProps {
+  passStrength: number;
+}
+
+export const PassStrength = ({ passStrength }: PassStrengthProps) => {
   return (
     <div
       className={cn("flex col-span-2 gap-2 justify-around", {

@@ -9,6 +9,10 @@ export const cruisesNavApi: CruiseNavApiType[] = [
     href: "/dashboard/admin/cruises-admin/ships",
   },
   {
+    name: "Cabins",
+    href: "/dashboard/admin/cruises-admin/cabins",
+  },
+  {
     name: "Itinerary",
     href: "/dashboard/admin/cruises-admin/itinerary",
   },

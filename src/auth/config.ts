@@ -53,9 +53,6 @@ export const authConfig = {
       const isOnUser = nextUrl.pathname.startsWith("/dashboard/user");
       const isOnAuth = nextUrl.pathname.startsWith("/auth");
 
-      console.log({ user });
-      console.log({ userRole });
-
       if (isOnAuth) {
         if (isLoggedIn) {
           return Response.redirect(new URL("/dashboard", nextUrl));
