@@ -1,9 +1,9 @@
-import { getMscShipsNames } from "@/server/ships.server";
+import { sql } from "@/database";
 
 export async function GET() {
   try {
-    const ships = await getMscShipsNames();
-    return Response.json(ships); // Respond with status 200 and the ships data
+    const { rows } = await sql.query("SELECT name FROM msc_cruise_ships");
+    return Response.json(rows); // Respond with status 200 and the ships data
   } catch (error) {
     console.error(error);
   }
