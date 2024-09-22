@@ -81,19 +81,19 @@ export const getMscShipsClasses = cache(async () => {
 
 export const getMscShipsNames = cache(async () => {
   try {
-    const session = await auth();
+    // const session = await auth();
 
-    if (!session) {
-      return {
-        error: "Unauthorized",
-      };
-    }
+    // if (!session) {
+    //   return {
+    //     error: "Unauthorized",
+    //   };
+    // }
 
-    if (session?.user?.role !== "ADMIN") {
-      return {
-        error: "Unauthorized",
-      };
-    }
+    // if (session?.user?.role !== "ADMIN") {
+    //   return {
+    //     error: "Unauthorized",
+    //   };
+    // }
 
     const { rows } = await sql.query("SELECT name FROM msc_cruise_ships");
 
