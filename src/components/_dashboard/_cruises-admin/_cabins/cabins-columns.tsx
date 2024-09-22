@@ -8,16 +8,24 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ShipType } from "@/zod/types/ship.type";
+
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { UpdateCabinForm } from "./UpdateCabinForm";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
-export const cabinColumns: ColumnDef<ShipType>[] = [
+type CabinPropsType = {
+  name: string;
+  ship: string;
+  image: string;
+  cabin_id: string;
+};
+
+export const cabinColumns: ColumnDef<CabinPropsType>[] = [
   {
     accessorKey: "image",
     header: "Image",
@@ -46,7 +54,7 @@ export const cabinColumns: ColumnDef<ShipType>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const ship = row.original;
+      const cabin = row.original;
 
       return (
         <DropdownMenu>
@@ -60,13 +68,14 @@ export const cabinColumns: ColumnDef<ShipType>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
             <Link
-              href={`/dashboard/admin/cruises-admin/ships/${ship.name}/cabins`}
+              href={`/dashboard/admin/cruises-admin/ships/${cabin.name}/cabins`}
             >
               <DropdownMenuItem>View Cabins</DropdownMenuItem>
             </Link>
-            <Link href={`/dashboard/admin/cruises-admin/ships/${ship.name}`}>
-              <DropdownMenuItem>View ship details</DropdownMenuItem>
-            </Link>
+
+            <span className="text-sm pl-2">
+              <UpdateCabinForm cabin={cabin} />
+            </span>
           </DropdownMenuContent>
         </DropdownMenu>
       );

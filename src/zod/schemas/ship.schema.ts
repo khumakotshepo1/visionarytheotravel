@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const shipSchema = z.object({
-  ship_id: z.string(),
+  ship_id: z.string().optional(),
   name: z
     .string()
     .min(3, {
@@ -25,7 +25,7 @@ export const shipSchema = z.object({
 });
 
 export const cabinSchema = z.object({
-  cabin_id: z.string(),
+  cabin_id: z.string().optional(),
   ship_id: z.string(),
   name: z
     .string()
