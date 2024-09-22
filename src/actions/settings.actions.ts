@@ -156,7 +156,9 @@ export const userImageAction = async (formData: FormData) => {
     const buffer = Buffer.from(arrayBuffer);
 
     // Delete existing images in the folder
-    await cloudinary.api.delete_resources_by_prefix(`aboutvibes/${userId}`);
+    await cloudinary.api.delete_resources_by_prefix(
+      `profile-pictures/${userId}`
+    );
 
     // Upload the new image
     const upload = new Promise(async (resolve, reject) => {
@@ -164,7 +166,7 @@ export const userImageAction = async (formData: FormData) => {
         .upload_stream(
           {
             resource_type: "image",
-            folder: `aboutvibes/${userId}`,
+            folder: `profile-pictures/${userId}`,
             width: 100, // Set the desired width
             height: 100, // Set the desired height
             crop: "fill", // Crop the image to fit the specified dimensions
