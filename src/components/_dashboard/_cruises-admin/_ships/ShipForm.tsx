@@ -40,17 +40,9 @@ import { useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { mscShipsApi, mscShipsClasses } from "./msc-ships-api";
 
-type ShipClass = { class: string };
-type ShipName = { name: string };
-
-export function ShipForm({
-  shipsClasses,
-  shipsNames,
-}: {
-  shipsClasses: ShipClass[];
-  shipsNames: ShipName[];
-}) {
+export function ShipForm() {
   const form = useForm<ShipType>({
     resolver: zodResolver(shipSchema), // Apply the zodResolver
   });
@@ -130,7 +122,7 @@ export function ShipForm({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {shipsNames.map((item) => (
+                            {mscShipsApi.map((item) => (
                               <SelectItem key={item.name} value={item.name}>
                                 {item.name}
                               </SelectItem>
@@ -163,9 +155,9 @@ export function ShipForm({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {shipsClasses.map((item) => (
-                              <SelectItem key={item.class} value={item.class}>
-                                {item.class}
+                            {mscShipsClasses.map((item) => (
+                              <SelectItem key={item} value={item}>
+                                {item}
                               </SelectItem>
                             ))}
                           </SelectContent>

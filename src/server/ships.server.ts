@@ -53,56 +53,6 @@ export const getShipByName = cache(async (name: string) => {
   }
 });
 
-export const getMscShipsClasses = cache(async () => {
-  try {
-    const session = await auth();
-
-    if (!session) {
-      return {
-        error: "Unauthorized",
-      };
-    }
-
-    if (session?.user?.role !== "ADMIN") {
-      return {
-        error: "Unauthorized",
-      };
-    }
-
-    const { rows } = await sql.query(
-      "SELECT DISTINCT class FROM msc_cruise_ships"
-    );
-
-    return rows || null;
-  } catch (error) {
-    throw new Error("Failed to fetch ships classes.");
-  }
-});
-
-export const getMscShipsNames = cache(async () => {
-  try {
-    // const session = await auth();
-
-    // if (!session) {
-    //   return {
-    //     error: "Unauthorized",
-    //   };
-    // }
-
-    // if (session?.user?.role !== "ADMIN") {
-    //   return {
-    //     error: "Unauthorized",
-    //   };
-    // }
-
-    const { rows } = await sql.query("SELECT name FROM msc_cruise_ships");
-
-    return rows || null;
-  } catch (error) {
-    throw new Error("Failed to fetch ships names.");
-  }
-});
-
 export const getAllCabins = cache(async () => {
   try {
     const session = await auth();

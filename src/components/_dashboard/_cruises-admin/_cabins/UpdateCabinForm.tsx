@@ -34,12 +34,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2 } from "lucide-react";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-type ShipNames = { name: string };
+import { mscCabinNames, mscShipsApi } from "../_ships/msc-ships-api";
 
 type CabinPropsType = {
   name: string;
@@ -49,36 +47,6 @@ type CabinPropsType = {
 };
 
 export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
-  const [shipsNames, setShipsNames] = useState<ShipNames[]>([]);
-
-  const VERCEL_PROJECT_PRODUCTION_URL =
-    process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL || "";
-
-  const isLocal = VERCEL_PROJECT_PRODUCTION_URL.includes("localhost");
-  const protocol = isLocal ? "http" : "https";
-
-  console.log({ VERCEL_PROJECT_PRODUCTION_URL });
-
-  useEffect(() => {
-    const getShipNames = async () => {
-      try {
-        const res = await fetch(
-          `${protocol}://${VERCEL_PROJECT_PRODUCTION_URL}/api/cruises/msc/ships`
-        );
-        if (!res.ok) throw new Error("Failed to fetch ship names");
-        const data = await res.json();
-        setShipsNames(data);
-      } catch (error) {
-        console.error(error);
-        toast.error("Error fetching ship names");
-      }
-    };
-
-    getShipNames();
-  }, [cabin, protocol, VERCEL_PROJECT_PRODUCTION_URL]);
-
-  console.log({ shipsNames });
-
   const form = useForm<CabinType>({
     resolver: zodResolver(cabinSchema),
     defaultValues: {
@@ -89,13 +57,6 @@ export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
   });
 
   const cabinId = cabin.cabin_id;
-
-  const cabinNames = [
-    { name: "Inside" },
-    { name: "Oceanview" },
-    { name: "Balcony" },
-    { name: "Suite" },
-  ];
 
   const { refresh } = useRouter();
 
@@ -154,7 +115,7 @@ export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
                             <SelectValue placeholder="Select cabin type" />
                           </SelectTrigger>
                           <SelectContent>
-                            {cabinNames.map((item) => (
+                            {mscCabinNames.map((item) => (
                               <SelectItem key={item.name} value={item.name}>
                                 {item.name}
                               </SelectItem>
@@ -184,7 +145,7 @@ export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
                             <SelectValue placeholder="Select ship" />
                           </SelectTrigger>
                           <SelectContent>
-                            {shipsNames.map((item) => (
+                            {mscShipsApi.map((item) => (
                               <SelectItem key={item.name} value={item.name}>
                                 {item.name}
                               </SelectItem>

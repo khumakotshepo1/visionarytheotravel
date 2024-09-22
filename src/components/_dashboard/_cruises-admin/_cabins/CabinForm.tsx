@@ -39,20 +39,12 @@ import { useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { mscCabinNames, mscShipsApi } from "../_ships/msc-ships-api";
 
-type ShipNames = { name: string };
-
-export function CabinForm({ shipsNames }: { shipsNames: ShipNames[] }) {
+export function CabinForm() {
   const form = useForm<CabinType>({
     resolver: zodResolver(cabinSchema), // Apply the zodResolver
   });
-
-  const cabinNames = [
-    { name: "Inside" },
-    { name: "Oceanview" },
-    { name: "Balcony" },
-    { name: "Suite" },
-  ];
 
   const { refresh } = useRouter();
 
@@ -129,7 +121,7 @@ export function CabinForm({ shipsNames }: { shipsNames: ShipNames[] }) {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {cabinNames.map((item) => (
+                            {mscCabinNames.map((item) => (
                               <SelectItem key={item.name} value={item.name}>
                                 {item.name}
                               </SelectItem>
@@ -162,7 +154,7 @@ export function CabinForm({ shipsNames }: { shipsNames: ShipNames[] }) {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {shipsNames.map((item) => (
+                            {mscShipsApi.map((item) => (
                               <SelectItem key={item.name} value={item.name}>
                                 {item.name}
                               </SelectItem>
