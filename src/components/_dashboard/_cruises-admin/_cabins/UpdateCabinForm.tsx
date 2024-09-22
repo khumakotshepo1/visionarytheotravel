@@ -52,7 +52,10 @@ export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
   const [shipsNames, setShipsNames] = useState<ShipNames[]>([]);
 
   const VERCEL_PROJECT_PRODUCTION_URL =
-    process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL;
+    process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL || "";
+
+  const isLocal = VERCEL_PROJECT_PRODUCTION_URL.includes("localhost");
+  const protocol = isLocal ? "http" : "https";
 
   console.log({ VERCEL_PROJECT_PRODUCTION_URL });
 
@@ -60,7 +63,7 @@ export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
     const getShipNames = async () => {
       try {
         const res = await fetch(
-          `http://${VERCEL_PROJECT_PRODUCTION_URL}/api/cruises/msc/ships`
+          `${protocol}://${VERCEL_PROJECT_PRODUCTION_URL}/api/cruises/msc/ships`
         );
         if (!res.ok) throw new Error("Failed to fetch ship names");
         const data = await res.json();
@@ -72,7 +75,9 @@ export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
     };
 
     getShipNames();
-  }, [cabin, VERCEL_PROJECT_PRODUCTION_URL]);
+  }, [cabin, protocol, VERCEL_PROJECT_PRODUCTION_URL]);
+
+  console.log({ shipsNames });
 
   const form = useForm<CabinType>({
     resolver: zodResolver(cabinSchema),
