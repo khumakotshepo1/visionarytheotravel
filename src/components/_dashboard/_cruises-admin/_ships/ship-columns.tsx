@@ -14,6 +14,7 @@ import Image from "next/image";
 
 import { deleteShipAction } from "@/actions/cruise.actions";
 import { toast } from "sonner";
+import { UpdateShipForm } from "./UpdateShipForm";
 
 export const shipColumns: ColumnDef<ShipPropsType>[] = [
   {
