@@ -20,6 +20,13 @@ import {
 export const fullNameAction = async (data: UserFullNameType) => {
   try {
     const session = await auth();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
     const userId = session?.user?.user_id;
 
     const results = fullNameSchema.safeParse(data);
@@ -59,6 +66,13 @@ export const fullNameAction = async (data: UserFullNameType) => {
 export const emailAction = async (data: UserEmailType) => {
   try {
     const session = await auth();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
     const userId = session?.user?.user_id;
 
     const results = emailSchema.safeParse(data);
@@ -102,6 +116,13 @@ export const emailAction = async (data: UserEmailType) => {
 export const phoneAction = async (data: UserPhoneType) => {
   try {
     const session = await auth();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
     const userId = session?.user?.user_id;
 
     const results = phoneSchema.safeParse(data);
@@ -141,6 +162,13 @@ export const phoneAction = async (data: UserPhoneType) => {
 
 export const userImageAction = async (formData: FormData) => {
   const session = await auth();
+
+  if (!session) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+
   const userId = session?.user?.user_id;
 
   try {

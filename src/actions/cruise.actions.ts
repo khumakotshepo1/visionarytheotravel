@@ -2,9 +2,11 @@
 
 import { auth } from "@/auth";
 import { sql } from "@/database";
-import cloudinary from "@/lib/cloudinary";
-import { getShipByName } from "@/server/ships.server";
+import { getShipByName } from "@/server/cruises.server";
 import { getErrorMessage } from "@/utils/error-message";
+import { revalidatePath } from "next/cache";
+
+import cloudinary from "@/lib/cloudinary";
 
 export const addShipAction = async (data: FormData) => {
   try {
@@ -16,21 +18,27 @@ export const addShipAction = async (data: FormData) => {
       };
     }
 
-    const name = data.get("name") as string;
-    const type = data.get("type") as string;
-    const image = data.get("image") as File;
+    if (session?.user?.role !== "admin" && session?.user?.role !== "manager") {
+      return {
+        error: "Unauthorized",
+      };
+    }
 
-    if (image.size > 3000000) {
+    const ship_name = data.get("ship_name") as string;
+    const ship_class = data.get("ship_class") as string;
+    const ship_image = data.get("ship_image") as File;
+
+    if (ship_image.size > 3000000) {
       return {
         error: "File size exceeds 3mb",
       };
     }
 
-    const arrayBuffer = await image.arrayBuffer();
+    const arrayBuffer = await ship_image.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
     // Delete existing images in the folder
-    await cloudinary.api.delete_resources_by_prefix(`msc/${name}`);
+    await cloudinary.api.delete_resources_by_prefix(`msc/${ship_name}`);
 
     // Upload the new image
     const upload = new Promise(async (resolve, reject) => {
@@ -38,7 +46,7 @@ export const addShipAction = async (data: FormData) => {
         .upload_stream(
           {
             resource_type: "image",
-            folder: `msc/${name}`,
+            folder: `msc/${ship_name}`,
             width: 500, // Set the desired width
             height: 500, // Set the desired height
             crop: "fill", // Crop the image to fit the specified dimensions
@@ -58,10 +66,12 @@ export const addShipAction = async (data: FormData) => {
 
     if (imageUrl) {
       await sql.query(
-        `INSERT INTO ships (name, image, type) VALUES ($1, $2, $3) RETURNING *`,
-        [name, imageUrl, type]
+        `INSERT INTO ships (ship_name, ship_image, ship_class) VALUES ($1, $2, $3) RETURNING *`,
+        [ship_name, imageUrl, ship_class]
       );
     }
+
+    revalidatePath("/dashboard/admin/cruises-admin/ships");
 
     return {
       success: "Ship added successfully",
@@ -84,10 +94,16 @@ export const updateShipAction = async (data: FormData, id: string) => {
       };
     }
 
+    if (session?.user?.role !== "admin" && session?.user?.role !== "manager") {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
     const shipId = parseInt(id);
-    const name = data.get("name") as string;
-    const type = data.get("type") as string;
-    const image = data.get("image") as File;
+    const ship_name = data.get("ship_name") as string;
+    const ship_class = data.get("ship_class") as string;
+    const ship_image = data.get("ship_image") as File;
 
     if (!shipId) {
       return {
@@ -95,35 +111,35 @@ export const updateShipAction = async (data: FormData, id: string) => {
       };
     }
 
-    if (!name) {
+    if (!ship_name) {
       return {
         error: "Name is required",
       };
     }
 
-    if (!type) {
+    if (!ship_class) {
       return {
         error: "Type is required",
       };
     }
 
-    if (!image) {
+    if (!ship_image) {
       return {
         error: "Image is required",
       };
     }
 
-    if (image.size > 3000000) {
+    if (ship_image.size > 3000000) {
       return {
         error: "File size exceeds 3mb",
       };
     }
 
-    const arrayBuffer = await image.arrayBuffer();
+    const arrayBuffer = await ship_image.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
     // Delete existing images in the folder
-    await cloudinary.api.delete_resources_by_prefix(`msc/${name}`);
+    await cloudinary.api.delete_resources_by_prefix(`msc/${ship_name}`);
 
     // Upload the new image
     const upload = new Promise(async (resolve, reject) => {
@@ -131,7 +147,7 @@ export const updateShipAction = async (data: FormData, id: string) => {
         .upload_stream(
           {
             resource_type: "image",
-            folder: `msc/${name}`,
+            folder: `msc/${ship_name}`,
             width: 500, // Set the desired width
             height: 500, // Set the desired height
             crop: "fill", // Crop the image to fit the specified dimensions
@@ -151,13 +167,54 @@ export const updateShipAction = async (data: FormData, id: string) => {
 
     if (imageUrl) {
       await sql.query(
-        `UPDATE ships SET name = $1, image = $2, type = $3 WHERE ship_id = $4`,
-        [name, imageUrl, type, shipId]
+        `UPDATE ships SET ship_name = $1, ship_image = $2, type = $3 WHERE ship_id = $4`,
+        [ship_name, imageUrl, ship_class, shipId]
       );
     }
 
+    revalidatePath("/dashboard/admin/cruises-admin/ships");
+
     return {
       success: "Ship updated successfully",
+    };
+  } catch (error) {
+    console.error({ shipError: error });
+    return {
+      error: getErrorMessage(error),
+    };
+  }
+};
+
+export const deleteShipAction = async (id: string) => {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    if (session?.user?.role !== "admin" && session?.user?.role !== "manager") {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    const shipId = parseInt(id);
+
+    if (!shipId) {
+      return {
+        error: "Ship ID is required",
+      };
+    }
+
+    await sql.query("DELETE FROM ships WHERE ship_id = $1", [shipId]);
+
+    revalidatePath("/dashboard/admin/cruises-admin/ships");
+
+    return {
+      success: "Ship deleted successfully",
     };
   } catch (error) {
     console.error({ shipError: error });
@@ -177,17 +234,23 @@ export const addCabinAction = async (data: FormData) => {
       };
     }
 
-    const name = data.get("name") as string;
-    const ship = data.get("ship_id") as string;
-    const image = data.get("image") as File;
+    if (session?.user?.role !== "admin" && session?.user?.role !== "manager") {
+      return {
+        error: "Unauthorized",
+      };
+    }
 
-    if (!image) {
+    const cabin_name = data.get("cabin_name") as string;
+    const ship = data.get("ship_id") as string;
+    const cabin_image = data.get("cabin_image") as File;
+
+    if (!cabin_image) {
       return {
         error: "Image is required",
       };
     }
 
-    if (!name) {
+    if (!cabin_name) {
       return {
         error: "Name is required",
       };
@@ -201,17 +264,19 @@ export const addCabinAction = async (data: FormData) => {
 
     const { ship_id } = await getShipByName(ship);
 
-    if (image.size > 3000000) {
+    if (cabin_image.size > 3000000) {
       return {
         error: "File size exceeds 3mb",
       };
     }
 
-    const arrayBuffer = await image.arrayBuffer();
+    const arrayBuffer = await cabin_image.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
     // Delete existing images in the folder
-    await cloudinary.api.delete_resources_by_prefix(`msc/${ship}/${name}`);
+    await cloudinary.api.delete_resources_by_prefix(
+      `msc/${ship}/${cabin_name}`
+    );
 
     // Upload the new image
     const upload = new Promise(async (resolve, reject) => {
@@ -219,7 +284,7 @@ export const addCabinAction = async (data: FormData) => {
         .upload_stream(
           {
             resource_type: "image",
-            folder: `msc/${ship}/${name}`,
+            folder: `msc/${ship}/${cabin_name}`,
             width: 500, // Set the desired width
             height: 500, // Set the desired height
             crop: "fill", // Crop the image to fit the specified dimensions
@@ -239,10 +304,12 @@ export const addCabinAction = async (data: FormData) => {
 
     if (imageUrl) {
       await sql.query(
-        `INSERT INTO cabins (name, image, ship_id) VALUES ($1, $2, $3) RETURNING *`,
-        [name, imageUrl, ship_id]
+        `INSERT INTO cabins (cabin_name, cabin_image, ship_id) VALUES ($1, $2, $3) RETURNING *`,
+        [cabin_name, imageUrl, ship_id]
       );
     }
+
+    revalidatePath("/dashboard/admin/cruises-admin/cabins");
 
     return {
       success: "Cabin added successfully",
@@ -265,10 +332,16 @@ export const updateCabinAction = async (data: FormData, id: string) => {
       };
     }
 
+    if (session?.user?.role !== "admin" && session?.user?.role !== "manager") {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
     const cabinId = parseInt(id);
-    const name = data.get("name") as string;
+    const cabin_name = data.get("cabin_name") as string;
     const ship = data.get("ship_id") as string;
-    const image = data.get("image") as File;
+    const cabin_image = data.get("cabin_image") as File;
 
     if (!cabinId) {
       return {
@@ -276,13 +349,13 @@ export const updateCabinAction = async (data: FormData, id: string) => {
       };
     }
 
-    if (!image) {
+    if (!cabin_image) {
       return {
         error: "Image is required",
       };
     }
 
-    if (!name) {
+    if (!cabin_name) {
       return {
         error: "Name is required",
       };
@@ -296,17 +369,19 @@ export const updateCabinAction = async (data: FormData, id: string) => {
 
     const { ship_id } = await getShipByName(ship);
 
-    if (image.size > 3000000) {
+    if (cabin_image.size > 3000000) {
       return {
         error: "File size exceeds 3mb",
       };
     }
 
-    const arrayBuffer = await image.arrayBuffer();
+    const arrayBuffer = await cabin_image.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
     // Delete existing images in the folder
-    await cloudinary.api.delete_resources_by_prefix(`msc/${ship}/${name}`);
+    await cloudinary.api.delete_resources_by_prefix(
+      `msc/${ship}/${cabin_name}`
+    );
 
     // Upload the new image
     const upload = new Promise(async (resolve, reject) => {
@@ -314,7 +389,7 @@ export const updateCabinAction = async (data: FormData, id: string) => {
         .upload_stream(
           {
             resource_type: "image",
-            folder: `msc/${ship}/${name}`,
+            folder: `msc/${ship}/${cabin_name}`,
             width: 500, // Set the desired width
             height: 500, // Set the desired height
             crop: "fill", // Crop the image to fit the specified dimensions
@@ -334,13 +409,53 @@ export const updateCabinAction = async (data: FormData, id: string) => {
 
     if (imageUrl) {
       await sql.query(
-        `UPDATE cabins SET name = $1, image = $2, ship_id = $3 WHERE cabin_id = $4 RETURNING *`,
-        [name, imageUrl, ship_id, cabinId]
+        `UPDATE cabins SET cabin_name = $1, cabin_image = $2, ship_id = $3 WHERE cabin_id = $4 RETURNING *`,
+        [cabin_name, imageUrl, ship_id, cabinId]
       );
     }
 
+    revalidatePath("/dashboard/admin/cruises-admin/cabins");
+
     return {
       success: "Cabin updated successfully",
+    };
+  } catch (error) {
+    console.error({ cabinError: error });
+    return {
+      error: getErrorMessage(error),
+    };
+  }
+};
+
+export const deleteCabinAction = async (id: string) => {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    if (session?.user?.role !== "admin" && session?.user?.role !== "manager") {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    const cabinId = parseInt(id);
+    if (!cabinId) {
+      return {
+        error: "Cabin ID is required",
+      };
+    }
+
+    await sql.query("DELETE FROM cabins WHERE cabin_id = $1", [cabinId]);
+
+    revalidatePath("/dashboard/admin/cruises-admin/cabins");
+
+    return {
+      success: "Cabin deleted successfully",
     };
   } catch (error) {
     console.error({ cabinError: error });

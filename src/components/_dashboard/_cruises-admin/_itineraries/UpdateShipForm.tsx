@@ -1,8 +1,10 @@
 "use client";
 
-import { updateCabinAction } from "@/actions/cruise.actions";
+import { updateShipAction } from "@/actions/cruise.actions";
+
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
+
 import {
   Dialog,
   DialogClose,
@@ -21,6 +23,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
 import {
   Select,
   SelectContent,
@@ -28,27 +31,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cabinSchema } from "@/zod/schemas/cruise.schema";
-import { CabinType } from "@/zod/types/ship.type";
 
+import { shipSchema } from "@/zod/schemas/cruise.schema";
+import { ShipType } from "@/zod/types/ship.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2 } from "lucide-react";
 
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { mscCabinNames, mscShipsApi } from "../_ships/msc-ships-api";
+import { mscShipsApi, mscShipsClasses } from "./msc-ships-api";
 
-export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
-  const form = useForm<CabinType>({
-    resolver: zodResolver(cabinSchema),
+export function UpdateShipForm({ ship }: { ship: ShipPropsType }) {
+  const form = useForm<ShipType>({
+    resolver: zodResolver(shipSchema),
     defaultValues: {
-      cabin_name: cabin.cabin_name,
-      cabin_image: cabin.cabin_image,
-      ship_id: cabin.ship_name,
-    },
+      name: ship.name,
+      image: ship.image,
+    }, // Apply the zodResolver
   });
 
-  const cabinId = cabin.cabin_id;
+  const shipId = ship.ship_id;
 
   const validateFile = (fileList: FileList) => {
     const file = fileList[0];
@@ -57,21 +59,30 @@ export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
     return isImage || "Please select a valid image file.";
   };
 
-  const handleCabinUpdate = async (data: CabinType) => {
-    const cabin_image = data.cabin_image[0] as File;
-    const cabin_name = data.cabin_name;
-    const ship_id = data.ship_id;
+  const processForm = async (data: ShipType) => {
+    console.log({ data });
+
+    const image = data.image[0] as File;
+    const name = data.name;
+    const type = data.type;
 
     const formData = new FormData();
-    formData.append("cabin_image", cabin_image);
-    formData.append("cabin_name", cabin_name);
-    formData.append("ship_id", ship_id);
 
-    const res = await updateCabinAction(formData, cabinId);
+    formData.append("image", image);
+    formData.append("name", name);
+    formData.append("type", type);
+
+    console.log({ formData });
+
+    const res = await updateShipAction(formData, shipId);
 
     if (res?.error) {
+      console.log(res.error);
       toast.error(res.error);
-    } else if (res?.success) {
+    }
+
+    if (res?.success) {
+      console.log(res.success);
       toast.success(res.success);
     }
   };
@@ -79,60 +90,32 @@ export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button>Edit Cabin</button>
+        <button>Edit Ship</button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Update Cabin</DialogTitle>
+          <DialogTitle>Add Ship</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleCabinUpdate)}>
+          <form onSubmit={form.handleSubmit(processForm)}>
             <div className="grid gap-4 py-4">
               <div className="flex flex-col space-y-1.5">
                 <FormField
                   control={form.control}
-                  name="cabin_name"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Cabin Type</FormLabel>
+                      <FormLabel>Ship Name</FormLabel>
                       <FormControl>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select cabin type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {mscCabinNames.map((item) => (
-                              <SelectItem key={item.name} value={item.name}>
-                                {item.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="flex flex-col space-y-1.5">
-                <FormField
-                  control={form.control}
-                  name="ship_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Ship</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select ship" />
-                          </SelectTrigger>
+                          <FormControl>
+                            <SelectTrigger className="w-[180px]">
+                              <SelectValue placeholder="Ship Name" />
+                            </SelectTrigger>
+                          </FormControl>
                           <SelectContent>
                             {mscShipsApi.map((item) => (
                               <SelectItem key={item.name} value={item.name}>
@@ -142,6 +125,40 @@ export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
                           </SelectContent>
                         </Select>
                       </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="flex flex-col space-y-1.5">
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ship Class</FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-[180px]">
+                              <SelectValue placeholder="Ship Class" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {mscShipsClasses.map((item) => (
+                              <SelectItem key={item} value={item}>
+                                {item}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+
                       <FormMessage />
                     </FormItem>
                   )}
@@ -155,13 +172,10 @@ export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
                 <Input
                   id="link"
                   type="file"
-                  {...form.register("cabin_image", { validate: validateFile })}
+                  {...form.register("image", { validate: validateFile })}
                   className="block w-full border-slate-400 rounded focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   required
                 />
-                {form.watch("cabin_image") && (
-                  <p>Selected file: {form.watch("cabin_image")[0]?.name}</p>
-                )}
               </div>
             </div>
             <DialogClose asChild>
@@ -172,7 +186,7 @@ export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
                 }
                 type="submit"
                 role="submit"
-                aria-label="Update Cabin"
+                aria-label="Change Full Name"
                 className="w-full bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
               >
                 {form.formState.isSubmitting ? (

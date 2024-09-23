@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -12,29 +11,20 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { UpdateCabinForm } from "./UpdateCabinForm";
-
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-
-type CabinPropsType = {
-  name: string;
-  ship: string;
-  image: string;
-  cabin_id: string;
-};
+import { deleteCabinAction } from "@/actions/cruise.actions";
+import { toast } from "sonner";
 
 export const cabinColumns: ColumnDef<CabinPropsType>[] = [
   {
-    accessorKey: "image",
-    header: "Image",
+    accessorKey: "cabin_image",
+    header: "Cabin Image",
     cell: ({ row }) => {
-      const image = row.getValue("image") as string;
+      const cabin_image = row.getValue("cabin_image") as string;
 
       return (
         <Image
-          src={image}
+          src={cabin_image}
           alt="Cabin image"
           width={100}
           height={100}
@@ -44,8 +34,8 @@ export const cabinColumns: ColumnDef<CabinPropsType>[] = [
     },
   },
   {
-    accessorKey: "name",
-    header: "Name",
+    accessorKey: "cabin_name",
+    header: "Cabin Name",
   },
   {
     accessorKey: "ship",
@@ -55,6 +45,19 @@ export const cabinColumns: ColumnDef<CabinPropsType>[] = [
     id: "actions",
     cell: ({ row }) => {
       const cabin = row.original;
+      const cabin_id = cabin.cabin_id;
+
+      const processForm = async () => {
+        const res = await deleteCabinAction(cabin_id);
+
+        if (res?.error) {
+          toast.error(res.error);
+        }
+
+        if (res?.success) {
+          toast.success(res.success);
+        }
+      };
 
       return (
         <DropdownMenu>
@@ -67,11 +70,9 @@ export const cabinColumns: ColumnDef<CabinPropsType>[] = [
           <DropdownMenuContent align="start">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-            <Link
-              href={`/dashboard/admin/cruises-admin/ships/${cabin.name}/cabins`}
-            >
-              <DropdownMenuItem>View Cabins</DropdownMenuItem>
-            </Link>
+            <form action={processForm}>
+              <button className="text-sm pl-2">Delete</button>
+            </form>
 
             <span className="text-sm pl-2">
               <UpdateCabinForm cabin={cabin} />

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -29,13 +30,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cabinSchema } from "@/zod/schemas/ship.schema";
+import { cabinSchema } from "@/zod/schemas/cruise.schema";
 import { CabinType } from "@/zod/types/ship.type";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2 } from "lucide-react";
-
-import { useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -46,8 +45,6 @@ export function CabinForm() {
     resolver: zodResolver(cabinSchema), // Apply the zodResolver
   });
 
-  const { refresh } = useRouter();
-
   const validateFile = (fileList: FileList) => {
     const file = fileList[0];
     if (!file) return true; // No file selected
@@ -56,33 +53,24 @@ export function CabinForm() {
   };
 
   const processForm = async (data: CabinType) => {
-    console.log({ data });
-
-    const image = data.image[0] as File;
-    const name = data.name;
+    const cabin_image = data.cabin_image[0] as File;
+    const cabin_name = data.cabin_name;
     const ship_id = data.ship_id;
 
     const formData = new FormData();
 
-    formData.append("image", image);
-    formData.append("name", name);
+    formData.append("cabin_image", cabin_image);
+    formData.append("cabin_name", cabin_name);
     formData.append("ship_id", ship_id);
-
-    console.log({ formData });
 
     const res = await addCabinAction(formData);
 
     if (res?.error) {
-      console.log(res.error);
       toast.error(res.error);
     }
 
     if (res?.success) {
-      console.log(res.success);
       toast.success(res.success);
-      setTimeout(() => {
-        refresh();
-      }, 2000);
     }
   };
 
@@ -106,7 +94,7 @@ export function CabinForm() {
               <div className="flex flex-col space-y-1.5">
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="cabin_name"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Cabin Type</FormLabel>
@@ -176,29 +164,35 @@ export function CabinForm() {
                 <Input
                   id="link"
                   type="file"
-                  {...form.register("image", { validate: validateFile })}
+                  {...form.register("cabin_image", { validate: validateFile })}
                   className="block w-full border-slate-400 rounded focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   required
                 />
+                {form.watch("cabin_image") && (
+                  <p>Selected file: {form.watch("cabin_image")[0]?.name}</p>
+                )}
               </div>
             </div>
-            <Button
-              disabled={
-                form.formState.isSubmitting || form.formState.isSubmitSuccessful
-              }
-              type="submit"
-              role="submit"
-              aria-label="Change Full Name"
-              className="w-full bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
-            >
-              {form.formState.isSubmitting ? (
-                <Icons.spinner className="h-4 w-4 animate-spin" />
-              ) : form.formState.isSubmitSuccessful ? (
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
-              ) : (
-                "Save"
-              )}
-            </Button>
+            <DialogClose asChild>
+              <Button
+                disabled={
+                  form.formState.isSubmitting ||
+                  form.formState.isSubmitSuccessful
+                }
+                type="submit"
+                role="submit"
+                aria-label="Change Full Name"
+                className="w-full bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
+              >
+                {form.formState.isSubmitting ? (
+                  <Icons.spinner className="h-4 w-4 animate-spin" />
+                ) : form.formState.isSubmitSuccessful ? (
+                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                ) : (
+                  "Save"
+                )}
+              </Button>
+            </DialogClose>
           </form>
         </Form>
       </DialogContent>

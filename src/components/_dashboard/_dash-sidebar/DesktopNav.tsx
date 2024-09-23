@@ -16,12 +16,9 @@ import { cruisesNavApi } from "./cruises-nav-api";
 
 export function DesktopNav({ session }: { session: Session | null }) {
   const [open, setOpen] = useState(false);
-  const [halfOpen, setHalfOpen] = useState(false);
 
   const pathname = usePathname();
   const role = session?.user?.role;
-
-  console.log({ open });
 
   // Determine the appropriate navigation links based on user role
   const dashNavApi: dashboardNavApiType[] = (() => {
@@ -43,21 +40,18 @@ export function DesktopNav({ session }: { session: Session | null }) {
   const cruisesLinks = open ? (
     <div
       className={cn(
-        "flex flex-col gap-2 py-2 pl-8 bg-gray-400/15 dark:bg-gray-600/15 rounded-xl mt-4",
-        {
-          hidden: halfOpen,
-        }
+        "flex flex-col gap-2 py-2 pl-8 bg-gray-400/15 dark:bg-gray-600/15 rounded-xl mt-4"
       )}
     >
       {cruisesNavApi.map((item) => (
         <Link
           key={item.name}
           href={item.href}
+          onClick={() => setOpen(!open)}
           className={cn(
-            "hover:text-highlightPath transition-all ease-in-out duration-300 uppercase font-semibold",
+            "hover:text-orangeElement transition-all ease-in-out duration-300 uppercase font-semibold",
             pathname === item.href && "text-orangeElement"
           )}
-          onClick={() => setHalfOpen(!halfOpen)}
         >
           <span className="flex items-center gap-2 text-sm">{item.name}</span>
         </Link>

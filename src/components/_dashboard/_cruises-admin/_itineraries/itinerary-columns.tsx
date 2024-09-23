@@ -12,21 +12,20 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import Image from "next/image";
 
-import { UpdateShipForm } from "./UpdateShipForm";
 import { deleteShipAction } from "@/actions/cruise.actions";
 import { toast } from "sonner";
 
-export const shipColumns: ColumnDef<ShipPropsType>[] = [
+export const cruiseItineraryColumns: ColumnDef<CruiseItineraryPropsType>[] = [
   {
-    accessorKey: "ship_image",
-    header: "Ship Image",
+    accessorKey: "map",
+    header: "Map",
     cell: ({ row }) => {
-      const ship_image = row.getValue("ship_image") as string;
+      const map = row.getValue("map") as string;
 
       return (
         <Image
-          src={ship_image}
-          alt="Ship image"
+          src={map}
+          alt="Map image"
           width={100}
           height={100}
           className="w-20 h-20 object-cover"
@@ -34,23 +33,32 @@ export const shipColumns: ColumnDef<ShipPropsType>[] = [
       );
     },
   },
+
   {
-    accessorKey: "ship_name",
-    header: "Ship Name",
+    accessorKey: "day",
+    header: "Day",
   },
   {
-    accessorKey: "ship_class",
-    header: "Ship Class",
+    accessorKey: "location",
+    header: "Location",
+  },
+  {
+    accessorKey: "arrive",
+    header: "Arrive",
+  },
+  {
+    accessorKey: "depart",
+    header: "Depart",
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const ship = row.original;
+      const cruiseItinerary = row.original;
 
-      const ship_id = ship.ship_id;
+      const cruise_itinerary_id = cruiseItinerary.cruise_itinerary_id;
 
       const processForm = async () => {
-        const res = await deleteShipAction(ship_id);
+        const res = await deleteShipAction(cruise_itinerary_id);
 
         if (res?.error) {
           toast.error(res.error);
@@ -77,7 +85,7 @@ export const shipColumns: ColumnDef<ShipPropsType>[] = [
             </form>
 
             <span className="text-sm pl-2">
-              <UpdateShipForm ship={ship} />
+              {/* <UpdateShipForm cruiseItinerary={cruiseItinerary} /> */}
             </span>
           </DropdownMenuContent>
         </DropdownMenu>

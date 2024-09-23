@@ -1,53 +1,60 @@
+-- Create the package_itineraries table
 CREATE TABLE
   IF NOT EXISTS package_itineraries (
     package_itinerary_id SERIAL PRIMARY KEY,
+    package_itinerary_name TEXT NOT NULL,
     day DATE NOT NULL,
     location VARCHAR(50) NOT NULL,
     arrive TIME NOT NULL,
     depart TIME NOT NULL,
     map TEXT NOT NULL,
-    CONSTRAINT check_times CHECK (arrive < depart)
+    CONSTRAINT check_arrive_depart CHECK (arrive < depart)
   );
 
+-- Create the excursions table
 CREATE TABLE
   IF NOT EXISTS excursions (
     excursion_id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
+    excursion_name TEXT NOT NULL,
     image TEXT NOT NULL
   );
 
+-- Create the accommodations table
 CREATE TABLE
   IF NOT EXISTS accommodations (
     accommodation_id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
+    accommodation_name TEXT NOT NULL,
     address TEXT NOT NULL,
     image TEXT NOT NULL
   );
 
+-- Create the transportation table
 CREATE TABLE
   IF NOT EXISTS transportation (
     transportation_id SERIAL PRIMARY KEY,
-    type TEXT NOT NULL,
-    name TEXT NOT NULL,
+    transportation_name TEXT NOT NULL,
+    type TEXT NOT NULL, -- Specify type (e.g., bus, train)
     image TEXT NOT NULL
   );
 
+-- Create the packages table
 CREATE TABLE
   IF NOT EXISTS packages (
     package_id SERIAL PRIMARY KEY,
-    accommodation_id INTEGER REFERENCES accommodations (accommodation_id),
-    transportation_id INTEGER REFERENCES transportation (transportation_id),
-    package_itinerary_id INTEGER REFERENCES package_itineraries (package_itinerary_id),
-    excursion_id INTEGER REFERENCES excursions (excursion_id),
-    name TEXT NOT NULL,
+    accommodation_id INTEGER REFERENCES accommodations (accommodation_id) ON DELETE SET NULL,
+    transportation_id INTEGER REFERENCES transportation (transportation_id) ON DELETE SET NULL,
+    package_itinerary_id INTEGER REFERENCES package_itineraries (package_itinerary_id) ON DELETE SET NULL,
+    excursion_id INTEGER REFERENCES excursions (excursion_id) ON DELETE SET NULL,
+    package_name TEXT NOT NULL,
     description TEXT NOT NULL,
     duration VARCHAR(20) NOT NULL,
     departure_date DATE NOT NULL,
     arrival_date DATE NOT NULL,
-    departure_port TEXT NOT NULL,
-    price NUMERIC(10, 2) NOT NULL
+    price NUMERIC(10, 2) NOT NULL,
+    CONSTRAINT check_dates CHECK (arrival_date < departure_date)
   );
 
+-- Create indexes for improved query performance
 CREATE INDEX idx_packages_excursion_id ON packages (excursion_id);
 
 CREATE INDEX idx_packages_accommodation_id ON packages (accommodation_id);

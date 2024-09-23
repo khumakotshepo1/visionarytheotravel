@@ -12,11 +12,12 @@ export const getAllShips = cache(async () => {
   }
 });
 
-export const getShipByName = cache(async (name: string) => {
+export const getShipByName = cache(async (shipName: string) => {
   try {
-    const { rows } = await sql.query("SELECT * FROM ships WHERE name = $1", [
-      name,
-    ]);
+    const { rows } = await sql.query(
+      "SELECT * FROM ships WHERE ship_name = $1",
+      [shipName]
+    );
 
     return rows[0] || null;
   } catch (error) {
@@ -27,7 +28,7 @@ export const getShipByName = cache(async (name: string) => {
 export const getAllCabins = cache(async () => {
   try {
     const { rows } = await sql.query(
-      "SELECT c.*, s.name as ship FROM cabins c JOIN ships s ON s.ship_id = c.ship_id"
+      "SELECT c.*, s.ship_name as ship FROM cabins c JOIN ships s ON s.ship_id = c.ship_id"
     );
 
     return rows || null;

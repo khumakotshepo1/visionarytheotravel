@@ -3,27 +3,6 @@ CREATE SEQUENCE package_booking_number_seq START 1000 INCREMENT 1;
 
 CREATE SEQUENCE cruise_booking_number_seq START 1000 INCREMENT 1;
 
--- Create tables using these sequences
-CREATE TABLE
-    IF NOT EXISTS package_bookings (
-        package_booking_number BIGINT PRIMARY KEY DEFAULT nextval ('package_booking_number_seq'),
-        customer_id INTEGER NOT NULL,
-        package_id INTEGER NOT NULL,
-        booked_by INTEGER NOT NULL,
-        created_at TIMESTAMP DEFAULT NOW (),
-        updated_at TIMESTAMP DEFAULT NOW ()
-    );
-
-CREATE TABLE
-    IF NOT EXISTS cruise_bookings (
-        cruise_booking_number BIGINT PRIMARY KEY DEFAULT nextval ('cruise_booking_number_seq'),
-        customer_id INTEGER NOT NULL,
-        cruise_id INTEGER NOT NULL,
-        booked_by INTEGER NOT NULL,
-        created_at TIMESTAMP DEFAULT NOW (),
-        updated_at TIMESTAMP DEFAULT NOW ()
-    );
-
 CREATE TABLE
     IF NOT EXISTS customers (
         customer_id SERIAL PRIMARY KEY,
@@ -41,4 +20,37 @@ CREATE TABLE
         date_of_birth DATE NOT NULL,
         created_at TIMESTAMP DEFAULT NOW (),
         updated_at TIMESTAMP DEFAULT NOW ()
+    );
+
+-- Create tables using these sequences
+CREATE TABLE
+    IF NOT EXISTS package_bookings (
+        package_booking_number BIGINT PRIMARY KEY DEFAULT nextval ('package_booking_number_seq'),
+        customer_id INTEGER NOT NULL REFERENCES customers (customer_id) ON DELETE CASCADE,
+        package_id INTEGER NOT NULL REFERENCES packages (package_id) ON DELETE CASCADE,
+        status VARCHAR(20),
+        booked_by INTEGER NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW (),
+        updated_at TIMESTAMP DEFAULT NOW ()
+    );
+
+CREATE TABLE
+    IF NOT EXISTS cruise_bookings (
+        cruise_booking_number BIGINT PRIMARY KEY DEFAULT nextval ('cruise_booking_number_seq'),
+        customer_id INTEGER NOT NULL REFERENCES customers (customer_id) ON DELETE CASCADE,
+        cruise_id INTEGER NOT NULL REFERENCES cruises (cruise_id) ON DELETE CASCADE,
+        status VARCHAR(20),
+        booked_by INTEGER NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW (),
+        updated_at TIMESTAMP DEFAULT NOW ()
+    );
+
+CREATE TABLE
+    IF NOT EXISTS booking_history (
+        history_id SERIAL PRIMARY KEY,
+        booking_number BIGINT NOT NULL,
+        booking_type VARCHAR(20) NOT NULL, -- 'cruise' or 'package'
+        status VARCHAR(20),
+        change_date TIMESTAMP DEFAULT NOW (),
+        notes TEXT
     );
