@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { addShipAction } from "@/actions/cruise.actions";
+import { updateShipAction } from "@/actions/cruise.actions";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,9 +37,14 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { mscShipsApi } from "./msc-ships-api";
 
-export function ShipForm() {
+export function UpdateShipForm({ ship }: { ship: ShipPropsType }) {
   const form = useForm<ShipType>({
     resolver: zodResolver(shipSchema),
+    defaultValues: {
+      ship_name: ship.ship_name,
+      ship_class: ship.ship_class,
+      ship_image: ship.ship_image,
+    },
   });
 
   const [selectedShipClass, setSelectedShipClass] = useState<string>("");
@@ -51,6 +56,8 @@ export function ShipForm() {
     return isImage || "Please select a valid image file.";
   };
 
+  const shipId = ship?.ship_id;
+
   const processForm = async (data: ShipType) => {
     const ship_image = data.ship_image[0] as File;
     const formData = new FormData();
@@ -58,7 +65,7 @@ export function ShipForm() {
     formData.append("ship_name", data.ship_name);
     formData.append("ship_class", data.ship_class);
 
-    const res = await addShipAction(formData);
+    const res = await updateShipAction(formData, shipId);
     if (res?.error) {
       toast.error(res.error);
     } else {

@@ -13,6 +13,7 @@ import { MoreHorizontal } from "lucide-react";
 
 import { deleteShipAction } from "@/actions/cruise.actions";
 import { toast } from "sonner";
+import { UpdateCruiseItineraryForm } from "./UpdateCruiseItineraryForm";
 
 export const cruiseItineraryColumns: ColumnDef<CruiseItineraryPropsType>[] = [
   {
@@ -70,7 +71,7 @@ export const cruiseItineraryColumns: ColumnDef<CruiseItineraryPropsType>[] = [
             </form>
 
             <span className="text-sm pl-2">
-              {/* <UpdateShipForm cruiseItinerary={cruiseItinerary} /> */}
+              <UpdateCruiseItineraryForm cruiseIti={cruiseItinerary} />
             </span>
           </DropdownMenuContent>
         </DropdownMenu>

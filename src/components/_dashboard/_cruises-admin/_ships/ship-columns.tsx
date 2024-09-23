@@ -12,7 +12,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import Image from "next/image";
 
-import { UpdateShipForm } from "./UpdateShipForm";
 import { deleteShipAction } from "@/actions/cruise.actions";
 import { toast } from "sonner";
 
