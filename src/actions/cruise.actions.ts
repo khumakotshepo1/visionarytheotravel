@@ -7,6 +7,8 @@ import { getErrorMessage } from "@/utils/error-message";
 import { revalidatePath } from "next/cache";
 
 import cloudinary from "@/lib/cloudinary";
+import { CruiseItineraryType } from "@/zod/types/cruises.type";
+import { cruiseItinerarySchema } from "@/zod/schemas/cruise.schema";
 
 export const addShipAction = async (data: FormData) => {
   try {
@@ -456,6 +458,105 @@ export const deleteCabinAction = async (id: string) => {
 
     return {
       success: "Cabin deleted successfully",
+    };
+  } catch (error) {
+    console.error({ cabinError: error });
+    return {
+      error: getErrorMessage(error),
+    };
+  }
+};
+
+export const addCruiseItineraryAction = async (data: CruiseItineraryType) => {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    if (session?.user?.role !== "admin" && session?.user?.role !== "manager") {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    const results = cruiseItinerarySchema.safeParse(data);
+
+    if (!results.success) {
+      return {
+        error: results.error.errors[0].message,
+      };
+    }
+
+    const { cruise_id, day, location, arrive, depart } = results.data;
+
+    await sql.query(
+      `INSERT INTO cruise_itinerary (cruise_id, day, location, arrive, depart) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [cruise_id, day, location, arrive, depart]
+    );
+
+    revalidatePath("/dashboard/admin/cruises-admin/cabins");
+
+    return {
+      success: "Cruise itinerary added successfully",
+    };
+  } catch (error) {
+    console.error({ cabinError: error });
+    return {
+      error: getErrorMessage(error),
+    };
+  }
+};
+
+export const updateCruiseItineraryAction = async (
+  data: CruiseItineraryType,
+  id: string
+) => {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    if (session?.user?.role !== "admin" && session?.user?.role !== "manager") {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    const results = cruiseItinerarySchema.safeParse(data);
+
+    if (!results.success) {
+      return {
+        error: results.error.errors[0].message,
+      };
+    }
+
+    const cruiseItineraryId = parseInt(id);
+
+    if (!cruiseItineraryId) {
+      return {
+        error: "Cruise Itinerary ID is required",
+      };
+    }
+
+    const { cruise_id, day, location, arrive, depart } = results.data;
+
+    await sql.query(
+      "UPDATE cruise_itinerary SET cruise_id = $1, day = $2, location = $3, arrive = $4, depart = $5 WHERE cruise_itinerary_id = $6 RETURNING *",
+      [cruise_id, day, location, arrive, depart, cruiseItineraryId]
+    );
+
+    revalidatePath("/dashboard/admin/cruises-admin/cabins");
+
+    return {
+      success: "Cruise Itinerary updated successfully",
     };
   } catch (error) {
     console.error({ cabinError: error });

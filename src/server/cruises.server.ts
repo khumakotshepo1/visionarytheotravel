@@ -36,3 +36,23 @@ export const getAllCabins = cache(async () => {
     throw new Error("Failed to fetch cabins.");
   }
 });
+
+export const getAllCruises = cache(async () => {
+  try {
+    const { rows } = await sql.query("SELECT * FROM cruises");
+
+    return rows || null;
+  } catch (error) {
+    throw new Error("Failed to fetch cruises.");
+  }
+});
+
+export const getAllCruiseItineraries = cache(async () => {
+  try {
+    const { rows } = await sql.query("SELECT * FROM cruise_itineraries");
+
+    return rows || null;
+  } catch (error) {
+    throw new Error("Failed to fetch cruise itineraries.");
+  }
+});

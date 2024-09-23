@@ -10,30 +10,11 @@ import {
 
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
-import Image from "next/image";
 
 import { deleteShipAction } from "@/actions/cruise.actions";
 import { toast } from "sonner";
 
 export const cruiseItineraryColumns: ColumnDef<CruiseItineraryPropsType>[] = [
-  {
-    accessorKey: "map",
-    header: "Map",
-    cell: ({ row }) => {
-      const map = row.getValue("map") as string;
-
-      return (
-        <Image
-          src={map}
-          alt="Map image"
-          width={100}
-          height={100}
-          className="w-20 h-20 object-cover"
-        />
-      );
-    },
-  },
-
   {
     accessorKey: "day",
     header: "Day",
@@ -49,6 +30,10 @@ export const cruiseItineraryColumns: ColumnDef<CruiseItineraryPropsType>[] = [
   {
     accessorKey: "depart",
     header: "Depart",
+  },
+  {
+    accessorKey: "cruise_name",
+    header: "Cruise Name",
   },
   {
     id: "actions",

@@ -16,9 +16,22 @@ declare interface CabinPropsType {
 declare interface CruiseItineraryPropsType {
   cruise_itinerary_id: string;
   cruise_id: string;
-  map: string;
-  day: Date;
+  day: string;
+  location: string;
   arrive: string; // Time in "HH:mm:ss" format
   depart: string; // Time in "HH:mm:ss" format
-  location: string;
+  cruise_name: string;
+}
+
+declare interface CruisePropsType {
+  cruise_id: string;
+  ship_id: string;
+  cruise_name: string;
+  description: string;
+  duration: string;
+  embarkation_date: Date;
+  disembarkation_date: Date;
+  departure_port: string;
+  cruise_price: number;
+  map: string;
 }

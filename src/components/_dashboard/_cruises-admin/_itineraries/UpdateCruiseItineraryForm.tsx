@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { addShipAction } from "@/actions/cruise.actions";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,8 +18,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -29,51 +25,42 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { shipSchema } from "@/zod/schemas/cruise.schema";
-import { ShipType } from "@/zod/types/cruises.type";
+import { cruiseItinerarySchema } from "@/zod/schemas/cruise.schema";
+import { CruiseItineraryType } from "@/zod/types/cruises.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { mscShipsApi } from "./msc-ships-api";
 
-export function ShipForm() {
-  const form = useForm<ShipType>({
-    resolver: zodResolver(shipSchema),
+import { CustomInput } from "@/components/custom-input";
+import { updateCruiseItineraryAction } from "@/actions/cruise.actions";
+
+interface CruiseItineraryFormProps {
+  cruiseIti: CruiseItineraryPropsType;
+}
+
+export function UpdateCruiseItineraryForm({
+  cruiseIti,
+}: CruiseItineraryFormProps) {
+  const form = useForm<CruiseItineraryType>({
+    resolver: zodResolver(cruiseItinerarySchema),
+    defaultValues: {
+      cruise_id: cruiseIti.cruise_name,
+      day: cruiseIti.day,
+      location: cruiseIti.location,
+      arrive: cruiseIti.arrive,
+      depart: cruiseIti.depart,
+    },
   });
 
-  const [selectedShipClass, setSelectedShipClass] = useState<string>("");
+  const cruise_itinerary_id = cruiseIti.cruise_itinerary_id;
 
-  const validateFile = (fileList: FileList) => {
-    const file = fileList[0];
-    if (!file) return true; // No file selected
-    const isImage = file.type.startsWith("image/");
-    return isImage || "Please select a valid image file.";
-  };
-
-  const processForm = async (data: ShipType) => {
-    const ship_image = data.ship_image[0] as File;
-    const formData = new FormData();
-    formData.append("ship_image", ship_image);
-    formData.append("ship_name", data.ship_name);
-    formData.append("ship_class", data.ship_class);
-
-    const res = await addShipAction(formData);
+  const processForm = async (data: CruiseItineraryType) => {
+    const res = await updateCruiseItineraryAction(data, cruise_itinerary_id);
     if (res?.error) {
       toast.error(res.error);
     } else {
       toast.success(res.success);
-      form.reset(); // Reset form after success
-      setSelectedShipClass(""); // Reset selected class
-    }
-  };
-
-  // Handle ship selection change
-  const handleShipChange = (value: string) => {
-    const ship = mscShipsApi.find((s) => s.name === value);
-    if (ship) {
-      setSelectedShipClass(ship.class);
-      form.setValue("ship_class", ship.class); // Optionally set ship class based on selected ship
     }
   };
 
@@ -84,12 +71,12 @@ export function ShipForm() {
           variant="outline"
           className="bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
         >
-          Add Ship
+          Add Itinerary
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Ship</DialogTitle>
+          <DialogTitle>Add Itinerary</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(processForm)}>
@@ -97,27 +84,22 @@ export function ShipForm() {
               <div className="flex flex-col space-y-1.5">
                 <FormField
                   control={form.control}
-                  name="ship_name"
+                  name="cruise_id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Ship Name</FormLabel>
+                      <FormLabel>Cruise</FormLabel>
                       <FormControl>
                         <Select
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                            handleShipChange(value);
-                          }}
+                          onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Ship Name" />
+                            <SelectValue placeholder="Select Cruise" />
                           </SelectTrigger>
                           <SelectContent>
-                            {mscShipsApi.map((item) => (
-                              <SelectItem key={item.name} value={item.name}>
-                                {item.name}
-                              </SelectItem>
-                            ))}
+                            <SelectItem value={cruiseIti.cruise_name}>
+                              {cruiseIti.cruise_name}
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -130,25 +112,22 @@ export function ShipForm() {
               <div className="flex flex-col space-y-1.5">
                 <FormField
                   control={form.control}
-                  name="ship_class"
+                  name="day"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Ship Class</FormLabel>
+                      <FormLabel>Day</FormLabel>
                       <FormControl>
                         <Select
                           onValueChange={field.onChange}
-                          defaultValue={selectedShipClass}
-                          disabled={!selectedShipClass} // Disable until a ship is selected
+                          defaultValue={field.value}
                         >
                           <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Ship Class" />
+                            <SelectValue placeholder="Select Day" />
                           </SelectTrigger>
                           <SelectContent>
-                            {selectedShipClass && (
-                              <SelectItem value={selectedShipClass}>
-                                {selectedShipClass}
-                              </SelectItem>
-                            )}
+                            <SelectItem value={cruiseIti.day}>
+                              {cruiseIti.day}
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -158,16 +137,51 @@ export function ShipForm() {
                 />
               </div>
 
-              <div className="grid flex-1 gap-2">
-                <Label htmlFor="ship_image" className="sr-only">
-                  Image
-                </Label>
-                <Input
-                  id="ship_image"
-                  type="file"
-                  {...form.register("ship_image", { validate: validateFile })}
-                  className="block w-full border-slate-400 rounded focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  required
+              <div className="flex flex-col space-y-1.5">
+                <FormField
+                  control={form.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Location</FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select Location" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value={cruiseIti.location}>
+                              {cruiseIti.location}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="flex flex-col space-y-1.5">
+                <CustomInput
+                  control={form.control}
+                  name="arrive"
+                  type="time"
+                  label="Arrive"
+                  placeholder="Arrive"
+                />
+              </div>
+
+              <div className="flex flex-col space-y-1.5">
+                <CustomInput
+                  control={form.control}
+                  name="depart"
+                  type="time"
+                  label="Depart"
+                  placeholder="Depart"
                 />
               </div>
             </div>
@@ -178,8 +192,6 @@ export function ShipForm() {
                   form.formState.isSubmitSuccessful
                 }
                 type="submit"
-                role="submit"
-                aria-label="Save Ship Details"
                 className="w-full bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
               >
                 {form.formState.isSubmitting ? (

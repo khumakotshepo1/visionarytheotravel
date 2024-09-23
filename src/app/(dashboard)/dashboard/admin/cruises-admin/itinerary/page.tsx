@@ -1,3 +1,9 @@
+import { CruiseItineraries } from "@/components/_dashboard/_cruises-admin/_itineraries/CruiseItineraries";
+
 export default function ItineraryPage() {
-  return <div>Itinerary Page</div>;
+  return (
+    <div>
+      <CruiseItineraries />
+    </div>
+  );
 }

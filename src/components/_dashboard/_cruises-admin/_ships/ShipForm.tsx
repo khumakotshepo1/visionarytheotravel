@@ -30,7 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { shipSchema } from "@/zod/schemas/cruise.schema";
-import { ShipType } from "@/zod/types/ship.type";
+import { ShipType } from "@/zod/types/cruises.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2 } from "lucide-react";
 import { useForm } from "react-hook-form";
