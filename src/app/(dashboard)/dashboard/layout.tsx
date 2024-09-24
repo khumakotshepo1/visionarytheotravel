@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { DesktopNav } from "@/components/_dashboard/_dash-sidebar/DesktopNav";
+import NextProgress from "@/components/next-progress";
 import { getVerificationTokenByEmail } from "@/server/users.server";
 
 import type { Metadata } from "next";
@@ -29,12 +30,14 @@ export default async function RootLayout({
           </p>
         </article>
       )}
-      <div className="h-[80vh] flex fixed w-full lg:relative font-anton container mx-auto">
-        <DesktopNav session={session} />
-        <section className="overflow-auto p-3 w-[90%] ml-[10%] lg:flex-1 lg:w-auto lg:m-0">
-          {children}
-        </section>
-      </div>
+      <NextProgress>
+        <div className="h-[80vh] flex fixed w-full lg:relative font-anton container mx-auto">
+          <DesktopNav session={session} />
+          <section className="overflow-auto p-3 w-[90%] ml-[10%] lg:flex-1 lg:w-auto lg:m-0">
+            {children}
+          </section>
+        </div>
+      </NextProgress>
     </>
   );
 }

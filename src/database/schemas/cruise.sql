@@ -28,6 +28,7 @@ CREATE TABLE
     disembarkation_date DATE NOT NULL,
     departure_port TEXT NOT NULL,
     cruise_price NUMERIC(10, 2) NOT NULL,
+    map_image TEXT NOT NULL,
     CONSTRAINT check_dates CHECK (embarkation_date < disembarkation_date)
   );
 
@@ -36,11 +37,10 @@ CREATE TABLE
   IF NOT EXISTS cruise_itineraries (
     cruise_itinerary_id SERIAL PRIMARY KEY,
     cruise_id INTEGER NOT NULL REFERENCES cruises (cruise_id) ON DELETE CASCADE,
-    day DATE NOT NULL,
+    day VARCHAR(10) NOT NULL,
     location VARCHAR(50) NOT NULL,
-    arrive TIME NOT NULL,
-    depart TIME NOT NULL,
-    map TEXT NOT NULL
+    arrive TIME,
+    depart TIME
   );
 
 -- Create indexes for faster querying

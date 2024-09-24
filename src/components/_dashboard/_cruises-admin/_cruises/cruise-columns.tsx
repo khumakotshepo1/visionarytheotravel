@@ -11,40 +11,43 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
-import { deleteShipAction } from "@/actions/cruise.actions";
+import { deleteCruiseAction } from "@/actions/cruise.actions";
 import { toast } from "sonner";
-import { UpdateCruiseItineraryForm } from "./UpdateCruiseItineraryForm";
+import { UpdateCruisesForm } from "./UpdateCruiseForm";
 
-export const cruiseItineraryColumns: ColumnDef<CruiseItineraryPropsType>[] = [
+export const cruiseColumns: ColumnDef<CruisePropsType>[] = [
   {
-    accessorKey: "day",
-    header: "Day",
-  },
-  {
-    accessorKey: "location",
-    header: "Location",
-  },
-  {
-    accessorKey: "arrive",
-    header: "Arrive",
-  },
-  {
-    accessorKey: "depart",
-    header: "Depart",
-  },
-  {
-    accessorKey: "cruise",
+    accessorKey: "cruise_name",
     header: "Cruise Name",
+  },
+  {
+    accessorKey: "departure_port",
+    header: "Departure Port",
+  },
+  {
+    accessorKey: "embarkation_date",
+    header: "Embarkation Date",
+  },
+  {
+    accessorKey: "disembarkation_date",
+    header: "Disembarkation Date",
+  },
+  {
+    accessorKey: "duration",
+    header: "Duration",
+  },
+  {
+    accessorKey: "ship_name",
+    header: "Ship Name",
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const cruiseItinerary = row.original;
-
-      const cruise_itinerary_id = cruiseItinerary.cruise_itinerary_id;
+      const cruise = row.original;
+      const cruise_id = cruise.cruise_id;
 
       const processForm = async () => {
-        const res = await deleteShipAction(cruise_itinerary_id);
+        const res = await deleteCruiseAction(cruise_id);
 
         if (res?.error) {
           toast.error(res.error);
@@ -71,7 +74,7 @@ export const cruiseItineraryColumns: ColumnDef<CruiseItineraryPropsType>[] = [
             </form>
 
             <span className="text-sm pl-2">
-              <UpdateCruiseItineraryForm cruiseIti={cruiseItinerary} />
+              <UpdateCruisesForm cruise={cruise} />
             </span>
           </DropdownMenuContent>
         </DropdownMenu>

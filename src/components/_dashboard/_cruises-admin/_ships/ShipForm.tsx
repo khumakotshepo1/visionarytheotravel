@@ -36,8 +36,11 @@ import { CheckCircle2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { mscShipsApi } from "./msc-ships-api";
+import { useRouter } from "next/navigation";
 
 export function ShipForm() {
+  const { refresh } = useRouter();
+
   const form = useForm<ShipType>({
     resolver: zodResolver(shipSchema),
   });
@@ -65,7 +68,9 @@ export function ShipForm() {
       toast.error(res.error);
     } else {
       toast.success(res.success);
-      form.reset(); // Reset form after success
+      form.reset();
+
+      refresh();
     }
   };
 

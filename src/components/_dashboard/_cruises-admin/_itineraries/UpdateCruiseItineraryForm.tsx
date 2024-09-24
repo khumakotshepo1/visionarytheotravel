@@ -34,6 +34,7 @@ import { toast } from "sonner";
 
 import { CustomInput } from "@/components/custom-input";
 import { updateCruiseItineraryAction } from "@/actions/cruise.actions";
+import { useRouter } from "next/navigation";
 
 interface CruiseItineraryFormProps {
   cruiseIti: CruiseItineraryPropsType;
@@ -42,10 +43,12 @@ interface CruiseItineraryFormProps {
 export function UpdateCruiseItineraryForm({
   cruiseIti,
 }: CruiseItineraryFormProps) {
+  const { refresh } = useRouter();
+
   const form = useForm<CruiseItineraryType>({
     resolver: zodResolver(cruiseItinerarySchema),
     defaultValues: {
-      cruise_id: cruiseIti.cruise_name,
+      cruise_id: cruiseIti.cruise,
       day: cruiseIti.day,
       location: cruiseIti.location,
       arrive: cruiseIti.arrive,
@@ -61,22 +64,20 @@ export function UpdateCruiseItineraryForm({
       toast.error(res.error);
     } else {
       toast.success(res.success);
+
+      form.reset();
+      refresh();
     }
   };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
-        >
-          Add Itinerary
-        </Button>
+        <button>Edit Itinerary</button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Itinerary</DialogTitle>
+          <DialogTitle>Edit Itinerary</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(processForm)}>
@@ -97,8 +98,8 @@ export function UpdateCruiseItineraryForm({
                             <SelectValue placeholder="Select Cruise" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value={cruiseIti.cruise_name}>
-                              {cruiseIti.cruise_name}
+                            <SelectItem value={cruiseIti.cruise}>
+                              {cruiseIti.cruise}
                             </SelectItem>
                           </SelectContent>
                         </Select>

@@ -23,7 +23,8 @@ interface Props<T extends FieldValues> {
     | "tel"
     | "file"
     | "date"
-    | "time"; // Input type
+    | "time"
+    | "textarea"; // Input type
 }
 
 // MembershipInput component with generic type T extending FieldValues

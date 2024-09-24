@@ -1,10 +1,9 @@
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { cruiseIteneraryProps } from "./_cruises/Cruise";
 
-export function TableDemo({
+export function ItineraryTable({
   itenerary,
 }: {
-  itenerary: cruiseIteneraryProps[];
+  itenerary: CruiseItineraryPropsType[];
 }) {
   return (
     <Table>
@@ -12,10 +11,7 @@ export function TableDemo({
         {itenerary?.map((day) => (
           <TableRow key={day.day} className="border-foreground">
             <TableCell className="font-medium">
-              <span>
-                {day.day}
-                <p>{day.date}</p>
-              </span>
+              <span>{day.day}</span>
             </TableCell>
             <TableCell>{day.location}</TableCell>
             <TableCell>{day.depart}</TableCell>

@@ -37,8 +37,11 @@ import { CheckCircle2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { mscCabinNames, mscShipsApi } from "../_ships/msc-ships-api";
+import { useRouter } from "next/navigation";
 
 export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
+  const { refresh } = useRouter();
+
   const form = useForm<CabinType>({
     resolver: zodResolver(cabinSchema),
     defaultValues: {
@@ -73,6 +76,9 @@ export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
       toast.error(res.error);
     } else if (res?.success) {
       toast.success(res.success);
+
+      form.reset();
+      refresh();
     }
   };
 

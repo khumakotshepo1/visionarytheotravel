@@ -1,17 +1,14 @@
-import { CruiseType } from "@/components/_cruises/Cruise";
-import { januaryCruiseApi } from "@/components/_cruises/cruise-api";
 import { CruiseSlug } from "@/components/_cruises/CruiseSlug";
+import { getCruiseById } from "@/server/cruises.server";
 
-export default function CruiseSlugPage({
+export default async function CruiseSlugPage({
   params,
 }: {
   params: { cruiseSlug: string };
 }) {
   const cruiseSlug = Number(params.cruiseSlug);
 
-  const cruise = januaryCruiseApi.find(
-    (cruise) => cruise.id === cruiseSlug
-  ) as CruiseType;
+  const cruise = (await getCruiseById(cruiseSlug)) as CruisePropsType;
 
   return (
     <>

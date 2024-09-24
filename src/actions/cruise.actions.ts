@@ -2,7 +2,7 @@
 
 import { auth } from "@/auth";
 import { sql } from "@/database";
-import { getShipByName } from "@/server/cruises.server";
+import { getCruiseByName, getShipByName } from "@/server/cruises.server";
 import { getErrorMessage } from "@/utils/error-message";
 import { revalidatePath } from "next/cache";
 
@@ -20,7 +20,7 @@ export const addShipAction = async (data: FormData) => {
       };
     }
 
-    if (session?.user?.role !== "admin" && session?.user?.role !== "manager") {
+    if (session?.user?.role !== "ADMIN" && session?.user?.role !== "MANAGER") {
       return {
         error: "Unauthorized",
       };
@@ -96,7 +96,7 @@ export const updateShipAction = async (data: FormData, id: string) => {
       };
     }
 
-    if (session?.user?.role !== "admin" && session?.user?.role !== "manager") {
+    if (session?.user?.role !== "ADMIN" && session?.user?.role !== "MANAGER") {
       return {
         error: "Unauthorized",
       };
@@ -197,7 +197,7 @@ export const deleteShipAction = async (id: string) => {
       };
     }
 
-    if (session?.user?.role !== "admin" && session?.user?.role !== "manager") {
+    if (session?.user?.role !== "ADMIN" && session?.user?.role !== "MANAGER") {
       return {
         error: "Unauthorized",
       };
@@ -236,7 +236,7 @@ export const addCabinAction = async (data: FormData) => {
       };
     }
 
-    if (session?.user?.role !== "admin" && session?.user?.role !== "manager") {
+    if (session?.user?.role !== "ADMIN" && session?.user?.role !== "MANAGER") {
       return {
         error: "Unauthorized",
       };
@@ -334,7 +334,7 @@ export const updateCabinAction = async (data: FormData, id: string) => {
       };
     }
 
-    if (session?.user?.role !== "admin" && session?.user?.role !== "manager") {
+    if (session?.user?.role !== "ADMIN" && session?.user?.role !== "MANAGER") {
       return {
         error: "Unauthorized",
       };
@@ -438,8 +438,7 @@ export const deleteCabinAction = async (id: string) => {
         error: "Unauthorized",
       };
     }
-
-    if (session?.user?.role !== "admin" && session?.user?.role !== "manager") {
+    if (session?.user?.role !== "ADMIN" && session?.user?.role !== "MANAGER") {
       return {
         error: "Unauthorized",
       };
@@ -477,7 +476,7 @@ export const addCruiseItineraryAction = async (data: CruiseItineraryType) => {
       };
     }
 
-    if (session?.user?.role !== "admin" && session?.user?.role !== "manager") {
+    if (session?.user?.role !== "ADMIN" && session?.user?.role !== "MANAGER") {
       return {
         error: "Unauthorized",
       };
@@ -493,12 +492,16 @@ export const addCruiseItineraryAction = async (data: CruiseItineraryType) => {
 
     const { cruise_id, day, location, arrive, depart } = results.data;
 
+    const cruise = await getCruiseByName(cruise_id);
+
+    const cruiseId = cruise.cruise_id;
+
     await sql.query(
-      `INSERT INTO cruise_itinerary (cruise_id, day, location, arrive, depart) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [cruise_id, day, location, arrive, depart]
+      `INSERT INTO cruise_itineraries (cruise_id, day, location, arrive, depart) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [cruiseId, day, location, arrive, depart]
     );
 
-    revalidatePath("/dashboard/admin/cruises-admin/cabins");
+    revalidatePath("/dashboard/admin/cruises-admin/itinerary");
 
     return {
       success: "Cruise itinerary added successfully",
@@ -524,7 +527,7 @@ export const updateCruiseItineraryAction = async (
       };
     }
 
-    if (session?.user?.role !== "admin" && session?.user?.role !== "manager") {
+    if (session?.user?.role !== "ADMIN" && session?.user?.role !== "MANAGER") {
       return {
         error: "Unauthorized",
       };
@@ -548,18 +551,407 @@ export const updateCruiseItineraryAction = async (
 
     const { cruise_id, day, location, arrive, depart } = results.data;
 
+    const cruise = await getCruiseByName(cruise_id);
+
+    const cruiseId = cruise.cruise_id;
+
     await sql.query(
-      "UPDATE cruise_itinerary SET cruise_id = $1, day = $2, location = $3, arrive = $4, depart = $5 WHERE cruise_itinerary_id = $6 RETURNING *",
-      [cruise_id, day, location, arrive, depart, cruiseItineraryId]
+      "UPDATE cruise_itineraries SET cruise_id = $1, day = $2, location = $3, arrive = $4, depart = $5 WHERE cruise_itinerary_id = $6 RETURNING *",
+      [cruiseId, day, location, arrive, depart, cruiseItineraryId]
     );
 
-    revalidatePath("/dashboard/admin/cruises-admin/cabins");
+    revalidatePath("/dashboard/admin/cruises-admin/itinerary");
 
     return {
       success: "Cruise Itinerary updated successfully",
     };
   } catch (error) {
     console.error({ cabinError: error });
+    return {
+      error: getErrorMessage(error),
+    };
+  }
+};
+
+export const deleteCruiseItineraryAction = async (id: string) => {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    if (session?.user?.role !== "ADMIN" && session?.user?.role !== "MANAGER") {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    const cruiseItineraryId = parseInt(id);
+
+    if (!cruiseItineraryId) {
+      return {
+        error: "Cruise Itinerary ID is required",
+      };
+    }
+
+    await sql.query(
+      "DELETE FROM cruise_itineraries WHERE cruise_itinerary_id = $1",
+      [cruiseItineraryId]
+    );
+
+    revalidatePath("/dashboard/admin/cruises-admin/itinerary");
+
+    return {
+      success: "Cruise Itinerary deleted successfully",
+    };
+  } catch (error) {
+    console.error({ cabinError: error });
+    return {
+      error: getErrorMessage(error),
+    };
+  }
+};
+
+export const addCruiseAction = async (data: FormData) => {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    if (session?.user?.role !== "ADMIN" && session?.user?.role !== "MANAGER") {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    const cruise_name = data.get("cruise_name");
+    const ship = data.get("ship_id") as string;
+    const map_image = data.get("map_image") as File;
+    const description = data.get("description");
+    const embarkation_date = data.get("embarkation_date");
+    const disembarkation_date = data.get("disembarkation_date");
+    const duration = data.get("duration") as string;
+    const departure_port = data.get("departure_port") as string;
+    const cruise_price = data.get("cruise_price") as string;
+
+    console.log({ map_image });
+
+    if (!cruise_name) {
+      return {
+        error: "Cruise name is required",
+      };
+    }
+
+    if (!ship) {
+      return {
+        error: "Ship is required",
+      };
+    }
+
+    if (!map_image) {
+      return {
+        error: "Map image is required",
+      };
+    }
+
+    if (!description) {
+      return {
+        error: "Description is required",
+      };
+    }
+
+    if (!embarkation_date) {
+      return {
+        error: "Embarkation date is required",
+      };
+    }
+
+    if (!disembarkation_date) {
+      return {
+        error: "Disembarkation date is required",
+      };
+    }
+
+    if (!duration) {
+      return {
+        error: "Duration is required",
+      };
+    }
+
+    if (!departure_port) {
+      return {
+        error: "Departure port is required",
+      };
+    }
+
+    if (!cruise_price) {
+      return {
+        error: "Cruise price is required",
+      };
+    }
+
+    if (map_image.size > 3000000) {
+      return {
+        error: "File size exceeds 3mb",
+      };
+    }
+
+    const arrayBuffer = await map_image.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // Delete existing images in the folder
+    await cloudinary.api.delete_resources_by_prefix(`msc/${cruise_name}`);
+
+    // Upload the new image
+    const upload = new Promise(async (resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          {
+            resource_type: "image",
+            folder: `msc/${cruise_name}`,
+            width: 500, // Set the desired width
+            height: 500, // Set the desired height
+            crop: "fill", // Crop the image to fit the specified dimensions
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          async (error: any, result: any) => {
+            if (error) {
+              return reject(error.message);
+            }
+            return resolve(result?.secure_url);
+          }
+        )
+        .end(buffer);
+    });
+
+    const imageUrl = await upload;
+
+    const { ship_id } = await getShipByName(ship);
+
+    if (imageUrl) {
+      await sql.query(
+        "INSERT INTO cruises (cruise_name, ship_id, map_image, description, embarkation_date, disembarkation_date, duration, departure_port, cruise_price) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
+        [
+          cruise_name,
+          ship_id,
+          imageUrl,
+          description,
+          embarkation_date,
+          disembarkation_date,
+          duration,
+          departure_port,
+          cruise_price,
+        ]
+      );
+    }
+
+    revalidatePath("/dashboard/admin/cruises-admin/manage-cruises");
+
+    return {
+      success: "Cruise added successfully",
+    };
+  } catch (error) {
+    console.error({ cruiseError: error });
+    return {
+      error: getErrorMessage(error),
+    };
+  }
+};
+
+export const updateCruiseAction = async (data: FormData, id: string) => {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    if (session?.user?.role !== "ADMIN" && session?.user?.role !== "MANAGER") {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    const cruiseId = parseInt(id);
+    if (!cruiseId) {
+      return {
+        error: "Cruise ID is required",
+      };
+    }
+
+    const cruise_name = data.get("cruise_name");
+    const ship = data.get("ship_id") as string;
+    const map_image = data.get("map_image") as File;
+    const description = data.get("description");
+    const embarkation_date = data.get("embarkation_date");
+    const disembarkation_date = data.get("disembarkation_date");
+    const duration = data.get("duration");
+    const departure_port = data.get("departure_port");
+    const cruise_price = data.get("cruise_price");
+
+    if (!cruise_name) {
+      return {
+        error: "Name is required",
+      };
+    }
+
+    if (!ship) {
+      return {
+        error: "Ship is required",
+      };
+    }
+
+    if (!map_image) {
+      return {
+        error: "Map is required",
+      };
+    }
+
+    if (!description) {
+      return {
+        error: "Description is required",
+      };
+    }
+
+    if (!embarkation_date) {
+      return {
+        error: "Embarkation date is required",
+      };
+    }
+
+    if (!disembarkation_date) {
+      return {
+        error: "Disembarkation date is required",
+      };
+    }
+
+    if (!duration) {
+      return {
+        error: "Duration is required",
+      };
+    }
+
+    if (!departure_port) {
+      return {
+        error: "Departure port is required",
+      };
+    }
+
+    if (!cruise_price) {
+      return {
+        error: "Cruise price is required",
+      };
+    }
+
+    if (map_image.size > 3000000) {
+      return {
+        error: "File size exceeds 3mb",
+      };
+    }
+
+    const arrayBuffer = await map_image.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // Delete existing images in the folder
+    await cloudinary.api.delete_resources_by_prefix(`msc/${cruise_name}`);
+
+    // Upload the new image
+    const upload = new Promise(async (resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          {
+            resource_type: "image",
+            folder: `msc/${cruise_name}`,
+            width: 500, // Set the desired width
+            height: 500, // Set the desired height
+            crop: "fill", // Crop the image to fit the specified dimensions
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          async (error: any, result: any) => {
+            if (error) {
+              return reject(error.message);
+            }
+            return resolve(result?.secure_url);
+          }
+        )
+        .end(buffer);
+    });
+
+    const imageUrl = await upload;
+
+    const { ship_id } = await getShipByName(ship);
+
+    if (imageUrl) {
+      await sql.query(
+        "UPDATE cruises SET cruise_name = ?, ship_id = ?, map_image = ?, description = ?, embarkation_date = ?, disembarkation_date = ?, duration = ?, departure_port = ?, cruise_price = ? WHERE cruise_id = ?",
+        [
+          cruise_name,
+          ship_id,
+          imageUrl,
+          description,
+          embarkation_date,
+          disembarkation_date,
+          duration,
+          departure_port,
+          cruise_price,
+        ]
+      );
+    }
+
+    revalidatePath("/dashboard/admin/cruises-admin/manage-cruises");
+
+    return {
+      success: "Cruise updated successfully",
+    };
+  } catch (error) {
+    console.error({ cruiseError: error });
+    return {
+      error: getErrorMessage(error),
+    };
+  }
+};
+
+export const deleteCruiseAction = async (id: string) => {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    if (session?.user?.role !== "ADMIN" && session?.user?.role !== "MANAGER") {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    const cruiseId = parseInt(id);
+    if (!cruiseId) {
+      return {
+        error: "Cruise ID is required",
+      };
+    }
+
+    await sql.query("DELETE FROM cruises WHERE cruise_id = $1", [cruiseId]);
+
+    revalidatePath("/dashboard/admin/cruises-admin/manage-cruises");
+
+    return {
+      success: "Cruise deleted successfully",
+    };
+  } catch (error) {
+    console.error({ cruiseError: error });
     return {
       error: getErrorMessage(error),
     };

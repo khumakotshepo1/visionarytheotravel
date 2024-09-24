@@ -36,17 +36,20 @@ import { cruiseItineraryApi } from "./cruise-itinerary-api";
 import { useState } from "react";
 import { CustomInput } from "@/components/custom-input";
 import { addCruiseItineraryAction } from "@/actions/cruise.actions";
+import { useRouter } from "next/navigation";
 
 interface CruiseItineraryFormProps {
   cruises: CruisePropsType[];
 }
 
 export function CruiseItineraryForm({ cruises }: CruiseItineraryFormProps) {
+  const { refresh } = useRouter();
+
   const [selectedLocation, setSelectedLocation] = useState<string[]>([]);
-  const [cruiseDuration, setCruiseDuration] = useState<number>(0); // Default to 0
+  const [cruiseDuration, setCruiseDuration] = useState<number>(0);
   const [itineraryDays, setItineraryDays] = useState<string[]>(
     generateDays(cruiseDuration)
-  ); // Default based on initial duration
+  );
 
   const form = useForm<CruiseItineraryType>({
     resolver: zodResolver(cruiseItinerarySchema),
@@ -56,18 +59,26 @@ export function CruiseItineraryForm({ cruises }: CruiseItineraryFormProps) {
     const selectedCruise = cruises.find((c) => c.cruise_name === value);
 
     if (selectedCruise) {
-      setCruiseDuration(parseInt(selectedCruise.duration));
-      const newItineraryDays = generateDays(parseInt(selectedCruise.duration));
-      setItineraryDays(newItineraryDays);
+      const duration = parseInt(selectedCruise.duration);
+      setCruiseDuration(duration);
+      setItineraryDays(generateDays(duration));
+
+      // Correctly match the cruise itinerary using cruise_name
       const cruiseItinerary = cruiseItineraryApi.find(
-        (c) => c.name === selectedCruise.cruise_id
+        (c) => c.name === selectedCruise.cruise_name
       );
-      setSelectedLocation(cruiseItinerary?.location || []);
-      form.setValue("location", cruiseItinerary?.location[0] || ""); // Set first location as default
+
+      if (cruiseItinerary) {
+        setSelectedLocation(cruiseItinerary.location);
+        form.setValue("location", cruiseItinerary.location[0] || ""); // Set first location as default
+      } else {
+        setSelectedLocation([]);
+        form.setValue("location", "");
+      }
     } else {
       setCruiseDuration(0);
       setSelectedLocation([]);
-      form.setValue("location", ""); // Reset location
+      form.setValue("location", "");
     }
   };
 
@@ -77,6 +88,9 @@ export function CruiseItineraryForm({ cruises }: CruiseItineraryFormProps) {
       toast.error(res.error);
     } else {
       toast.success(res.success);
+
+      form.reset();
+      refresh();
     }
   };
 
@@ -97,126 +111,119 @@ export function CruiseItineraryForm({ cruises }: CruiseItineraryFormProps) {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(processForm)}>
             <div className="grid gap-4 py-4">
-              <div className="flex flex-col space-y-1.5">
-                <FormField
-                  control={form.control}
-                  name="cruise_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cruise</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                            handleShipChange(value);
-                          }}
-                          defaultValue={field.value}
-                        >
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select Cruise" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {cruises.map((item) => (
-                              <SelectItem
-                                key={item.cruise_id}
-                                value={item.cruise_name}
-                              >
-                                {item.cruise_name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              {/* Cruise Selection */}
+              <FormField
+                control={form.control}
+                name="cruise_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cruise</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          handleShipChange(value);
+                        }}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Select Cruise" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {cruises.map((item) => (
+                            <SelectItem
+                              key={item.cruise_id}
+                              value={item.cruise_name}
+                            >
+                              {item.cruise_name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <div className="flex flex-col space-y-1.5">
-                <FormField
-                  control={form.control}
-                  name="day"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Day</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select Day" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {itineraryDays.map((item) => (
-                              <SelectItem key={item} value={item}>
-                                {item}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              {/* Day Selection */}
+              <FormField
+                control={form.control}
+                name="day"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Day</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Select Day" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {itineraryDays.map((item) => (
+                            <SelectItem key={item} value={item}>
+                              {item}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <div className="flex flex-col space-y-1.5">
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Location</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={
-                            selectedLocation.length > 0
-                              ? selectedLocation[0]
-                              : ""
-                          }
-                          disabled={selectedLocation.length === 0}
-                        >
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select Location" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {selectedLocation.map((item) => (
-                              <SelectItem key={item} value={item}>
-                                {item}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              {/* Location Selection */}
+              <FormField
+                control={form.control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Location</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={
+                          selectedLocation.length > 0 ? selectedLocation[0] : ""
+                        }
+                        disabled={selectedLocation.length === 0}
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Select Location" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {selectedLocation.map((item) => (
+                            <SelectItem key={item} value={item}>
+                              {item}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <div className="flex flex-col space-y-1.5">
-                <CustomInput
-                  control={form.control}
-                  name="arrive"
-                  type="time"
-                  label="Arrive"
-                  placeholder="Arrive"
-                />
-              </div>
+              {/* Arrival Time */}
+              <CustomInput
+                control={form.control}
+                name="arrive"
+                type="time"
+                label="Arrive"
+                placeholder="Arrive"
+              />
 
-              <div className="flex flex-col space-y-1.5">
-                <CustomInput
-                  control={form.control}
-                  name="depart"
-                  type="time"
-                  label="Depart"
-                  placeholder="Depart"
-                />
-              </div>
+              {/* Departure Time */}
+              <CustomInput
+                control={form.control}
+                name="depart"
+                type="time"
+                label="Depart"
+                placeholder="Depart"
+              />
             </div>
             <DialogClose asChild>
               <Button

@@ -1,53 +1,72 @@
 import { CalendarIcon, MapPinIcon, MoonIcon, ShipIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { TableDemo } from "../Table";
+import { ItineraryTable } from "../ItineraryTable";
 import { Cabins } from "./Cabins";
+import {
+  getCabinsByShipId,
+  getCruiseItinerariesByCruiseId,
+} from "@/server/cruises.server";
 
-import { CruiseType } from "./Cruise";
+export async function CruiseSlug({ cruise }: { cruise: CruisePropsType }) {
+  const shipId = parseInt(cruise.ship_id);
+  const cruiseId = parseInt(cruise.cruise_id);
 
-export function CruiseSlug({ cruise }: { cruise: CruiseType }) {
+  const cabins = (await getCabinsByShipId(shipId)) as CabinPropsType[];
+  const itinerary = await getCruiseItinerariesByCruiseId(cruiseId);
+
+  console.log({ itinerary });
+
   return (
     <>
       <section className="flex flex-col lg:flex-row justify-center md:items-center lg:items-start gap-2 font-anton">
         <article className="h-96 w-full relative">
           <Image
-            src={cruise.image}
-            alt={cruise.name}
+            src={cruise.ship_image}
+            alt={cruise.ship_name}
             fill
             className="object-cover"
           />
           <div className="absolute top-0 left-0 bg-background p-4 rounded-br-xl">
-            <p className="font-semibold text-xl md:text-2xl">{cruise.name}</p>
+            <p className="font-semibold text-xl md:text-2xl">
+              {cruise.cruise_name}
+            </p>
           </div>
         </article>
         <article className="w-full lg:w-1/2 px-4">
-          <h1 className="text-3xl font-bold pb-4">Durban Port</h1>
+          <h1 className="text-3xl font-bold pb-4 capitalize">
+            {cruise.departure_port} port
+          </h1>
 
           {/*cruise info div*/}
           <div className="flex justify-between items-center w-full border-b-2 border-foreground py-4">
             <div className="flex flex-col gap-2 text-base">
               <span className="flex items-center gap-2">
                 <CalendarIcon className="h-4 w-4" />
-                <p>{cruise.date}</p>
+                <p>
+                  {cruise.embarkation_date.toDateString()} -{" "}
+                  {cruise.disembarkation_date.toDateString()}
+                </p>
               </span>
               <span className="flex items-center gap-2">
                 <MoonIcon className="h-4 w-4" />
-                <p>{cruise.nights}</p>
+                <p>
+                  {cruise.duration} nights, {parseInt(cruise.duration) + 1} days
+                </p>
               </span>
               <span className="flex items-center gap-2">
                 <MapPinIcon className="h-4 w-4" />
-                <p>Mozambique</p>
+                <p>{cruise.cruise_name}</p>
               </span>
               <span className="flex items-center gap-2">
                 <ShipIcon className="h-4 w-4" />
-                <p>{cruise.ship}</p>
+                <p>{cruise.ship_name}</p>
               </span>
             </div>
 
             <Image
               src={"/logos/msc-logo-blue.png"}
-              alt="msc-hero"
+              alt="msc logo"
               width={120}
               height={40}
               className="bg-lightElement rounded-xl p-4"
@@ -59,7 +78,7 @@ export function CruiseSlug({ cruise }: { cruise: CruiseType }) {
             <div className="flex gap-2 justify-between">
               <span>
                 <p className="text-sm capitalize">inside</p>
-                <p>{cruise.price}/per person</p>
+                <p>{cruise.cruise_price}/per person</p>
               </span>
               <span>
                 <p className="text-sm capitalize">ocean view</p>
@@ -96,7 +115,7 @@ export function CruiseSlug({ cruise }: { cruise: CruiseType }) {
       <section className="py-20 px-4 font-anton">
         <h2 className="text-4xl py-4">Itenerary</h2>
         <div className="flex flex-col lg:flex-row gap-16 items-center">
-          <TableDemo itenerary={cruise.cruiseItenerary} />
+          <ItineraryTable itenerary={itinerary} />
           <Image
             src={"/images/cruises/maps/pom_port-map.png"}
             alt="map"
@@ -108,7 +127,7 @@ export function CruiseSlug({ cruise }: { cruise: CruiseType }) {
 
       <section className="py-20 px-4 font-anton">
         <h2 className="text-4xl py-4">Cabins</h2>
-        <Cabins ship={cruise.ship} />
+        <Cabins cabins={cabins} />
       </section>
     </>
   );

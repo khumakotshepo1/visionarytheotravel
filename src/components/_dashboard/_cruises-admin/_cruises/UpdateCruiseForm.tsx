@@ -1,6 +1,5 @@
 "use client";
 
-import { addCabinAction } from "@/actions/cruise.actions";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
@@ -30,23 +29,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cabinSchema } from "@/zod/schemas/cruise.schema";
-import { CabinType } from "@/zod/types/cruises.type";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2 } from "lucide-react";
 
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { mscCabinNames, mscShipsApi } from "../_ships/msc-ships-api";
+import { CruiseType } from "@/zod/types/cruises.type";
+import { cruiseSchema } from "@/zod/schemas/cruise.schema";
+import { CustomInput } from "@/components/custom-input";
+import { updateCruiseAction } from "@/actions/cruise.actions";
 import { useRouter } from "next/navigation";
 
-export function CabinForm() {
+export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
   const { refresh } = useRouter();
 
-  const form = useForm<CabinType>({
-    resolver: zodResolver(cabinSchema), // Apply the zodResolver
+  const form = useForm<CruiseType>({
+    resolver: zodResolver(cruiseSchema),
+    defaultValues: {
+      ship_id: cruise.ship_name,
+      cruise_name: cruise.cruise_name,
+      description: cruise.description,
+      embarkation_date: cruise.embarkation_date,
+      disembarkation_date: cruise.disembarkation_date,
+      duration: cruise.duration,
+      departure_port: cruise.departure_port,
+      cruise_price: cruise.cruise_price,
+    },
   });
+
+  console.log({ cruise });
 
   const validateFile = (fileList: FileList) => {
     const file = fileList[0];
@@ -55,18 +67,35 @@ export function CabinForm() {
     return isImage || "Please select a valid image file.";
   };
 
-  const processForm = async (data: CabinType) => {
-    const cabin_image = data.cabin_image[0] as File;
-    const cabin_name = data.cabin_name;
-    const ship_id = data.ship_id;
+  const ports: string[] = ["durban", "cape town"];
+
+  const cruiseId = cruise.cruise_id;
+
+  const processForm = async (data: CruiseType) => {
+    const map_image = data.map_image[0] as File;
+    const cruise_name = data.cruise_name;
+    const ship = data.ship_id;
+    const description = data.description;
+    const embarkation_date = data.embarkation_date;
+    const disembarkation_date = data.disembarkation_date;
+
+    const duration = data.duration;
+    const departure_port = data.departure_port;
+    const cruise_price = data.cruise_price;
 
     const formData = new FormData();
 
-    formData.append("cabin_image", cabin_image);
-    formData.append("cabin_name", cabin_name);
-    formData.append("ship_id", ship_id);
+    formData.append("map_image", map_image);
+    formData.append("cruise_name", cruise_name);
+    formData.append("ship_id", ship);
+    formData.append("description", description);
+    formData.append("embarkation_date", embarkation_date.toISOString());
+    formData.append("disembarkation_date", disembarkation_date.toISOString());
+    formData.append("duration", duration);
+    formData.append("departure_port", departure_port);
+    formData.append("cruise_price", cruise_price);
 
-    const res = await addCabinAction(formData);
+    const res = await updateCruiseAction(formData, cruiseId);
 
     if (res?.error) {
       toast.error(res.error);
@@ -87,23 +116,41 @@ export function CabinForm() {
           variant="outline"
           className="bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
         >
-          Add Cabin
+          Edit Cruise
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Cabin</DialogTitle>
+          <DialogTitle>Edit Cruise</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(processForm)}>
             <div className="grid gap-4 py-4">
               <div className="flex flex-col space-y-1.5">
+                <CustomInput
+                  control={form.control}
+                  name="cruise_name"
+                  label="Cruise Name"
+                  placeholder="Cruise Name"
+                  type="text"
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <CustomInput
+                  control={form.control}
+                  name="description"
+                  label="Description"
+                  placeholder="Description"
+                  type="text"
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
                 <FormField
                   control={form.control}
-                  name="cabin_name"
+                  name="departure_port"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Cabin Type</FormLabel>
+                      <FormLabel>Departure Port</FormLabel>
                       <FormControl>
                         <Select
                           onValueChange={field.onChange}
@@ -111,13 +158,13 @@ export function CabinForm() {
                         >
                           <FormControl>
                             <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="select cabin type" />
+                              <SelectValue placeholder="select port" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {mscCabinNames.map((item) => (
-                              <SelectItem key={item.name} value={item.name}>
-                                {item.name}
+                            {ports.map((item) => (
+                              <SelectItem key={item} value={item}>
+                                {item}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -127,6 +174,35 @@ export function CabinForm() {
                       <FormMessage />
                     </FormItem>
                   )}
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <CustomInput
+                  control={form.control}
+                  name="embarkation_date"
+                  label="Embarkation Date"
+                  placeholder="Embarkation Date"
+                  type="date"
+                />
+              </div>
+
+              <div className="flex flex-col space-y-1.5">
+                <CustomInput
+                  control={form.control}
+                  name="disembarkation_date"
+                  label="Disembarkation Date"
+                  placeholder="Disembarkation Date"
+                  type="date"
+                />
+              </div>
+
+              <div className="flex flex-col space-y-1.5">
+                <CustomInput
+                  control={form.control}
+                  name="cruise_price"
+                  label="Cruise Price"
+                  placeholder="Cruise Price"
+                  type="number"
                 />
               </div>
 
@@ -148,11 +224,9 @@ export function CabinForm() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {mscShipsApi.map((item) => (
-                              <SelectItem key={item.name} value={item.name}>
-                                {item.name}
-                              </SelectItem>
-                            ))}
+                            <SelectItem value={cruise.ship_name}>
+                              {cruise.ship_name}
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -170,13 +244,10 @@ export function CabinForm() {
                 <Input
                   id="link"
                   type="file"
-                  {...form.register("cabin_image", { validate: validateFile })}
+                  {...form.register("map_image", { validate: validateFile })}
                   className="block w-full border-slate-400 rounded focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   required
                 />
-                {form.watch("cabin_image") && (
-                  <p>Selected file: {form.watch("cabin_image")[0]?.name}</p>
-                )}
               </div>
             </div>
             <DialogClose asChild>

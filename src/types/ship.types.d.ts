@@ -20,7 +20,7 @@ declare interface CruiseItineraryPropsType {
   location: string;
   arrive: string; // Time in "HH:mm:ss" format
   depart: string; // Time in "HH:mm:ss" format
-  cruise_name: string;
+  cruise: string;
 }
 
 declare interface CruisePropsType {
@@ -32,6 +32,10 @@ declare interface CruisePropsType {
   embarkation_date: Date;
   disembarkation_date: Date;
   departure_port: string;
-  cruise_price: number;
+  cruise_price: string;
   map: string;
+  ship_name: string;
+  ship_class: string;
+  ship_image: string;
+  cruiseItenerary: CruiseItineraryPropsType[];
 }

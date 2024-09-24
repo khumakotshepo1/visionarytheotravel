@@ -5,28 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useState } from "react";
 
-export type cruiseIteneraryProps = {
-  day: string;
-  date: string;
-  location: string;
-  arrive: string;
-  depart: string;
-};
-
-export type CruiseType = {
-  id: number;
-  image: string;
-  ship: string;
-  name: string;
-  nights: string;
-  description: string;
-  price: number;
-  date: string;
-  cruiseItenerary: cruiseIteneraryProps[];
-};
-
 type cruiseProps = {
-  cruise: CruiseType[];
+  cruise: CruisePropsType[];
   title: string;
 };
 
@@ -59,11 +39,11 @@ export function Cruise({ cruise, title }: cruiseProps) {
           }}
         >
           {cruise.map((cruise) => (
-            <div key={cruise.id} className="flex flex-shrink-0 w-screen">
+            <div key={cruise.cruise_id} className="flex flex-shrink-0 w-screen">
               <div className="flex flex-col gap-2 w-full relative">
                 <Image
-                  src={cruise.image}
-                  alt={cruise.name}
+                  src={cruise.ship_image}
+                  alt={cruise.ship_name}
                   width={300}
                   height={300}
                   className="object-cover w-full h-52"
@@ -71,17 +51,22 @@ export function Cruise({ cruise, title }: cruiseProps) {
                 />
                 <div className="font-anton flex flex-col gap-2 relative">
                   <h3 className="text-lg font-semibold  bg-background">
-                    {cruise.name}
+                    {cruise.cruise_name}
                   </h3>
                   <p className="bg-background text-xs">{cruise.description}</p>
                   <span className="flex items-center gap-2 text-sm">
-                    <p className="bg-background">{cruise.nights}</p>
+                    <p className="bg-background">
+                      {cruise.duration} Nights, {parseInt(cruise.duration) + 1}{" "}
+                      Days
+                    </p>
                     <div className="w-1.5 h-1.5 rounded-xl bg-foreground" />
-                    <p className="p-3 bg-background">{cruise.date}</p>
+                    <p className="p-3 bg-background">
+                      {cruise.embarkation_date.toLocaleDateString()}
+                    </p>
                   </span>
-                  <Link href={`/cruises/${cruise.id}`}>
+                  <Link href={`/cruises/${cruise.cruise_id}`}>
                     <button className="p-3 bg-foreground text-background flex items-center justify-center rounded-xl text-sm font-semibold w-3/5">
-                      R{cruise.price}
+                      R{cruise.cruise_price}
                     </button>
                   </Link>
                 </div>
@@ -109,10 +94,10 @@ export function Cruise({ cruise, title }: cruiseProps) {
       {/* Desktop Grid */}
       <div className="hidden lg:flex flex-wrap gap-4">
         {cruise.map((cruise) => (
-          <div key={cruise.id} className="flex flex-col gap-2">
+          <div key={cruise.cruise_id} className="flex flex-col gap-2">
             <Image
-              src={cruise.image}
-              alt={cruise.name}
+              src={cruise.ship_image}
+              alt={cruise.cruise_name}
               width={300}
               height={300}
               className="object-cover h-52 rounded-xl"
@@ -120,17 +105,21 @@ export function Cruise({ cruise, title }: cruiseProps) {
             />
             <div className="font-anton flex flex-col gap-2 relative">
               <h3 className="text-lg font-semibold  bg-background">
-                {cruise.name}
+                {cruise.cruise_name}
               </h3>
               <p className="bg-background text-xs">{cruise.description}</p>
               <span className="flex items-center gap-2 text-sm">
-                <p className="bg-background">{cruise.nights}</p>
+                <p className="bg-background">
+                  {cruise.duration} Nights, {parseInt(cruise.duration) + 1} Days
+                </p>
                 <div className="w-1.5 h-1.5 rounded-xl bg-foreground" />
-                <p className="p-3 bg-background">{cruise.date}</p>
+                <p className="bg-background">
+                  {cruise.embarkation_date.toDateString()}
+                </p>
               </span>
-              <Link href={`/cruises/${cruise.id}`}>
+              <Link href={`/cruises/${cruise.cruise_id}`}>
                 <button className="p-3 bg-foreground text-background flex items-center justify-center rounded-xl text-sm font-semibold w-3/5">
-                  R{cruise.price}
+                  R{cruise.cruise_price}
                 </button>
               </Link>
             </div>

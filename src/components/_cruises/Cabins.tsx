@@ -3,21 +3,9 @@
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useState } from "react";
-import { musicaCabinsApi } from "./cabins-api";
 
-export type CabinType = {
-  name: string;
-  image: string;
-};
-
-export function Cabins({ ship }: { ship: string }) {
+export function Cabins({ cabins }: { cabins: CabinPropsType[] }) {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
-
-  let cabins: CabinType[] = [];
-
-  if (ship === "MSC Musica") {
-    cabins = musicaCabinsApi;
-  }
 
   const handlePrevious = useCallback(() => {
     setCurrentSlide((prevSlide) =>
@@ -44,18 +32,18 @@ export function Cabins({ ship }: { ship: string }) {
           }}
         >
           {cabins.map((cabin) => (
-            <div key={cabin.name} className="flex flex-shrink-0 w-screen">
+            <div key={cabin.cabin_name} className="flex flex-shrink-0 w-screen">
               <div className="flex flex-col gap-2 w-full relative">
                 <Image
-                  src={cabin.image}
-                  alt={cabin.name}
+                  src={cabin.cabin_image}
+                  alt={cabin.cabin_name}
                   width={300}
                   height={300}
                   className="object-cover w-full h-auto"
                   loading="lazy"
                 />
                 <h3 className="text-lg font-semibold p-3 bg-background absolute left-0 bottom-0">
-                  {cabin.name}
+                  {cabin.cabin_name}
                 </h3>
               </div>
             </div>
@@ -81,16 +69,16 @@ export function Cabins({ ship }: { ship: string }) {
       {/* Desktop Grid */}
       <div className="hidden lg:flex flex-wrap gap-4">
         {cabins.map((cabin) => (
-          <div key={cabin.name} className="flex flex-col gap-2">
+          <div key={cabin.cabin_name} className="flex flex-col gap-2">
             <Image
-              src={cabin.image}
-              alt={cabin.name}
+              src={cabin.cabin_image}
+              alt={cabin.cabin_name}
               width={300}
               height={300}
               className="object-cover"
               loading="lazy" // Add lazy loading
             />
-            <h3 className="text-lg font-semibold">{cabin.name}</h3>
+            <h3 className="text-lg font-semibold">{cabin.cabin_name}</h3>
           </div>
         ))}
       </div>

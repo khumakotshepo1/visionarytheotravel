@@ -53,9 +53,8 @@ export default function RootLayout({
             <main className="flex-1 overflow-hidden flex flex-col gap-4 mt-12">
               {children}
             </main>
-
-            <Toaster />
           </div>
+          <Toaster richColors />
         </ThemeProvider>
       </body>
     </html>

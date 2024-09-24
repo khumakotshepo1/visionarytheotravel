@@ -36,8 +36,11 @@ import { CheckCircle2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { mscShipsApi } from "./msc-ships-api";
+import { useRouter } from "next/navigation";
 
 export function UpdateShipForm({ ship }: { ship: ShipPropsType }) {
+  const { refresh } = useRouter();
+
   const form = useForm<ShipType>({
     resolver: zodResolver(shipSchema),
     defaultValues: {
@@ -72,6 +75,8 @@ export function UpdateShipForm({ ship }: { ship: ShipPropsType }) {
       toast.success(res.success);
       form.reset(); // Reset form after success
       setSelectedShipClass(""); // Reset selected class
+
+      refresh();
     }
   };
 
