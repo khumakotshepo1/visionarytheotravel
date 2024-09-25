@@ -31,7 +31,6 @@ import {
 } from "@/components/ui/select";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2 } from "lucide-react";
 
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -40,6 +39,8 @@ import { cruiseSchema } from "@/zod/schemas/cruise.schema";
 import { CustomInput } from "@/components/custom-input";
 import { updateCruiseAction } from "@/actions/cruise.actions";
 import { useRouter } from "next/navigation";
+import { Textarea } from "@/components/ui/textarea";
+import { cruiseItineraryApi } from "../_itineraries/cruise-itinerary-api";
 
 export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
   const { refresh } = useRouter();
@@ -72,7 +73,11 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
   const cruiseId = cruise.cruise_id;
 
   const processForm = async (data: CruiseType) => {
+    console.log({ data });
+
     const map_image = data.map_image[0] as File;
+    const cruise_image = data.cruise_image[0] as File;
+    const cruise_destination = data.cruise_destination;
     const cruise_name = data.cruise_name;
     const ship = data.ship_id;
     const description = data.description;
@@ -86,6 +91,8 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
     const formData = new FormData();
 
     formData.append("map_image", map_image);
+    formData.append("cruise_image", cruise_image);
+    formData.append("cruise_destination", cruise_destination);
     formData.append("cruise_name", cruise_name);
     formData.append("ship_id", ship);
     formData.append("description", description);
@@ -112,12 +119,7 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
-        >
-          Edit Cruise
-        </Button>
+        <button>Edit Cruise</button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -126,22 +128,97 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(processForm)}>
             <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex flex-col space-y-1.5">
+                  <FormField
+                    control={form.control}
+                    name="cruise_destination"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Destination Name</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="w-full border-0 border-b-2 rounded-none">
+                                <SelectValue placeholder="select a destination" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {cruiseItineraryApi.map((item) => (
+                                <SelectItem key={item.name} value={item.name}>
+                                  {item.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <CustomInput
+                    control={form.control}
+                    name="cruise_name"
+                    label="Cruise Name"
+                    placeholder="Cruise Name"
+                    type="text"
+                  />
+                </div>
+              </div>
               <div className="flex flex-col space-y-1.5">
-                <CustomInput
+                <FormField
                   control={form.control}
-                  name="cruise_name"
-                  label="Cruise Name"
-                  placeholder="Cruise Name"
-                  type="text"
+                  name="ship_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ship</FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-full border-0 border-b-2 rounded-none">
+                              <SelectValue placeholder="select ship" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value={cruise.ship_name}>
+                              {cruise.ship_name}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <CustomInput
+                <FormField
                   control={form.control}
                   name="description"
-                  label="Description"
-                  placeholder="Description"
-                  type="text"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Tell us a little bit about this cruise"
+                          className="resize-none"
+                          {...field}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
@@ -206,37 +283,6 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
                 />
               </div>
 
-              <div className="flex flex-col space-y-1.5">
-                <FormField
-                  control={form.control}
-                  name="ship_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Ship</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="select ship" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value={cruise.ship_name}>
-                              {cruise.ship_name}
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
               <div className="grid flex-1 gap-2">
                 <Label htmlFor="link" className="sr-only">
                   Image
@@ -252,19 +298,12 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
             </div>
             <DialogClose asChild>
               <Button
-                disabled={
-                  form.formState.isSubmitting ||
-                  form.formState.isSubmitSuccessful
-                }
+                disabled={form.formState.isSubmitting}
                 type="submit"
-                role="submit"
-                aria-label="Change Full Name"
                 className="w-full bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
               >
                 {form.formState.isSubmitting ? (
                   <Icons.spinner className="h-4 w-4 animate-spin" />
-                ) : form.formState.isSubmitSuccessful ? (
-                  <CheckCircle2 className="h-4 w-4 text-green-600" />
                 ) : (
                   "Save"
                 )}

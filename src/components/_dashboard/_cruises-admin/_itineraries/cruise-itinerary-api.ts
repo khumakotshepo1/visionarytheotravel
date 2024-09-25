@@ -10,7 +10,7 @@ export const cruiseItineraryApi: cruiseItineraryApiType[] = [
   },
 
   {
-    name: "durban",
+    name: "durban2nowhere",
     location: ["durban", "sea"],
   },
 

@@ -52,6 +52,7 @@ export const cruiseItinerarySchema = z.object({
 export const cruiseSchema = z.object({
   cruise_id: z.string().optional(),
   ship_id: z.string(),
+  cruise_destination: z.string(),
   cruise_name: z
     .string()
     .min(3, {
@@ -81,4 +82,5 @@ export const cruiseSchema = z.object({
     }),
   cruise_price: z.string().trim(),
   map_image: z.any(),
+  cruise_image: z.any(),
 });

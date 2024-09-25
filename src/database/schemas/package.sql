@@ -7,7 +7,6 @@ CREATE TABLE
     location VARCHAR(50) NOT NULL,
     arrive TIME NOT NULL,
     depart TIME NOT NULL,
-    map TEXT NOT NULL,
     CONSTRAINT check_arrive_depart CHECK (arrive < depart)
   );
 
@@ -16,7 +15,7 @@ CREATE TABLE
   IF NOT EXISTS excursions (
     excursion_id SERIAL PRIMARY KEY,
     excursion_name TEXT NOT NULL,
-    image TEXT NOT NULL
+    excursion_image TEXT NOT NULL
   );
 
 -- Create the accommodations table
@@ -24,8 +23,8 @@ CREATE TABLE
   IF NOT EXISTS accommodations (
     accommodation_id SERIAL PRIMARY KEY,
     accommodation_name TEXT NOT NULL,
-    address TEXT NOT NULL,
-    image TEXT NOT NULL
+    accommodation_address TEXT NOT NULL,
+    accommodation_image TEXT NOT NULL
   );
 
 -- Create the transportation table
@@ -33,8 +32,8 @@ CREATE TABLE
   IF NOT EXISTS transportation (
     transportation_id SERIAL PRIMARY KEY,
     transportation_name TEXT NOT NULL,
-    type TEXT NOT NULL, -- Specify type (e.g., bus, train)
-    image TEXT NOT NULL
+    transportation_type TEXT NOT NULL, -- Specify type (e.g., bus, train)
+    transportationimage TEXT NOT NULL
   );
 
 -- Create the packages table
@@ -50,7 +49,9 @@ CREATE TABLE
     duration VARCHAR(20) NOT NULL,
     departure_date DATE NOT NULL,
     arrival_date DATE NOT NULL,
-    price NUMERIC(10, 2) NOT NULL,
+    package_map TEXT NOT NULL,
+    package_image TEXT NOT NULL,
+    package_price NUMERIC(10, 2) NOT NULL,
     CONSTRAINT check_dates CHECK (arrival_date < departure_date)
   );
 

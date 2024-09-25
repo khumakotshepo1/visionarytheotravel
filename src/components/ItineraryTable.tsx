@@ -9,13 +9,16 @@ export function ItineraryTable({
     <Table>
       <TableBody>
         {itenerary?.map((day) => (
-          <TableRow key={day.day} className="border-foreground">
+          <TableRow
+            key={day.day}
+            className="border-foreground text-center capitalize"
+          >
             <TableCell className="font-medium">
               <span>{day.day}</span>
             </TableCell>
             <TableCell>{day.location}</TableCell>
-            <TableCell>{day.depart}</TableCell>
-            <TableCell className="text-right">{day.arrive}</TableCell>
+            <TableCell>{day.depart === null ? "-" : day.depart}</TableCell>
+            <TableCell>{day.arrive === null ? "-" : day.arrive}</TableCell>
           </TableRow>
         ))}
       </TableBody>

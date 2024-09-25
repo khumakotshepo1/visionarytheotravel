@@ -2,7 +2,10 @@
 
 import { auth } from "@/auth";
 import { sql } from "@/database";
-import { getCruiseByName, getShipByName } from "@/server/cruises.server";
+import {
+  getCruiseByDestionation,
+  getShipByName,
+} from "@/server/cruises.server";
 import { getErrorMessage } from "@/utils/error-message";
 import { revalidatePath } from "next/cache";
 
@@ -49,8 +52,8 @@ export const addShipAction = async (data: FormData) => {
           {
             resource_type: "image",
             folder: `msc/${ship_name}`,
-            width: 500, // Set the desired width
-            height: 500, // Set the desired height
+            width: 1920, // Set the desired width
+            height: 1080, // Set the desired height
             crop: "fill", // Crop the image to fit the specified dimensions
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -72,8 +75,6 @@ export const addShipAction = async (data: FormData) => {
         [ship_name, imageUrl, ship_class]
       );
     }
-
-    revalidatePath("/dashboard/admin/cruises-admin/ships");
 
     return {
       success: "Ship added successfully",
@@ -150,8 +151,8 @@ export const updateShipAction = async (data: FormData, id: string) => {
           {
             resource_type: "image",
             folder: `msc/${ship_name}`,
-            width: 500, // Set the desired width
-            height: 500, // Set the desired height
+            width: 1920, // Set the desired width
+            height: 1080, // Set the desired height
             crop: "fill", // Crop the image to fit the specified dimensions
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -173,8 +174,6 @@ export const updateShipAction = async (data: FormData, id: string) => {
         [ship_name, imageUrl, ship_class, shipId]
       );
     }
-
-    revalidatePath("/dashboard/admin/cruises-admin/ships");
 
     return {
       success: "Ship updated successfully",
@@ -287,8 +286,8 @@ export const addCabinAction = async (data: FormData) => {
           {
             resource_type: "image",
             folder: `msc/${ship}/${cabin_name}`,
-            width: 500, // Set the desired width
-            height: 500, // Set the desired height
+            width: 1920, // Set the desired width
+            height: 1080, // Set the desired height
             crop: "fill", // Crop the image to fit the specified dimensions
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -310,8 +309,6 @@ export const addCabinAction = async (data: FormData) => {
         [cabin_name, imageUrl, ship_id]
       );
     }
-
-    revalidatePath("/dashboard/admin/cruises-admin/cabins");
 
     return {
       success: "Cabin added successfully",
@@ -392,8 +389,8 @@ export const updateCabinAction = async (data: FormData, id: string) => {
           {
             resource_type: "image",
             folder: `msc/${ship}/${cabin_name}`,
-            width: 500, // Set the desired width
-            height: 500, // Set the desired height
+            width: 1920, // Set the desired width
+            height: 1080, // Set the desired height
             crop: "fill", // Crop the image to fit the specified dimensions
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -415,8 +412,6 @@ export const updateCabinAction = async (data: FormData, id: string) => {
         [cabin_name, imageUrl, ship_id, cabinId]
       );
     }
-
-    revalidatePath("/dashboard/admin/cruises-admin/cabins");
 
     return {
       success: "Cabin updated successfully",
@@ -492,7 +487,7 @@ export const addCruiseItineraryAction = async (data: CruiseItineraryType) => {
 
     const { cruise_id, day, location, arrive, depart } = results.data;
 
-    const cruise = await getCruiseByName(cruise_id);
+    const cruise = await getCruiseByDestionation(cruise_id);
 
     const cruiseId = cruise.cruise_id;
 
@@ -501,13 +496,11 @@ export const addCruiseItineraryAction = async (data: CruiseItineraryType) => {
       [cruiseId, day, location, arrive, depart]
     );
 
-    revalidatePath("/dashboard/admin/cruises-admin/itinerary");
-
     return {
       success: "Cruise itinerary added successfully",
     };
   } catch (error) {
-    console.error({ cabinError: error });
+    console.error({ cruiseItineraryError: error });
     return {
       error: getErrorMessage(error),
     };
@@ -551,7 +544,7 @@ export const updateCruiseItineraryAction = async (
 
     const { cruise_id, day, location, arrive, depart } = results.data;
 
-    const cruise = await getCruiseByName(cruise_id);
+    const cruise = await getCruiseByDestionation(cruise_id);
 
     const cruiseId = cruise.cruise_id;
 
@@ -559,8 +552,6 @@ export const updateCruiseItineraryAction = async (
       "UPDATE cruise_itineraries SET cruise_id = $1, day = $2, location = $3, arrive = $4, depart = $5 WHERE cruise_itinerary_id = $6 RETURNING *",
       [cruiseId, day, location, arrive, depart, cruiseItineraryId]
     );
-
-    revalidatePath("/dashboard/admin/cruises-admin/itinerary");
 
     return {
       success: "Cruise Itinerary updated successfully",
@@ -631,6 +622,7 @@ export const addCruiseAction = async (data: FormData) => {
       };
     }
 
+    const cruise_destination = data.get("cruise_destination");
     const cruise_name = data.get("cruise_name");
     const ship = data.get("ship_id") as string;
     const map_image = data.get("map_image") as File;
@@ -640,8 +632,13 @@ export const addCruiseAction = async (data: FormData) => {
     const duration = data.get("duration") as string;
     const departure_port = data.get("departure_port") as string;
     const cruise_price = data.get("cruise_price") as string;
+    const cruise_image = data.get("cruise_image") as File;
 
-    console.log({ map_image });
+    if (!cruise_destination) {
+      return {
+        error: "Cruise destination is required",
+      };
+    }
 
     if (!cruise_name) {
       return {
@@ -697,25 +694,34 @@ export const addCruiseAction = async (data: FormData) => {
       };
     }
 
+    if (!cruise_image) {
+      return {
+        error: "Cruise image is required",
+      };
+    }
+
     if (map_image.size > 3000000) {
       return {
         error: "File size exceeds 3mb",
       };
     }
 
-    const arrayBuffer = await map_image.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    const mapArrayBuffer = await map_image.arrayBuffer();
+    const mapBuffer = Buffer.from(mapArrayBuffer);
+
+    const cruiseArrayBuffer = await cruise_image.arrayBuffer();
+    const cruiseBuffer = Buffer.from(cruiseArrayBuffer);
 
     // Delete existing images in the folder
     await cloudinary.api.delete_resources_by_prefix(`msc/${cruise_name}`);
 
     // Upload the new image
-    const upload = new Promise(async (resolve, reject) => {
+    const mapUpload = new Promise(async (resolve, reject) => {
       cloudinary.uploader
         .upload_stream(
           {
             resource_type: "image",
-            folder: `msc/${cruise_name}`,
+            folder: `msc/${cruise_name}/map`,
             width: 500, // Set the desired width
             height: 500, // Set the desired height
             crop: "fill", // Crop the image to fit the specified dimensions
@@ -728,31 +734,51 @@ export const addCruiseAction = async (data: FormData) => {
             return resolve(result?.secure_url);
           }
         )
-        .end(buffer);
+        .end(mapBuffer);
     });
 
-    const imageUrl = await upload;
+    const cruiseUpload = new Promise(async (resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          {
+            resource_type: "image",
+            folder: `msc/${cruise_name}`,
+            width: 1920, // Set the desired width
+            height: 1080, // Set the desired height
+            crop: "fill", // Crop the image to fit the specified dimensions
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          async (error: any, result: any) => {
+            if (error) {
+              return reject(error.message);
+            }
+            return resolve(result?.secure_url);
+          }
+        )
+        .end(cruiseBuffer);
+    });
+
+    const mapImageUrl = await mapUpload;
+    const cruiseImageUrl = await cruiseUpload;
 
     const { ship_id } = await getShipByName(ship);
 
-    if (imageUrl) {
-      await sql.query(
-        "INSERT INTO cruises (cruise_name, ship_id, map_image, description, embarkation_date, disembarkation_date, duration, departure_port, cruise_price) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
-        [
-          cruise_name,
-          ship_id,
-          imageUrl,
-          description,
-          embarkation_date,
-          disembarkation_date,
-          duration,
-          departure_port,
-          cruise_price,
-        ]
-      );
-    }
-
-    revalidatePath("/dashboard/admin/cruises-admin/manage-cruises");
+    await sql.query(
+      "INSERT INTO cruises (cruise_destination, cruise_name, ship_id, map_image, description, embarkation_date, disembarkation_date, duration, departure_port, cruise_price, cruise_image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
+      [
+        cruise_destination,
+        cruise_name,
+        ship_id,
+        mapImageUrl,
+        description,
+        embarkation_date,
+        disembarkation_date,
+        duration,
+        departure_port,
+        cruise_price,
+        cruiseImageUrl,
+      ]
+    );
 
     return {
       success: "Cruise added successfully",
@@ -782,25 +808,34 @@ export const updateCruiseAction = async (data: FormData, id: string) => {
     }
 
     const cruiseId = parseInt(id);
-    if (!cruiseId) {
-      return {
-        error: "Cruise ID is required",
-      };
-    }
 
+    const cruise_destination = data.get("cruise_destination");
     const cruise_name = data.get("cruise_name");
     const ship = data.get("ship_id") as string;
     const map_image = data.get("map_image") as File;
     const description = data.get("description");
     const embarkation_date = data.get("embarkation_date");
     const disembarkation_date = data.get("disembarkation_date");
-    const duration = data.get("duration");
-    const departure_port = data.get("departure_port");
-    const cruise_price = data.get("cruise_price");
+    const duration = data.get("duration") as string;
+    const departure_port = data.get("departure_port") as string;
+    const cruise_price = data.get("cruise_price") as string;
+    const cruise_image = data.get("cruise_image") as File;
+
+    if (!cruiseId) {
+      return {
+        error: "Cruise ID is required",
+      };
+    }
+
+    if (!cruise_destination) {
+      return {
+        error: "Cruise destination is required",
+      };
+    }
 
     if (!cruise_name) {
       return {
-        error: "Name is required",
+        error: "Cruise name is required",
       };
     }
 
@@ -812,7 +847,7 @@ export const updateCruiseAction = async (data: FormData, id: string) => {
 
     if (!map_image) {
       return {
-        error: "Map is required",
+        error: "Map image is required",
       };
     }
 
@@ -852,25 +887,34 @@ export const updateCruiseAction = async (data: FormData, id: string) => {
       };
     }
 
+    if (!cruise_image) {
+      return {
+        error: "Cruise image is required",
+      };
+    }
+
     if (map_image.size > 3000000) {
       return {
         error: "File size exceeds 3mb",
       };
     }
 
-    const arrayBuffer = await map_image.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    const mapArrayBuffer = await map_image.arrayBuffer();
+    const mapBuffer = Buffer.from(mapArrayBuffer);
+
+    const cruiseArrayBuffer = await cruise_image.arrayBuffer();
+    const cruiseBuffer = Buffer.from(cruiseArrayBuffer);
 
     // Delete existing images in the folder
     await cloudinary.api.delete_resources_by_prefix(`msc/${cruise_name}`);
 
     // Upload the new image
-    const upload = new Promise(async (resolve, reject) => {
+    const mapUpload = new Promise(async (resolve, reject) => {
       cloudinary.uploader
         .upload_stream(
           {
             resource_type: "image",
-            folder: `msc/${cruise_name}`,
+            folder: `msc/${cruise_name}/map`,
             width: 500, // Set the desired width
             height: 500, // Set the desired height
             crop: "fill", // Crop the image to fit the specified dimensions
@@ -883,31 +927,52 @@ export const updateCruiseAction = async (data: FormData, id: string) => {
             return resolve(result?.secure_url);
           }
         )
-        .end(buffer);
+        .end(mapBuffer);
     });
 
-    const imageUrl = await upload;
+    const cruiseUpload = new Promise(async (resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          {
+            resource_type: "image",
+            folder: `msc/${cruise_name}`,
+            width: 1920, // Set the desired width
+            height: 1080, // Set the desired height
+            crop: "fill", // Crop the image to fit the specified dimensions
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          async (error: any, result: any) => {
+            if (error) {
+              return reject(error.message);
+            }
+            return resolve(result?.secure_url);
+          }
+        )
+        .end(cruiseBuffer);
+    });
+
+    const mapImageUrl = await mapUpload;
+    const cruiseImageUrl = await cruiseUpload;
 
     const { ship_id } = await getShipByName(ship);
 
-    if (imageUrl) {
-      await sql.query(
-        "UPDATE cruises SET cruise_name = ?, ship_id = ?, map_image = ?, description = ?, embarkation_date = ?, disembarkation_date = ?, duration = ?, departure_port = ?, cruise_price = ? WHERE cruise_id = ?",
-        [
-          cruise_name,
-          ship_id,
-          imageUrl,
-          description,
-          embarkation_date,
-          disembarkation_date,
-          duration,
-          departure_port,
-          cruise_price,
-        ]
-      );
-    }
-
-    revalidatePath("/dashboard/admin/cruises-admin/manage-cruises");
+    await sql.query(
+      "UPDATE cruises SET cruise_destination=$1, cruise_name=$2, ship_id=$3, map_image=$4, description=$5, embarkation_date=$6, disembarkation_date=$7, duration=$8, departure_port=$9, cruise_price=$10, cruise_image=$11 WHERE cruise_id = $12 RETURNING *",
+      [
+        cruise_destination,
+        cruise_name,
+        ship_id,
+        mapImageUrl,
+        description,
+        embarkation_date,
+        disembarkation_date,
+        duration,
+        departure_port,
+        cruise_price,
+        cruiseImageUrl,
+        cruiseId,
+      ]
+    );
 
     return {
       success: "Cruise updated successfully",

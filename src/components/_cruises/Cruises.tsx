@@ -6,6 +6,8 @@ import { format } from "date-fns";
 export async function Cruises() {
   const cruises = (await getAllCruises()) as CruisePropsType[];
 
+  console.log({ cruises });
+
   // Group cruises by embarkation month and year
   const groupedCruises: { [key: string]: CruisePropsType[] } = {};
 
@@ -30,7 +32,7 @@ export async function Cruises() {
         {Object.keys(groupedCruises).map((monthYear) => (
           <div key={monthYear} className="border-b-4 border-foreground py-4">
             <Cruise
-              cruise={groupedCruises[monthYear]}
+              cruises={groupedCruises[monthYear]}
               title={`Cruises for ${monthYear}`}
             />
           </div>

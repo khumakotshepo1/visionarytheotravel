@@ -28,7 +28,7 @@ import {
 import { cruiseItinerarySchema } from "@/zod/schemas/cruise.schema";
 import { CruiseItineraryType } from "@/zod/types/cruises.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2 } from "lucide-react";
+
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -188,17 +188,12 @@ export function UpdateCruiseItineraryForm({
             </div>
             <DialogClose asChild>
               <Button
-                disabled={
-                  form.formState.isSubmitting ||
-                  form.formState.isSubmitSuccessful
-                }
+                disabled={form.formState.isSubmitting}
                 type="submit"
                 className="w-full bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
               >
                 {form.formState.isSubmitting ? (
                   <Icons.spinner className="h-4 w-4 animate-spin" />
-                ) : form.formState.isSubmitSuccessful ? (
-                  <CheckCircle2 className="h-4 w-4 text-green-600" />
                 ) : (
                   "Save"
                 )}

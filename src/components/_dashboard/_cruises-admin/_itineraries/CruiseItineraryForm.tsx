@@ -29,7 +29,6 @@ import { generateDays } from "@/utils/custom-utils";
 import { cruiseItinerarySchema } from "@/zod/schemas/cruise.schema";
 import { CruiseItineraryType } from "@/zod/types/cruises.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { cruiseItineraryApi } from "./cruise-itinerary-api";
@@ -56,7 +55,7 @@ export function CruiseItineraryForm({ cruises }: CruiseItineraryFormProps) {
   });
 
   const handleShipChange = (value: string) => {
-    const selectedCruise = cruises.find((c) => c.cruise_name === value);
+    const selectedCruise = cruises.find((c) => c.cruise_destination === value);
 
     if (selectedCruise) {
       const duration = parseInt(selectedCruise.duration);
@@ -65,7 +64,7 @@ export function CruiseItineraryForm({ cruises }: CruiseItineraryFormProps) {
 
       // Correctly match the cruise itinerary using cruise_name
       const cruiseItinerary = cruiseItineraryApi.find(
-        (c) => c.name === selectedCruise.cruise_name
+        (c) => c.name === selectedCruise.cruise_destination
       );
 
       if (cruiseItinerary) {
@@ -133,9 +132,9 @@ export function CruiseItineraryForm({ cruises }: CruiseItineraryFormProps) {
                           {cruises.map((item) => (
                             <SelectItem
                               key={item.cruise_id}
-                              value={item.cruise_name}
+                              value={item.cruise_destination}
                             >
-                              {item.cruise_name}
+                              {item.cruise_destination}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -227,17 +226,12 @@ export function CruiseItineraryForm({ cruises }: CruiseItineraryFormProps) {
             </div>
             <DialogClose asChild>
               <Button
-                disabled={
-                  form.formState.isSubmitting ||
-                  form.formState.isSubmitSuccessful
-                }
+                disabled={form.formState.isSubmitting}
                 type="submit"
                 className="w-full bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
               >
                 {form.formState.isSubmitting ? (
                   <Icons.spinner className="h-4 w-4 animate-spin" />
-                ) : form.formState.isSubmitSuccessful ? (
-                  <CheckCircle2 className="h-4 w-4 text-green-600" />
                 ) : (
                   "Save"
                 )}

@@ -22,8 +22,8 @@ export async function CruiseSlug({ cruise }: { cruise: CruisePropsType }) {
       <section className="flex flex-col lg:flex-row justify-center md:items-center lg:items-start gap-2 font-anton">
         <article className="h-96 w-full relative">
           <Image
-            src={cruise.ship_image}
-            alt={cruise.ship_name}
+            src={cruise.cruise_image}
+            alt={cruise.cruise_name}
             fill
             className="object-cover"
           />
@@ -114,13 +114,14 @@ export async function CruiseSlug({ cruise }: { cruise: CruisePropsType }) {
       </section>
       <section className="py-20 px-4 font-anton">
         <h2 className="text-4xl py-4">Itenerary</h2>
-        <div className="flex flex-col lg:flex-row gap-16 items-center">
+        <div className="flex flex-col lg:flex-row lg:justify-between gap-16 items-center lg:h-80">
           <ItineraryTable itenerary={itinerary} />
           <Image
-            src={"/images/cruises/maps/pom_port-map.png"}
-            alt="map"
+            src={cruise.map_image}
+            alt={`${cruise.cruise_name} map`}
             width={500}
-            height={300}
+            height={200}
+            className="max-lg:w-80 h-full object-cover"
           />
         </div>
       </section>

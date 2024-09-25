@@ -26,6 +26,7 @@ declare interface CruiseItineraryPropsType {
 declare interface CruisePropsType {
   cruise_id: string;
   ship_id: string;
+  cruise_destination: string;
   cruise_name: string;
   description: string;
   duration: string;
@@ -33,7 +34,8 @@ declare interface CruisePropsType {
   disembarkation_date: Date;
   departure_port: string;
   cruise_price: string;
-  map: string;
+  map_image: string;
+  cruise_image: string;
   ship_name: string;
   ship_class: string;
   ship_image: string;

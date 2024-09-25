@@ -88,6 +88,21 @@ export const getCruiseByName = cache(async (cruiseName: string) => {
   }
 });
 
+export const getCruiseByDestionation = cache(
+  async (cruiseDestination: string) => {
+    try {
+      const { rows } = await sql.query(
+        "SELECT * FROM cruises WHERE cruise_destination = $1",
+        [cruiseDestination]
+      );
+
+      return rows[0] || null;
+    } catch (error) {
+      throw new Error("Failed to fetch cruise by name.");
+    }
+  }
+);
+
 export const getAllCruiseItineraries = cache(async () => {
   try {
     const { rows } = await sql.query(

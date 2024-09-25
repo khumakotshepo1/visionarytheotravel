@@ -32,7 +32,6 @@ import {
 import { shipSchema } from "@/zod/schemas/cruise.schema";
 import { ShipType } from "@/zod/types/cruises.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { mscShipsApi } from "./msc-ships-api";
@@ -174,26 +173,16 @@ export function ShipForm() {
                   className="block w-full border-slate-400 rounded focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   required
                 />
-                {/* {form.watch("ship_image") && (
-                  <p>Selected file: {form.watch("ship_image")[0]}</p>
-                )} */}
               </div>
             </div>
             <DialogClose asChild>
               <Button
-                disabled={
-                  form.formState.isSubmitting ||
-                  form.formState.isSubmitSuccessful
-                }
+                disabled={form.formState.isSubmitting}
                 type="submit"
-                role="submit"
-                aria-label="Save Ship Details"
                 className="w-full bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
               >
                 {form.formState.isSubmitting ? (
                   <Icons.spinner className="h-4 w-4 animate-spin" />
-                ) : form.formState.isSubmitSuccessful ? (
-                  <CheckCircle2 className="h-4 w-4 text-green-600" />
                 ) : (
                   "Save"
                 )}

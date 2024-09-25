@@ -6,26 +6,26 @@ import Link from "next/link";
 import { useCallback, useState } from "react";
 
 type cruiseProps = {
-  cruise: CruisePropsType[];
+  cruises: CruisePropsType[];
   title: string;
 };
 
-export function Cruise({ cruise, title }: cruiseProps) {
+export function Cruise({ cruises, title }: cruiseProps) {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
 
   const handlePrevious = useCallback(() => {
     setCurrentSlide((prevSlide) =>
-      prevSlide === 0 ? cruise.length - 1 : prevSlide - 1
+      prevSlide === 0 ? cruises.length - 1 : prevSlide - 1
     );
-  }, [cruise.length]);
+  }, [cruises.length]);
 
   const handleNext = useCallback(() => {
     setCurrentSlide((prevSlide) =>
-      prevSlide === cruise.length - 1 ? 0 : prevSlide + 1
+      prevSlide === cruises.length - 1 ? 0 : prevSlide + 1
     );
-  }, [cruise.length]);
+  }, [cruises.length]);
 
-  if (cruise.length === 0) return <p>No cruise available.</p>;
+  if (cruises.length === 0) return <p>No cruise available.</p>;
 
   return (
     <>
@@ -38,12 +38,12 @@ export function Cruise({ cruise, title }: cruiseProps) {
             transform: `translateX(-${currentSlide * 100}vw)`,
           }}
         >
-          {cruise.map((cruise) => (
+          {cruises.map((cruise) => (
             <div key={cruise.cruise_id} className="flex flex-shrink-0 w-screen">
               <div className="flex flex-col gap-2 w-full relative">
                 <Image
-                  src={cruise.ship_image}
-                  alt={cruise.ship_name}
+                  src={cruise.cruise_image}
+                  alt={cruise.cruise_name}
                   width={300}
                   height={300}
                   className="object-cover w-full h-52"
@@ -93,10 +93,10 @@ export function Cruise({ cruise, title }: cruiseProps) {
 
       {/* Desktop Grid */}
       <div className="hidden lg:flex flex-wrap gap-4">
-        {cruise.map((cruise) => (
+        {cruises.map((cruise) => (
           <div key={cruise.cruise_id} className="flex flex-col gap-2">
             <Image
-              src={cruise.ship_image}
+              src={cruise.cruise_image}
               alt={cruise.cruise_name}
               width={300}
               height={300}

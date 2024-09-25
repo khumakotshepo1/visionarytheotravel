@@ -21,6 +21,7 @@ CREATE TABLE
   IF NOT EXISTS cruises (
     cruise_id SERIAL PRIMARY KEY,
     ship_id INTEGER REFERENCES ships (ship_id) ON DELETE SET NULL,
+    cruise_destination TEXT NOT NULL,
     cruise_name TEXT NOT NULL,
     description TEXT NOT NULL,
     duration VARCHAR(20) NOT NULL,
@@ -29,6 +30,7 @@ CREATE TABLE
     departure_port TEXT NOT NULL,
     cruise_price NUMERIC(10, 2) NOT NULL,
     map_image TEXT NOT NULL,
+    cruise_image TEXT NOT NULL,
     CONSTRAINT check_dates CHECK (embarkation_date < disembarkation_date)
   );
 
