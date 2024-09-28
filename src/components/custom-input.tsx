@@ -16,15 +16,15 @@ interface Props<T extends FieldValues> {
   name: Path<T>; // Path to the field in the form schema T
   placeholder: string; // Placeholder text for the input field
   type:
-    | "text"
-    | "number"
-    | "password"
-    | "email"
-    | "tel"
-    | "file"
-    | "date"
-    | "time"
-    | "textarea"; // Input type
+  | "text"
+  | "number"
+  | "password"
+  | "email"
+  | "tel"
+  | "file"
+  | "date"
+  | "time"
+  | "textarea"; // Input type
 }
 
 // MembershipInput component with generic type T extending FieldValues

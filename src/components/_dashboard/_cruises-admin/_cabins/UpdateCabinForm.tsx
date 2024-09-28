@@ -37,8 +37,15 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { mscCabinNames, mscShipsApi } from "../_ships/msc-ships-api";
 import { useRouter } from "next/navigation";
+import { CloudUploadIcon } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
 
 export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
+  const [cabinImagePreview, setCabinImagePreview] = useState<string | null>(
+    null
+  );
+
   const { refresh } = useRouter();
 
   const form = useForm<CabinType>({
@@ -78,6 +85,14 @@ export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
 
       form.reset();
       refresh();
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const fileURL = URL.createObjectURL(file);
+      setCabinImagePreview(fileURL);
     }
   };
 
@@ -153,20 +168,30 @@ export function UpdateCabinForm({ cabin }: { cabin: CabinPropsType }) {
                 />
               </div>
 
-              <div className="grid flex-1 gap-2">
-                <Label htmlFor="link" className="sr-only">
-                  Image
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="cabin_image">
+                  <span className="flex items-center gap-2">
+                    <CloudUploadIcon className="h-6 w-6" />
+                    Upload Cabin Image
+                  </span>
                 </Label>
                 <Input
-                  id="link"
+                  id="cabin_image"
                   type="file"
                   {...form.register("cabin_image", { validate: validateFile })}
                   className="block w-full border-slate-400 rounded focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   required
+                  onChange={handleFileChange}
                 />
-                {form.watch("cabin_image") && (
-                  <p>Selected file: {form.watch("cabin_image")[0]?.name}</p>
+                {cabinImagePreview && (
+                  <Image
+                    src={cabinImagePreview}
+                    width={200}
+                    height={200}
+                    alt="Cabin Preview"
+                  />
                 )}
+                <FormMessage />
               </div>
             </div>
             <DialogClose asChild>

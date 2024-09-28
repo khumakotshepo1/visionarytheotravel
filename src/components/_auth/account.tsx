@@ -25,13 +25,9 @@ export const Account = async () => {
 
   const role = session?.user?.role;
 
-  // let dashNavApi: dashboardNavApiType[] = [];
 
-  // role === "ADMIN" && (dashNavApi = adminNavApi);
-  // role === "MANAGER" && (dashNavApi = managerNavApi);
-  // role === "USER" && (dashNavApi = userNavApi);
 
-  const urlRole = role?.toLowerCase();
+  const urlRole = role === "MANAGER" ? "admin" : role?.toLowerCase();
 
   return (
     <DropdownMenu>
@@ -45,7 +41,7 @@ export const Account = async () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
-        className="bg-gray-400/10 dark:bg-gray-600/10 backdrop-blur-lg"
+        className="bg-gray-400/10 dark:bg-gray-600/10 backdrop-blur-lg text-darkElement dark:text-darkElement"
       >
         <DropdownMenuLabel>
           <span className="capitalize">{name}</span>
@@ -54,11 +50,6 @@ export const Account = async () => {
         <Link href={`/dashboard/${urlRole}`} className="w-full">
           <DropdownMenuItem>Dashboard</DropdownMenuItem>
         </Link>
-        {/* {dashNavApi.map((item) => (
-          <Link key={item.name} href={item.href} className="w-full">
-            <DropdownMenuItem>{item.name}</DropdownMenuItem>
-          </Link>
-        ))} */}
 
         <DropdownMenuSeparator />
         <DropdownMenuItem>

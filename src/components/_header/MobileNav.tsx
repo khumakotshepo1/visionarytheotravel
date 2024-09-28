@@ -31,7 +31,7 @@ export default function MobileNav({ session }: { session: Session | null }) {
               href={item.href}
               onClick={() => setIsOpen(!isOpen)}
               className={cn(
-                "font-anton text-3xl tracking-wide",
+                "text-xl tracking-wide font-bold",
                 pathname === item.href && "text-orangeElement"
               )}
             >
@@ -51,7 +51,7 @@ export default function MobileNav({ session }: { session: Session | null }) {
   }
 
   return (
-    <nav className="md:hidden font-anton">
+    <nav className="md:hidden">
       <div
         className="md:hidden cursor-pointer sticky bottom-0 left-0 right-0 z-50 py-6 rounded-xl flex items-center justify-center gap-2 bg-background backdrop:blur-lg"
         onClick={() => setIsOpen(!isOpen)}

@@ -6,8 +6,6 @@ import { format } from "date-fns";
 export async function Cruises() {
   const cruises = (await getAllCruises()) as CruisePropsType[];
 
-  console.log({ cruises });
-
   // Group cruises by embarkation month and year
   const groupedCruises: { [key: string]: CruisePropsType[] } = {};
 

@@ -31,7 +31,7 @@ export default async function RootLayout({
         </article>
       )}
       <NextProgress>
-        <div className="h-[80vh] flex fixed w-full lg:relative font-anton container mx-auto">
+        <div className="h-[80vh] flex fixed w-full lg:relative container mx-auto">
           <DesktopNav session={session} />
           <section className="overflow-auto p-3 w-[90%] ml-[10%] lg:flex-1 lg:w-auto lg:m-0">
             {children}

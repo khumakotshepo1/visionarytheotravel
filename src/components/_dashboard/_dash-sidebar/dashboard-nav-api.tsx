@@ -42,28 +42,6 @@ export const adminNavApi: dashboardNavApiType[] = [
   },
 ];
 
-export const managerNavApi: dashboardNavApiType[] = [
-  {
-    name: "Orders",
-    href: "/dashboard/manager/orders",
-    icon: <ShoppingBasketIcon />,
-  },
-  {
-    name: "Products",
-    href: "/dashboard/manager/products",
-    icon: <ShoppingCartIcon />,
-  },
-  {
-    name: "Customers",
-    href: "/dashboard/manager/customers",
-    icon: <UserIcon />,
-  },
-  {
-    name: "Settings",
-    href: "/dashboard/settings",
-    icon: <SettingsIcon />,
-  },
-];
 
 export const userNavApi: dashboardNavApiType[] = [
   {

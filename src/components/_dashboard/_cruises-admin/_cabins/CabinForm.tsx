@@ -3,7 +3,6 @@
 import { addCabinAction } from "@/actions/cruise.actions";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-
 import {
   Dialog,
   DialogClose,
@@ -22,7 +21,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
 import {
   Select,
   SelectContent,
@@ -32,19 +30,24 @@ import {
 } from "@/components/ui/select";
 import { cabinSchema } from "@/zod/schemas/cruise.schema";
 import { CabinType } from "@/zod/types/cruises.type";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { mscCabinNames, mscShipsApi } from "../_ships/msc-ships-api";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { CloudUploadIcon } from "lucide-react";
+import { useState } from "react";
 
 export function CabinForm() {
   const { refresh } = useRouter();
 
+  const [cabinImagePreview, setCabinImagePreview] = useState<string | null>(
+    null
+  );
+
   const form = useForm<CabinType>({
-    resolver: zodResolver(cabinSchema), // Apply the zodResolver
+    resolver: zodResolver(cabinSchema),
   });
 
   const validateFile = (fileList: FileList) => {
@@ -60,22 +63,25 @@ export function CabinForm() {
     const ship_id = data.ship_id;
 
     const formData = new FormData();
-
     formData.append("cabin_image", cabin_image);
     formData.append("cabin_name", cabin_name);
     formData.append("ship_id", ship_id);
 
     const res = await addCabinAction(formData);
-
     if (res?.error) {
       toast.error(res.error);
-    }
-
-    if (res?.success) {
+    } else if (res?.success) {
       toast.success(res.success);
-
       form.reset();
       refresh();
+    }
+  };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const fileURL = URL.createObjectURL(file);
+      setCabinImagePreview(fileURL);
     }
   };
 
@@ -108,11 +114,9 @@ export function CabinForm() {
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
-                          <FormControl>
-                            <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="select cabin type" />
-                            </SelectTrigger>
-                          </FormControl>
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select cabin type" />
+                          </SelectTrigger>
                           <SelectContent>
                             {mscCabinNames.map((item) => (
                               <SelectItem key={item.name} value={item.name}>
@@ -122,7 +126,6 @@ export function CabinForm() {
                           </SelectContent>
                         </Select>
                       </FormControl>
-
                       <FormMessage />
                     </FormItem>
                   )}
@@ -141,11 +144,9 @@ export function CabinForm() {
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
-                          <FormControl>
-                            <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="select ship" />
-                            </SelectTrigger>
-                          </FormControl>
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select ship" />
+                          </SelectTrigger>
                           <SelectContent>
                             {mscShipsApi.map((item) => (
                               <SelectItem key={item.name} value={item.name}>
@@ -155,27 +156,36 @@ export function CabinForm() {
                           </SelectContent>
                         </Select>
                       </FormControl>
-
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
 
-              <div className="grid flex-1 gap-2">
-                <Label htmlFor="link" className="sr-only">
-                  Image
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="cabin_image">
+                  <span className="flex gap-2 items-center justify-center py-3 border-2 border-dashed border-foreground">
+                    <CloudUploadIcon className="h-4 w-4" />
+                    Upload Cabin Image
+                  </span>
                 </Label>
                 <Input
-                  id="link"
+                  id="cabin_image"
                   type="file"
                   {...form.register("cabin_image", { validate: validateFile })}
-                  className="block w-full border-slate-400 rounded focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  className="sr-only block w-full border-slate-400 rounded focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   required
+                  onChange={handleImageChange}
                 />
-                {form.watch("cabin_image") && (
-                  <p>Selected file: {form.watch("cabin_image")[0]?.name}</p>
+                {cabinImagePreview && (
+                  <Image
+                    src={cabinImagePreview}
+                    width={200}
+                    height={200}
+                    alt="Cabin Preview"
+                  />
                 )}
+                <FormMessage />
               </div>
             </div>
             <DialogClose asChild>

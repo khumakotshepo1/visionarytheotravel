@@ -10,7 +10,6 @@ import React, { useState } from "react";
 import {
   adminNavApi,
   dashboardNavApiType,
-  managerNavApi,
   userNavApi,
 } from "./dashboard-nav-api";
 
@@ -33,9 +32,8 @@ export default function MobileDashNav({
   const dashNavApi: dashboardNavApiType[] = (() => {
     switch (role) {
       case "ADMIN":
-        return adminNavApi;
       case "MANAGER":
-        return managerNavApi;
+        return adminNavApi;
       case "USER":
         return userNavApi;
       default:
@@ -43,14 +41,10 @@ export default function MobileDashNav({
     }
   })();
 
-  const urlRole = role?.toLowerCase();
+  const urlRole = role === "MANAGER" ? "admin" : role?.toLowerCase();
 
   const cruisesLinks = open ? (
-    <div
-      className={cn(
-        "flex flex-col gap-2 py-2 pl-8 pr-36 bg-gray-400/15 dark:bg-gray-600/15 rounded-xl mt-4"
-      )}
-    >
+    <div className={cn("flex flex-col gap-2 py-2 pl-8 pr-36 bg-gray-400/15 dark:bg-gray-600/15 rounded-xl mt-4")}>
       {cruisesNavApi.map((item) => (
         <Link
           key={item.name}
@@ -80,11 +74,11 @@ export default function MobileDashNav({
           href={`/dashboard/${urlRole}`}
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
-            "font-anton text-3xl tracking-wide",
+            "text-xl tracking-wide",
             pathname === `/dashboard/${urlRole}` && "text-orangeElement"
           )}
         >
-          <span className="flex items-center gap-2">
+          <span className="flex items-center gap-2 font-bold">
             <GaugeIcon />
             <p className={cn("transition-all ease-in-out duration-300")}>
               Dashboard
@@ -92,17 +86,14 @@ export default function MobileDashNav({
           </span>
         </Link>
 
-        {role === "ADMIN" && (
+        {(role === "ADMIN" || role === "MANAGER") && (
           <div>
             <button
               className={cn(
-                "font-anton text-3xl tracking-wide",
-                pathname === `/dashboard/${urlRole}/cruises-admin` &&
-                  "text-orangeElement"
+                "text-xl tracking-wide font-bold",
+                pathname === `/dashboard/${urlRole}/cruises-admin` && "text-orangeElement"
               )}
-              onClick={() => {
-                setOpen(!open);
-              }}
+              onClick={() => setOpen(!open)}
             >
               <span className="flex items-center gap-2">
                 <ShipIcon />
@@ -121,7 +112,7 @@ export default function MobileDashNav({
             href={item.href}
             onClick={() => setIsOpen(!isOpen)}
             className={cn(
-              "font-anton text-3xl tracking-wide",
+              "text-xl tracking-wide font-bold",
               pathname === item.href && "text-orangeElement"
             )}
           >
@@ -149,3 +140,4 @@ export default function MobileDashNav({
     </>
   );
 }
+

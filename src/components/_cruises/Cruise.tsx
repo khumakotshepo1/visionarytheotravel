@@ -65,7 +65,7 @@ export function Cruise({ cruises, title }: cruiseProps) {
                     </p>
                   </span>
                   <Link href={`/cruises/${cruise.cruise_id}`}>
-                    <button className="p-3 bg-foreground text-background flex items-center justify-center rounded-xl text-sm font-semibold w-3/5">
+                    <button className="p-3 bg-foreground text-background flex items-center justify-center rounded-xl text-sm font-semibold w-full">
                       R{cruise.cruise_price}
                     </button>
                   </Link>
@@ -118,7 +118,7 @@ export function Cruise({ cruises, title }: cruiseProps) {
                 </p>
               </span>
               <Link href={`/cruises/${cruise.cruise_id}`}>
-                <button className="p-3 bg-foreground text-background flex items-center justify-center rounded-xl text-sm font-semibold w-3/5">
+                <button className="p-3 bg-foreground text-background flex items-center justify-center rounded-xl text-sm font-semibold w-full">
                   R{cruise.cruise_price}
                 </button>
               </Link>

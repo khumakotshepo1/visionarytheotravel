@@ -69,7 +69,7 @@ export const authConfig = {
           return false;
         }
 
-        if (isOnAdmin && userRole !== "ADMIN") {
+        if (isOnAdmin && userRole !== "ADMIN" && userRole !== "MANAGER") {
           return false;
         }
 

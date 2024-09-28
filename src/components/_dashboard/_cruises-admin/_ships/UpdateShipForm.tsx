@@ -36,6 +36,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { mscShipsApi } from "./msc-ships-api";
 import { useRouter } from "next/navigation";
+import { CloudUploadIcon } from "lucide-react";
+import Image from "next/image";
 
 export function UpdateShipForm({ ship }: { ship: ShipPropsType }) {
   const { refresh } = useRouter();
@@ -50,6 +52,7 @@ export function UpdateShipForm({ ship }: { ship: ShipPropsType }) {
   });
 
   const [selectedShipClass, setSelectedShipClass] = useState<string>("");
+  const [shipImagePreview, setShipImagePreview] = useState<string | null>(null);
 
   const validateFile = (fileList: FileList) => {
     const file = fileList[0];
@@ -85,6 +88,14 @@ export function UpdateShipForm({ ship }: { ship: ShipPropsType }) {
     if (ship) {
       setSelectedShipClass(ship.class);
       form.setValue("ship_class", ship.class); // Optionally set ship class based on selected ship
+    }
+  };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const fileURL = URL.createObjectURL(file);
+      setShipImagePreview(fileURL);
     }
   };
 
@@ -170,16 +181,30 @@ export function UpdateShipForm({ ship }: { ship: ShipPropsType }) {
               </div>
 
               <div className="grid flex-1 gap-2">
-                <Label htmlFor="ship_image" className="sr-only">
-                  Image
+                <Label htmlFor="ship_image">
+                  <span className="flex flex-col justify-center">
+                    <CloudUploadIcon className="h-4 w-4" /> Ship Image
+                  </span>
                 </Label>
                 <Input
                   id="ship_image"
                   type="file"
                   {...form.register("ship_image", { validate: validateFile })}
-                  className="block w-full border-slate-400 rounded focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  onChange={handleImageChange}
+                  className="sr-only block w-full border-slate-400 rounded focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   required
                 />
+                {shipImagePreview && (
+                  <div className="relative w-full h-48">
+                    <Image
+                      src={shipImagePreview}
+                      alt="Ship Image Preview"
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded"
+                    />
+                  </div>
+                )}
               </div>
             </div>
             <DialogClose asChild>

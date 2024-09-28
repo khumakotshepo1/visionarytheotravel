@@ -36,7 +36,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "antialiased scroll-smooth bg-lightElement text-darkElement dark:bg-darkElement dark:text-lightElement font-anton",
+          "antialiased scroll-smooth bg-lightElement text-darkElement dark:bg-darkElement dark:text-lightElement font-sans",
           geistSans.variable,
           geistMono.variable,
           anton.variable
@@ -48,14 +48,15 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="min-h-screen container mx-auto flex flex-col justify-between font-sans">
+          <div className="min-h-screen container mx-auto flex flex-col justify-between">
             <Header />
             <main className="flex-1 overflow-hidden flex flex-col gap-4 mt-12">
               {children}
             </main>
           </div>
-          <Toaster richColors />
+          <Toaster richColors toastOptions={{}} />
         </ThemeProvider>
+
       </body>
     </html>
   );

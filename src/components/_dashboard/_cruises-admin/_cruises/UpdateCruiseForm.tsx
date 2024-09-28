@@ -142,7 +142,7 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
                             defaultValue={field.value}
                           >
                             <FormControl>
-                              <SelectTrigger className="w-full border-0 border-b-2 rounded-none">
+                              <SelectTrigger>
                                 <SelectValue placeholder="select a destination" />
                               </SelectTrigger>
                             </FormControl>

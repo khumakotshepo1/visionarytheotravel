@@ -36,15 +36,17 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { mscShipsApi } from "./msc-ships-api";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { CloudUploadIcon } from "lucide-react";
 
 export function ShipForm() {
   const { refresh } = useRouter();
-
   const form = useForm<ShipType>({
     resolver: zodResolver(shipSchema),
   });
 
   const [selectedShipClass, setSelectedShipClass] = useState<string>("");
+  const [shipImagePreview, setShipImagePreview] = useState<string | null>(null);
 
   const validateFile = (fileList: FileList) => {
     const file = fileList[0];
@@ -54,8 +56,6 @@ export function ShipForm() {
   };
 
   const processForm = async (data: ShipType) => {
-    console.log({ data });
-
     const ship_image = data.ship_image[0] as File;
     const formData = new FormData();
     formData.append("ship_image", ship_image);
@@ -68,17 +68,23 @@ export function ShipForm() {
     } else {
       toast.success(res.success);
       form.reset();
-
       refresh();
     }
   };
 
-  // Handle ship selection change
   const handleShipChange = (value: string) => {
     const ship = mscShipsApi.find((s) => s.name === value);
     if (ship) {
       setSelectedShipClass(ship.class);
       form.setValue("ship_class", ship.class); // Optionally set ship class based on selected ship
+    }
+  };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const fileURL = URL.createObjectURL(file);
+      setShipImagePreview(fileURL);
     }
   };
 
@@ -99,80 +105,90 @@ export function ShipForm() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(processForm)}>
             <div className="grid gap-4 py-4">
-              <div className="flex flex-col space-y-1.5">
-                <FormField
-                  control={form.control}
-                  name="ship_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Ship Name</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                            handleShipChange(value);
-                          }}
-                          defaultValue={field.value}
-                        >
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Ship Name" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {mscShipsApi.map((item) => (
-                              <SelectItem key={item.name} value={item.name}>
-                                {item.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="ship_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ship Name</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          handleShipChange(value);
+                        }}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Ship Name" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mscShipsApi.map((item) => (
+                            <SelectItem key={item.name} value={item.name}>
+                              {item.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <div className="flex flex-col space-y-1.5">
-                <FormField
-                  control={form.control}
-                  name="ship_class"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Ship Class</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={selectedShipClass}
-                        >
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Ship Class" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {selectedShipClass && (
-                              <SelectItem value={selectedShipClass}>
-                                {selectedShipClass}
-                              </SelectItem>
-                            )}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="ship_class"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ship Class</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={selectedShipClass}
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Ship Class" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {selectedShipClass && (
+                            <SelectItem value={selectedShipClass}>
+                              {selectedShipClass}
+                            </SelectItem>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <div className="grid flex-1 gap-2">
-                <Label htmlFor="ship_image" className="sr-only">
-                  Image
+                <Label htmlFor="ship_image">
+                  <span className="flex gap-2 items-center justify-center py-3 border-2 border-dashed border-foreground">
+                    <CloudUploadIcon className="h-4 w-4" /> Ship Image
+                  </span>
                 </Label>
                 <Input
                   id="ship_image"
                   type="file"
                   {...form.register("ship_image", { validate: validateFile })}
-                  className="block w-full border-slate-400 rounded focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  onChange={handleImageChange}
+                  className="sr-only block w-full border-slate-400 rounded focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   required
                 />
+                {shipImagePreview && (
+                  <div className="relative w-full h-48">
+                    <Image
+                      src={shipImagePreview}
+                      alt="Ship Image Preview"
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded"
+                    />
+                  </div>
+                )}
               </div>
             </div>
             <DialogClose asChild>
