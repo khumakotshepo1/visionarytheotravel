@@ -29,7 +29,7 @@ export function Cruise({ cruises, title }: cruiseProps) {
 
   return (
     <>
-      <h1 className="text-3xl font-anton py-4">{title}</h1>
+      <h1 className="text-3xl py-4 font-bold">{title}</h1>
       {/* Mobile Carousel */}
       <div className="lg:hidden relative overflow-hidden" aria-live="polite">
         <div
@@ -39,7 +39,11 @@ export function Cruise({ cruises, title }: cruiseProps) {
           }}
         >
           {cruises.map((cruise) => (
-            <div key={cruise.cruise_id} className="flex flex-shrink-0 w-screen">
+            <Link
+              href={`/cruises/${cruise.cruise_id}`}
+              key={cruise.cruise_id}
+              className="flex flex-shrink-0 w-screen"
+            >
               <div className="flex flex-col gap-2 w-full relative">
                 <Image
                   src={cruise.cruise_image}
@@ -49,7 +53,7 @@ export function Cruise({ cruises, title }: cruiseProps) {
                   className="object-cover w-full h-52"
                   loading="lazy"
                 />
-                <div className="font-anton flex flex-col gap-2 relative">
+                <div className="flex flex-col gap-2 relative">
                   <h3 className="text-lg font-semibold  bg-background">
                     {cruise.cruise_name}
                   </h3>
@@ -64,14 +68,13 @@ export function Cruise({ cruises, title }: cruiseProps) {
                       {cruise.embarkation_date.toLocaleDateString()}
                     </p>
                   </span>
-                  <Link href={`/cruises/${cruise.cruise_id}`}>
-                    <button className="p-3 bg-foreground text-background flex items-center justify-center rounded-xl text-sm font-semibold w-full">
-                      R{cruise.cruise_price}
-                    </button>
-                  </Link>
+
+                  <span className="py-3 text-orangeElement font-bold flex items-center justify-start rounded-xl w-full">
+                    R{cruise.cruise_price}
+                  </span>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
@@ -94,7 +97,11 @@ export function Cruise({ cruises, title }: cruiseProps) {
       {/* Desktop Grid */}
       <div className="hidden lg:flex flex-wrap gap-4">
         {cruises.map((cruise) => (
-          <div key={cruise.cruise_id} className="flex flex-col gap-2">
+          <Link
+            href={`/cruises/${cruise.cruise_id}`}
+            key={cruise.cruise_id}
+            className="flex flex-col gap-2"
+          >
             <Image
               src={cruise.cruise_image}
               alt={cruise.cruise_name}
@@ -103,7 +110,7 @@ export function Cruise({ cruises, title }: cruiseProps) {
               className="object-cover h-52 rounded-xl"
               loading="lazy" // Add lazy loading
             />
-            <div className="font-anton flex flex-col gap-2 relative">
+            <div className="flex flex-col gap-2 relative">
               <h3 className="text-lg font-semibold  bg-background">
                 {cruise.cruise_name}
               </h3>
@@ -117,13 +124,12 @@ export function Cruise({ cruises, title }: cruiseProps) {
                   {cruise.embarkation_date.toDateString()}
                 </p>
               </span>
-              <Link href={`/cruises/${cruise.cruise_id}`}>
-                <button className="p-3 bg-foreground text-background flex items-center justify-center rounded-xl text-sm font-semibold w-full">
-                  R{cruise.cruise_price}
-                </button>
-              </Link>
+
+              <span className="py-3 text-orangeElement font-bold flex items-center justify-start rounded-xl w-full">
+                R{cruise.cruise_price}
+              </span>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </>

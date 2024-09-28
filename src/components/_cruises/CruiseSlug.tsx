@@ -7,6 +7,8 @@ import {
   getCabinsByShipId,
   getCruiseItinerariesByCruiseId,
 } from "@/server/cruises.server";
+import { QuoteForm } from "./QuoteForm";
+import { Button } from "../ui/button";
 
 export async function CruiseSlug({ cruise }: { cruise: CruisePropsType }) {
   const shipId = parseInt(cruise.ship_id);
@@ -15,11 +17,9 @@ export async function CruiseSlug({ cruise }: { cruise: CruisePropsType }) {
   const cabins = (await getCabinsByShipId(shipId)) as CabinPropsType[];
   const itinerary = await getCruiseItinerariesByCruiseId(cruiseId);
 
-  console.log({ itinerary });
-
   return (
     <>
-      <section className="flex flex-col lg:flex-row justify-center md:items-center lg:items-start gap-2 font-anton">
+      <section className="flex flex-col lg:flex-row justify-center md:items-center lg:items-start gap-2">
         <article className="h-96 w-full relative">
           <Image
             src={cruise.cruise_image}
@@ -77,43 +77,28 @@ export async function CruiseSlug({ cruise }: { cruise: CruisePropsType }) {
           <div className="flex flex-col gap-4 py-8">
             <div className="flex gap-2 justify-between">
               <span>
-                <p className="text-sm capitalize">inside</p>
+                <p className="text-sm capitalize">from</p>
                 <p>{cruise.cruise_price}/per person</p>
-              </span>
-              <span>
-                <p className="text-sm capitalize">ocean view</p>
-                <p>R3000/per person</p>
-              </span>
-            </div>
-            <div className="flex gap-2 justify-between">
-              <span>
-                <p className="text-sm capitalize">balcony</p>
-                <p>R3000/per person</p>
-              </span>
-              <span>
-                <p className="text-sm capitalize">balcony suite</p>
-                <p>R3000/per person</p>
               </span>
             </div>
           </div>
 
           {/*quote div*/}
           <div className="flex flex-col gap-2 text-base">
+            <QuoteForm cruise={cruise} />
             <Link href={"/"}>
-              <button className="w-full md:w-1/2 p-2 rounded-xl bg-foreground text-background">
-                Get Quotation
-              </button>
-            </Link>
-            <Link href={"/"}>
-              <button className="w-full md:w-1/2 p-2 rounded-xl border-2 border-foreground">
-                Call 0212345678
-              </button>
+              <Button
+                variant="outline"
+                className="bg-foreground text-background w-full"
+              >
+                Call 021 123 4562
+              </Button>
             </Link>
           </div>
         </article>
       </section>
-      <section className="py-20 px-4 font-anton">
-        <h2 className="text-4xl py-4">Itenerary</h2>
+      <section className="py-20 px-4">
+        <h2 className="text-4xl py-4 font-semibold">Itenerary</h2>
         <div className="flex flex-col lg:flex-row lg:justify-between gap-16 items-center lg:h-80">
           <ItineraryTable itenerary={itinerary} />
           <Image
@@ -126,8 +111,8 @@ export async function CruiseSlug({ cruise }: { cruise: CruisePropsType }) {
         </div>
       </section>
 
-      <section className="py-20 px-4 font-anton">
-        <h2 className="text-4xl py-4">Cabins</h2>
+      <section className="py-20 px-4">
+        <h2 className="text-4xl py-4 font-semibold">Cabins</h2>
         <Cabins cabins={cabins} />
       </section>
     </>

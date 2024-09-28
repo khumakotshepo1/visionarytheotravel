@@ -5,6 +5,7 @@ import { useState, useCallback, useEffect, memo } from "react";
 // import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 
 export type HeroCarouselType = {
   title: string;
@@ -24,11 +25,11 @@ const CarouselComponent = ({
 }: CarouselProps) => {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
 
-  // const handlePrevious = useCallback(() => {
-  //   setCurrentSlide((prevSlide) =>
-  //     prevSlide === 0 ? slides.length - 1 : prevSlide - 1
-  //   );
-  // }, [slides.length]);
+  const handlePrevious = useCallback(() => {
+    setCurrentSlide((prevSlide) =>
+      prevSlide === 0 ? slides.length - 1 : prevSlide - 1
+    );
+  }, [slides.length]);
 
   const handleNext = useCallback(() => {
     setCurrentSlide((prevSlide) =>
@@ -72,27 +73,25 @@ const CarouselComponent = ({
                 {slide.cta}
               </Link>
             </div>
+
+            <button
+              onClick={handlePrevious}
+              aria-label="Previous slide"
+              className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:bg-gray-200"
+            >
+              <ArrowLeftIcon />
+            </button>
+            <button
+              onClick={handleNext}
+              aria-label="Next slide"
+              className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:bg-gray-200"
+            >
+              <ArrowRightIcon />
+            </button>
           </div>
         ))}
       </div>
-      {/* <div className="hidden absolute top-0 left-0 bottom-0 lg:flex items-center justify-center gap-5 py-4">
-        <button
-          onClick={handlePrevious}
-          aria-label="Previous slide"
-          className="bg-background rounded-full p-2 ml-3"
-        >
-          <ArrowLeftIcon />
-        </button>
-      </div>
-      <div className="hidden absolute top-0 right-0 bottom-0 lg:flex items-center justify-center gap-5 py-4">
-        <button
-          onClick={handleNext}
-          aria-label="Next slide"
-          className="bg-background rounded-full p-2 mr-3"
-        >
-          <ArrowRightIcon />
-        </button>
-      </div> */}
+
       <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-5 w-full py-4">
         {slides.map((_, i) => (
           <button

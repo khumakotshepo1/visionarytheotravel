@@ -12,6 +12,9 @@ import { revalidatePath } from "next/cache";
 import cloudinary from "@/lib/cloudinary";
 import { CruiseItineraryType } from "@/zod/types/cruises.type";
 import { cruiseItinerarySchema } from "@/zod/schemas/cruise.schema";
+import { CustomerType } from "@/zod/types/customer.type";
+import { customerSchema } from "@/zod/schemas/customer.schema";
+import { getCustomerByEmail } from "@/server/ customer.server";
 
 export const addShipAction = async (data: FormData) => {
   try {
@@ -1022,3 +1025,65 @@ export const deleteCruiseAction = async (id: string) => {
     };
   }
 };
+
+export async function addCruiseBookingAction(data: CustomerType, id: string) {
+  try {
+    const cruiseId = parseInt(id);
+
+    if (!cruiseId) {
+      return {
+        error: "Cruise ID is required",
+      };
+    }
+
+    const results = customerSchema.safeParse(data);
+
+    if (!results.success) {
+      return {
+        error: results.error.errors[0].message,
+      };
+    }
+
+    const {
+      first_name,
+      last_name,
+      email,
+      phone_number,
+      date_of_birth,
+      gender,
+      number_of_adults,
+      number_of_kids,
+    } = results.data;
+
+    const customerExists = await getCustomerByEmail(email);
+
+    if (!customerExists) {
+      const { rows: customer } = await sql.query(
+        "INSERT INTO customers (first_name, last_name, customer_email, phone_number, date_of_birth, gender) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+        [first_name, last_name, email, phone_number, date_of_birth, gender]
+      );
+
+      if (customer) {
+        await sql.query(
+          "INSERT INTO cruise_bookings (customer_id, cruise_id, number_of_adults, number_of_kids booked_by) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+          [
+            customer[0].customer_id,
+            cruiseId,
+            number_of_adults,
+            number_of_kids,
+            customer[0].customer_id,
+          ]
+        );
+      }
+
+      return {
+        success: "Cruise booking added successfully",
+      };
+    }
+  } catch (error) {
+    console.log({ bookingError: error });
+    return {
+      error: getErrorMessage(error),
+    };
+  }
+}
