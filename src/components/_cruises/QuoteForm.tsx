@@ -34,7 +34,7 @@ import { CustomInput } from "@/components/custom-input";
 import { useRouter } from "next/navigation";
 import { CustomerType } from "@/zod/types/customer.type";
 import { customerSchema } from "@/zod/schemas/customer.schema";
-import { addCruiseBookingAction } from "@/actions/cruise.actions";
+import { addCustomerCruiseBookingAction } from "@/actions/cruise.actions";
 
 export function QuoteForm({ cruise }: { cruise: CruisePropsType }) {
   const { refresh } = useRouter();
@@ -47,7 +47,7 @@ export function QuoteForm({ cruise }: { cruise: CruisePropsType }) {
   const cruiseId = cruise.cruise_id;
 
   const processForm = async (data: CustomerType) => {
-    const res = await addCruiseBookingAction(data, cruiseId);
+    const res = await addCustomerCruiseBookingAction(data, cruiseId);
     if (res?.error) {
       toast.error(res.error);
     } else if (res?.success) {
