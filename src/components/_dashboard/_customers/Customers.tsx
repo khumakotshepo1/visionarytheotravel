@@ -1,7 +1,7 @@
-import { DataTable } from "@/components/DataTable";
 import { customerColumns } from "./customer-columns";
 import { getAllCustomers } from "@/server/ customer.server";
 import { CustomerForm } from "./CustomerForm";
+import { CustomersTable } from "./CustomersTable";
 
 export async function Customers() {
   const customers = (await getAllCustomers()) as CustomerPropsType[];
@@ -12,7 +12,7 @@ export async function Customers() {
         <CustomerForm />
       </section>
       <section>
-        <DataTable columns={customerColumns} data={customers} />
+        <CustomersTable columns={customerColumns} data={customers} />
       </section>
     </>
   );

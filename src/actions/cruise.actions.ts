@@ -4,17 +4,27 @@ import { auth } from "@/auth";
 import { sql } from "@/database";
 import {
   getCruiseByDestionation,
+  getCruiseByName,
   getShipByName,
 } from "@/server/cruises.server";
 import { getErrorMessage } from "@/utils/error-message";
 import { revalidatePath } from "next/cache";
 
 import cloudinary from "@/lib/cloudinary";
-import { CruiseItineraryType } from "@/zod/types/cruises.type";
-import { cruiseItinerarySchema } from "@/zod/schemas/cruise.schema";
+import {
+  CruiseBookingType,
+  CruiseItineraryType,
+} from "@/zod/types/cruises.type";
+import {
+  cruiseBookingSchema,
+  cruiseItinerarySchema,
+} from "@/zod/schemas/cruise.schema";
 import { CustomerType } from "@/zod/types/customer.type";
 import { customerSchema } from "@/zod/schemas/customer.schema";
-import { getCustomerByEmail } from "@/server/ customer.server";
+import {
+  getCustomerByEmail,
+  getCustomerByPhoneNumber,
+} from "@/server/ customer.server";
 
 export const addShipAction = async (data: FormData) => {
   try {
@@ -1026,7 +1036,10 @@ export const deleteCruiseAction = async (id: string) => {
   }
 };
 
-export async function addCruiseBookingAction(data: CustomerType, id: string) {
+export async function addCustomerCruiseBookingAction(
+  data: CustomerType,
+  id: string
+) {
   try {
     const cruiseId = parseInt(id);
 
@@ -1080,6 +1093,55 @@ export async function addCruiseBookingAction(data: CustomerType, id: string) {
         success: "Cruise booking added successfully",
       };
     }
+  } catch (error) {
+    console.log({ bookingError: error });
+    return {
+      error: getErrorMessage(error),
+    };
+  }
+}
+
+export async function addCruiseBookingAction(data: CruiseBookingType) {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    const userId = session?.user?.user_id;
+
+    const results = cruiseBookingSchema.safeParse(data);
+
+    if (!results.success) {
+      return {
+        error: results.error.errors[0].message,
+      };
+    }
+
+    const { cruise_name, phone_number, number_of_adults, number_of_kids } =
+      results.data;
+
+    const customer = await getCustomerByPhoneNumber(phone_number);
+
+    const cruise = await getCruiseByName(cruise_name);
+
+    await sql.query(
+      "INSERT INTO cruise_bookings (customer_id, cruise_id, cruise_number_of_adults, cruise_number_of_kids, booked_by) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [
+        customer.customer_id,
+        cruise.cruise_id,
+        number_of_adults,
+        number_of_kids,
+        userId,
+      ]
+    );
+
+    return {
+      success: "Cruise booking added successfully",
+    };
   } catch (error) {
     console.log({ bookingError: error });
     return {

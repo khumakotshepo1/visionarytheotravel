@@ -13,7 +13,7 @@ CREATE TABLE
         passport_number VARCHAR(50),
         passport_issue_date DATE,
         passport_expiry_date DATE,
-        passport_country VARCHAR(50) NOT NULL,
+        passport_country VARCHAR(50),
         customer_email VARCHAR(100) NOT NULL,
         phone VARCHAR(20),
         address VARCHAR(100),

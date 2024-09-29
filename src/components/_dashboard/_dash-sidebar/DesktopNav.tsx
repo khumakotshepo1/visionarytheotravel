@@ -9,12 +9,15 @@ import {
   userNavApi,
 } from "./dashboard-nav-api";
 import { Session } from "next-auth";
-import { GaugeIcon, ShipIcon } from "lucide-react";
+import { GaugeIcon, PackageIcon, ShipIcon } from "lucide-react";
 import { useState } from "react";
 import { cruisesNavApi } from "./cruises-nav-api";
+import { packagesNavApi } from "./packages-nav-api";
 
 export function DesktopNav({ session }: { session: Session | null }) {
-  const [open, setOpen] = useState(false);
+  const [openCruisesMenu, setOpenCruisesMenu] = useState(false);
+  const [openPackagesMenu, setOpenPackagesMenu] = useState(false);
+
   const pathname = usePathname();
   const role = session?.user?.role;
 
@@ -33,14 +36,40 @@ export function DesktopNav({ session }: { session: Session | null }) {
 
   const urlRole = role === "MANAGER" ? "admin" : role?.toLowerCase();
 
-  // Render cruise links if `open` is true
-  const cruisesLinks = open ? (
-    <div className={cn("flex flex-col gap-2 py-2 pl-8 bg-gray-400/15 dark:bg-gray-600/15 rounded-xl mt-4")}>
+  // Render cruise links if `openCruisesMenu` is true
+  const cruisesLinks = openCruisesMenu ? (
+    <div
+      className={cn(
+        "flex flex-col gap-2 py-2 pl-8 bg-gray-400/15 dark:bg-gray-600/15 rounded-xl mt-4"
+      )}
+    >
       {cruisesNavApi.map((item) => (
         <Link
           key={item.name}
           href={item.href}
-          onClick={() => setOpen(!open)}
+          onClick={() => setOpenCruisesMenu(!openCruisesMenu)}
+          className={cn(
+            "hover:text-orangeElement transition-all ease-in-out duration-300 uppercase font-semibold",
+            pathname === item.href && "text-orangeElement"
+          )}
+        >
+          <span className="flex items-center gap-2 text-sm">{item.name}</span>
+        </Link>
+      ))}
+    </div>
+  ) : null;
+
+  const packagesLinks = openPackagesMenu ? (
+    <div
+      className={cn(
+        "flex flex-col gap-2 py-2 pl-8 bg-gray-400/15 dark:bg-gray-600/15 rounded-xl mt-4"
+      )}
+    >
+      {packagesNavApi.map((item) => (
+        <Link
+          key={item.name}
+          href={item.href}
+          onClick={() => setOpenPackagesMenu(!openPackagesMenu)}
           className={cn(
             "hover:text-orangeElement transition-all ease-in-out duration-300 uppercase font-semibold",
             pathname === item.href && "text-orangeElement"
@@ -53,7 +82,11 @@ export function DesktopNav({ session }: { session: Session | null }) {
   ) : null;
 
   return (
-    <aside className={cn("hidden w-64 lg:flex flex-col bg-gray-400/15 dark:bg-gray-600/15 gap-4 p-3 rounded-xl")}>
+    <aside
+      className={cn(
+        "hidden w-64 lg:flex flex-col bg-gray-400/15 dark:bg-gray-600/15 gap-4 p-3 rounded-xl"
+      )}
+    >
       <Link
         href={`/dashboard/${urlRole}`}
         className={cn(
@@ -74,9 +107,10 @@ export function DesktopNav({ session }: { session: Session | null }) {
           <button
             className={cn(
               "hover:text-orangeElement transition-all ease-in-out duration-300 uppercase font-semibold",
-              pathname === `/dashboard/${urlRole}/cruises-admin` && "text-orangeElement"
+              pathname === `/dashboard/${urlRole}/cruises-admin` &&
+                "text-orangeElement"
             )}
-            onClick={() => setOpen(!open)}
+            onClick={() => setOpenCruisesMenu(!openCruisesMenu)}
             aria-label="Toggle Cruises Menu"
           >
             <span className="flex items-center gap-2 text-sm">
@@ -87,6 +121,28 @@ export function DesktopNav({ session }: { session: Session | null }) {
             </span>
           </button>
           {cruisesLinks}
+        </div>
+      )}
+
+      {(role === "ADMIN" || role === "MANAGER") && (
+        <div>
+          <button
+            className={cn(
+              "hover:text-orangeElement transition-all ease-in-out duration-300 uppercase font-semibold",
+              pathname === `/dashboard/${urlRole}/packages-admin` &&
+                "text-orangeElement"
+            )}
+            onClick={() => setOpenPackagesMenu(!openPackagesMenu)}
+            aria-label="Toggle Packages Menu"
+          >
+            <span className="flex items-center gap-2 text-sm">
+              <PackageIcon />
+              <p className={cn("transition-all ease-in-out duration-300")}>
+                Packages
+              </p>
+            </span>
+          </button>
+          {packagesLinks}
         </div>
       )}
 
@@ -110,4 +166,3 @@ export function DesktopNav({ session }: { session: Session | null }) {
     </aside>
   );
 }
-

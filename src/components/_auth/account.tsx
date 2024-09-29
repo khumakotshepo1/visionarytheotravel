@@ -25,8 +25,6 @@ export const Account = async () => {
 
   const role = session?.user?.role;
 
-
-
   const urlRole = role === "MANAGER" ? "admin" : role?.toLowerCase();
 
   return (
@@ -41,7 +39,7 @@ export const Account = async () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
-        className="bg-gray-400/10 dark:bg-gray-600/10 backdrop-blur-lg text-darkElement dark:text-darkElement"
+        className="bg-gray-400/10 dark:bg-gray-600/10 backdrop-blur-lg text-darkElement dark:text-lightElement"
       >
         <DropdownMenuLabel>
           <span className="capitalize">{name}</span>

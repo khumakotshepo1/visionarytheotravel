@@ -33,13 +33,13 @@ import { CabinType } from "@/zod/types/cruises.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { mscCabinNames, mscShipsApi } from "../_ships/msc-ships-api";
+import { mscCabinNames } from "../_ships/msc-ships-api";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { CloudUploadIcon } from "lucide-react";
 import { useState } from "react";
 
-export function CabinForm() {
+export function CabinForm({ ships }: { ships: ShipPropsType[] }) {
   const { refresh } = useRouter();
 
   const [cabinImagePreview, setCabinImagePreview] = useState<string | null>(
@@ -148,9 +148,12 @@ export function CabinForm() {
                             <SelectValue placeholder="Select ship" />
                           </SelectTrigger>
                           <SelectContent>
-                            {mscShipsApi.map((item) => (
-                              <SelectItem key={item.name} value={item.name}>
-                                {item.name}
+                            {ships.map((item) => (
+                              <SelectItem
+                                key={item.ship_name}
+                                value={item.ship_name}
+                              >
+                                {item.ship_name}
                               </SelectItem>
                             ))}
                           </SelectContent>

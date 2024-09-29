@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { sql } from "@/database";
 
 import { cache } from "react";
@@ -129,3 +130,32 @@ export const getCruiseItinerariesByCruiseId = cache(
     }
   }
 );
+
+export const getAllCruiseBookings = cache(async () => {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    if (session?.user?.role !== "ADMIN" && session?.user?.role !== "MANAGER") {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    const { rows } = await sql.query(
+      `SELECT cb.*, c.*, cu.*
+       FROM cruise_bookings cb
+       JOIN cruises c ON c.cruise_id = cb.cruise_id
+       JOIN customers cu ON cu.customer_id = cb.customer_id`
+    );
+
+    return rows || null;
+  } catch (error) {
+    throw new Error("Failed to fetch cruise bookings.");
+  }
+});

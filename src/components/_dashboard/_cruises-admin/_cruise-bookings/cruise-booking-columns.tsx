@@ -12,10 +12,15 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
 import { toast } from "sonner";
-import { UpdateCustomerForm } from "./UpdateCustomerForm";
-import { deleteCustomerAction } from "@/actions/customer.action";
 
-export const customerColumns: ColumnDef<CustomerPropsType>[] = [
+import { deleteCustomerAction } from "@/actions/customer.action";
+import CruiseBooking from "./CruiseBooking";
+
+export const cruiseBookingColumns: ColumnDef<CruiseBookingPropsType>[] = [
+  {
+    accessorKey: "cruise_booking_number",
+    header: "Booking Number",
+  },
   {
     accessorKey: "first_name",
     header: "First Name",
@@ -25,17 +30,17 @@ export const customerColumns: ColumnDef<CustomerPropsType>[] = [
     header: "Last Name",
   },
   {
-    accessorKey: "customer_email",
-    header: "Email",
+    accessorKey: "status",
+    header: "Status",
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const customer = row.original;
-      const customer_id = customer.customer_id;
+      const booking = row.original;
+      const cruise_booking_number = booking.cruise_booking_number;
 
       const processForm = async () => {
-        const res = await deleteCustomerAction(customer_id);
+        const res = await deleteCustomerAction(cruise_booking_number);
 
         if (res?.error) {
           toast.error(res.error);
@@ -62,7 +67,7 @@ export const customerColumns: ColumnDef<CustomerPropsType>[] = [
             </form>
 
             <span className="text-sm pl-2">
-              <UpdateCustomerForm customer={customer} />
+              <CruiseBooking cruise_booking={booking} />
             </span>
           </DropdownMenuContent>
         </DropdownMenu>

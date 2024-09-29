@@ -5,6 +5,10 @@ export type CruiseNavApiType = {
 
 export const cruisesNavApi: CruiseNavApiType[] = [
   {
+    name: "Bookings",
+    href: "/dashboard/admin/cruises-admin/cruise-bookings",
+  },
+  {
     name: "Ships",
     href: "/dashboard/admin/cruises-admin/ships",
   },

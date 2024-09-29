@@ -20,15 +20,15 @@ import {
 } from "@/components/ui/table";
 
 import { useState } from "react";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({
+export function CruiseBookingsTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
@@ -50,10 +50,16 @@ export function DataTable<TData, TValue>({
     <div className="rounded-md text-darkElement dark:text-lightElement">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter booking numbers..."
+          value={
+            (table
+              .getColumn("cruise_booking_number")
+              ?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table
+              .getColumn("cruise_booking_number")
+              ?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

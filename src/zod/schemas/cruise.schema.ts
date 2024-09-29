@@ -84,3 +84,12 @@ export const cruiseSchema = z.object({
   map_image: z.any(),
   cruise_image: z.any(),
 });
+
+export const cruiseBookingSchema = z.object({
+  cruise_booking_id: z.string().optional(),
+  cruise_name: z.string(),
+  phone_number: z.string(),
+  status: z.string().optional(),
+  number_of_adults: z.string(),
+  number_of_kids: z.string(),
+});

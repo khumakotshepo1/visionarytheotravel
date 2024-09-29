@@ -24,7 +24,7 @@ export const customerSchema = z.object({
     .min(1, {
       message: "ID number is required",
     })
-    .max(10, {
+    .max(13, {
       message: "ID number is not valid",
     })
     .optional(),

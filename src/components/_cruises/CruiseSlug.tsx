@@ -89,7 +89,7 @@ export async function CruiseSlug({ cruise }: { cruise: CruisePropsType }) {
             <Link href={"/"}>
               <Button
                 variant="outline"
-                className="bg-foreground text-background w-full"
+                className="bg-foreground text-background dark:bg-foreground dark:text-background: w-full"
               >
                 Call 021 123 4562
               </Button>
