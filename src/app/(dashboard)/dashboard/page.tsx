@@ -1,5 +1,5 @@
 const Admin = async () => {
-  return <>Dashboard</>;
+  return <>dash</>;
 };
 
 export default Admin;

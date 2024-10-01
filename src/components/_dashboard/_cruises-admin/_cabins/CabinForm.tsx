@@ -3,14 +3,7 @@
 import { addCabinAction } from "@/actions/cruise.actions";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import {
   Form,
   FormControl,
@@ -40,7 +33,7 @@ import { CloudUploadIcon } from "lucide-react";
 import { useState } from "react";
 
 export function CabinForm({ ships }: { ships: ShipPropsType[] }) {
-  const { refresh } = useRouter();
+  const { refresh, back } = useRouter();
 
   const [cabinImagePreview, setCabinImagePreview] = useState<string | null>(
     null
@@ -74,6 +67,9 @@ export function CabinForm({ ships }: { ships: ShipPropsType[] }) {
       toast.success(res.success);
       form.reset();
       refresh();
+      setTimeout(() => {
+        back();
+      }, 2000);
     }
   };
 
@@ -86,19 +82,8 @@ export function CabinForm({ ships }: { ships: ShipPropsType[] }) {
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
-        >
-          Add Cabin
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Add Cabin</DialogTitle>
-        </DialogHeader>
+    <div className="fixed inset-0 bg-background flex items-center justify-center">
+      <div className="space-y-4 max-sm-w-xl w-[450px]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(processForm)}>
             <div className="grid gap-4 py-4">
@@ -114,7 +99,7 @@ export function CabinForm({ ships }: { ships: ShipPropsType[] }) {
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
-                          <SelectTrigger className="w-[180px]">
+                          <SelectTrigger className="w-full border-0 border-b-2 rounded-none">
                             <SelectValue placeholder="Select cabin type" />
                           </SelectTrigger>
                           <SelectContent>
@@ -144,7 +129,7 @@ export function CabinForm({ ships }: { ships: ShipPropsType[] }) {
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
-                          <SelectTrigger className="w-[180px]">
+                          <SelectTrigger className="w-full border-0 border-b-2 rounded-none">
                             <SelectValue placeholder="Select ship" />
                           </SelectTrigger>
                           <SelectContent>
@@ -191,7 +176,7 @@ export function CabinForm({ ships }: { ships: ShipPropsType[] }) {
                 <FormMessage />
               </div>
             </div>
-            <DialogClose asChild>
+            <div className="grid gap-4 py-3">
               <Button
                 disabled={form.formState.isSubmitting}
                 type="submit"
@@ -203,10 +188,20 @@ export function CabinForm({ ships }: { ships: ShipPropsType[] }) {
                   "Save"
                 )}
               </Button>
-            </DialogClose>
+
+              <Button
+                disabled={form.formState.isSubmitting}
+                className="w-full"
+                onClick={() => {
+                  back();
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
           </form>
         </Form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }

@@ -3,6 +3,7 @@ CREATE SEQUENCE package_booking_number_seq START 1000 INCREMENT 1;
 
 CREATE SEQUENCE cruise_booking_number_seq START 1000 INCREMENT 1;
 
+-- Create the customers table
 CREATE TABLE
     IF NOT EXISTS customers (
         customer_id SERIAL PRIMARY KEY,
@@ -22,37 +23,74 @@ CREATE TABLE
         updated_at TIMESTAMP DEFAULT NOW ()
     );
 
--- Create tables using these sequences
+-- Create the package_bookings table
 CREATE TABLE
     IF NOT EXISTS package_bookings (
         package_booking_number BIGINT PRIMARY KEY DEFAULT nextval ('package_booking_number_seq'),
+        accommodation_ref_number VARCHAR(100) NOT NULL DEFAULT '0',
+        transportation_ref_number VARCHAR(100) NOT NULL DEFAULT '0',
+        excursion_ref_number VARCHAR(100) NOT NULL DEFAULT '0',
         customer_id INTEGER NOT NULL REFERENCES customers (customer_id) ON DELETE CASCADE,
         package_id INTEGER NOT NULL REFERENCES packages (package_id) ON DELETE CASCADE,
         status VARCHAR(20) NOT NULL CHECK (status IN ('pending', 'confirmed', 'cancelled')) DEFAULT 'pending',
+        cruise_number_of_adults INTEGER NOT NULL,
+        cruise_number_of_kids INTEGER NOT NULL,
+        package_payment_amount NUMERIC(10, 2) NOT NULL DEFAULT 0,
+        package_payment_method VARCHAR(100) NOT NULL DEFAULT 'cash',
         booked_by INTEGER NOT NULL,
         created_at TIMESTAMP DEFAULT NOW (),
         updated_at TIMESTAMP DEFAULT NOW ()
     );
 
+-- Create the cruise_bookings table
 CREATE TABLE
     IF NOT EXISTS cruise_bookings (
         cruise_booking_number BIGINT PRIMARY KEY DEFAULT nextval ('cruise_booking_number_seq'),
+        msc_ref_number VARCHAR(100) NOT NULL DEFAULT '0',
         customer_id INTEGER NOT NULL REFERENCES customers (customer_id) ON DELETE CASCADE,
         cruise_id INTEGER NOT NULL REFERENCES cruises (cruise_id) ON DELETE CASCADE,
-        status VARCHAR(20) NOT NULL CHECK (status IN ('pending', 'confirmed', 'cancelled')) DEFAULT 'pending',
+        status VARCHAR(20) NOT NULL CHECK (
+            status IN ('pending', 'confirmed', 'completed', 'cancelled')
+        ) DEFAULT 'pending',
         cruise_number_of_adults INTEGER NOT NULL,
         cruise_number_of_kids INTEGER NOT NULL,
+        cruise_payment_amount NUMERIC(10, 2) NOT NULL DEFAULT 0,
+        cruise_payment_method VARCHAR(100) NOT NULL DEFAULT 'cash',
         booked_by INTEGER NOT NULL,
         created_at TIMESTAMP DEFAULT NOW (),
         updated_at TIMESTAMP DEFAULT NOW ()
     );
 
+-- Create the cruise_booking_history table
 CREATE TABLE
-    IF NOT EXISTS booking_history (
-        history_id SERIAL PRIMARY KEY,
-        booking_number BIGINT NOT NULL,
-        booking_type VARCHAR(20) NOT NULL, -- 'cruise' or 'package'
+    IF NOT EXISTS cruise_booking_history (
+        cruise_booking_history_id SERIAL PRIMARY KEY,
+        cruises_booking_number BIGINT NOT NULL,
+        msc_ref_number VARCHAR(100) NOT NULL DEFAULT '0',
+        customer_id INTEGER NOT NULL REFERENCES customers (customer_id) ON DELETE CASCADE,
         status VARCHAR(20),
-        change_date TIMESTAMP DEFAULT NOW (),
-        notes TEXT
+        payment_amount NUMERIC(10, 2) NOT NULL DEFAULT 0,
+        booked_by INTEGER NOT NULL,
+        deleted_by INTEGER NOT NULL,
+        notes TEXT,
+        created_at TIMESTAMP DEFAULT NOW (),
+        updated_at TIMESTAMP DEFAULT NOW ()
+    );
+
+-- Create the package_booking_history table
+CREATE TABLE
+    IF NOT EXISTS package_booking_history (
+        package_booking_history_id SERIAL PRIMARY KEY,
+        package_booking_number BIGINT NOT NULL,
+        accommodation_ref_number VARCHAR(100) NOT NULL DEFAULT '0',
+        transportation_ref_number VARCHAR(100) NOT NULL DEFAULT '0',
+        excursion_ref_number VARCHAR(100) NOT NULL DEFAULT '0',
+        customer_id INTEGER NOT NULL REFERENCES customers (customer_id) ON DELETE CASCADE,
+        status VARCHAR(20),
+        payment_amount NUMERIC(10, 2) NOT NULL DEFAULT 0,
+        booked_by INTEGER NOT NULL,
+        deleted_by INTEGER NOT NULL,
+        notes TEXT,
+        created_at TIMESTAMP DEFAULT NOW (),
+        updated_at TIMESTAMP DEFAULT NOW ()
     );

@@ -4,14 +4,7 @@ import { useState } from "react";
 import { addShipAction } from "@/actions/cruise.actions";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import {
   Form,
   FormControl,
@@ -40,7 +33,7 @@ import Image from "next/image";
 import { CloudUploadIcon } from "lucide-react";
 
 export function ShipForm() {
-  const { refresh } = useRouter();
+  const { refresh, back } = useRouter();
   const form = useForm<ShipType>({
     resolver: zodResolver(shipSchema),
   });
@@ -69,6 +62,9 @@ export function ShipForm() {
       toast.success(res.success);
       form.reset();
       refresh();
+      setTimeout(() => {
+        back();
+      }, 2000);
     }
   };
 
@@ -89,80 +85,73 @@ export function ShipForm() {
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
-        >
-          Add Ship
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Add Ship</DialogTitle>
-        </DialogHeader>
+    <div className="fixed inset-0 bg-background flex items-center justify-center">
+      <div className="space-y-4 max-sm-w-xl w-[450px]">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(processForm)}>
+          <form onSubmit={form.handleSubmit(processForm)} className="w-full">
             <div className="grid gap-4 py-4">
-              <FormField
-                control={form.control}
-                name="ship_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Ship Name</FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={(value) => {
-                          field.onChange(value);
-                          handleShipChange(value);
-                        }}
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Ship Name" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {mscShipsApi.map((item) => (
-                            <SelectItem key={item.name} value={item.name}>
-                              {item.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="flex flex-col space-y-1.5">
+                <FormField
+                  control={form.control}
+                  name="ship_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ship Name</FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            handleShipChange(value);
+                          }}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger className="w-full border-0 border-b-2 rounded-none">
+                            <SelectValue placeholder="Ship Name" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {mscShipsApi.map((item) => (
+                              <SelectItem key={item.name} value={item.name}>
+                                {item.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-              <FormField
-                control={form.control}
-                name="ship_class"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Ship Class</FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={selectedShipClass}
-                      >
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Ship Class" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {selectedShipClass && (
-                            <SelectItem value={selectedShipClass}>
-                              {selectedShipClass}
-                            </SelectItem>
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="flex flex-col space-y-1.5">
+                <FormField
+                  control={form.control}
+                  name="ship_class"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ship Class</FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={selectedShipClass}
+                        >
+                          <SelectTrigger className="w-full border-0 border-b-2 rounded-none">
+                            <SelectValue placeholder="Ship Class" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {selectedShipClass && (
+                              <SelectItem value={selectedShipClass}>
+                                {selectedShipClass}
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <div className="grid flex-1 gap-2">
                 <Label htmlFor="ship_image">
@@ -191,7 +180,8 @@ export function ShipForm() {
                 )}
               </div>
             </div>
-            <DialogClose asChild>
+
+            <div className="grid gap-4 py-3">
               <Button
                 disabled={form.formState.isSubmitting}
                 type="submit"
@@ -203,10 +193,20 @@ export function ShipForm() {
                   "Save"
                 )}
               </Button>
-            </DialogClose>
+
+              <Button
+                disabled={form.formState.isSubmitting}
+                className="w-full"
+                onClick={() => {
+                  back();
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
           </form>
         </Form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }

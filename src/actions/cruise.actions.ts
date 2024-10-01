@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { sql } from "@/database";
 import {
   getCruiseByDestionation,
+  getCruiseById,
   getCruiseByName,
   getShipByName,
 } from "@/server/cruises.server";
@@ -12,16 +13,20 @@ import { revalidatePath } from "next/cache";
 
 import cloudinary from "@/lib/cloudinary";
 import {
+  CruiseBookingPaymentType,
   CruiseBookingType,
   CruiseItineraryType,
 } from "@/zod/types/cruises.type";
 import {
+  cruiseBookingPaymentSchema,
   cruiseBookingSchema,
   cruiseItinerarySchema,
 } from "@/zod/schemas/cruise.schema";
 import { CustomerType } from "@/zod/types/customer.type";
 import { customerSchema } from "@/zod/schemas/customer.schema";
 import {
+  getCruiseBookingByBookingNumber,
+  getCruiseBookingByCustomerId,
   getCustomerByEmail,
   getCustomerByPhoneNumber,
 } from "@/server/ customer.server";
@@ -1051,6 +1056,8 @@ export async function addCustomerCruiseBookingAction(
 
     const results = customerSchema.safeParse(data);
 
+    console.log({ results });
+
     if (!results.success) {
       return {
         error: results.error.errors[0].message,
@@ -1064,8 +1071,8 @@ export async function addCustomerCruiseBookingAction(
       phone_number,
       date_of_birth,
       gender,
-      number_of_adults,
-      number_of_kids,
+      cruise_number_of_adults,
+      cruise_number_of_kids,
     } = results.data;
 
     const customerExists = await getCustomerByEmail(email);
@@ -1078,21 +1085,49 @@ export async function addCustomerCruiseBookingAction(
 
       if (customer) {
         await sql.query(
-          "INSERT INTO cruise_bookings (customer_id, cruise_id, number_of_adults, number_of_kids booked_by) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+          "INSERT INTO cruise_bookings (customer_id, cruise_id, cruise_number_of_adults, cruise_number_of_kids, booked_by) VALUES ($1, $2, $3, $4, $5) RETURNING *",
           [
             customer[0].customer_id,
             cruiseId,
-            number_of_adults,
-            number_of_kids,
+            cruise_number_of_adults,
+            cruise_number_of_kids,
             customer[0].customer_id,
           ]
         );
       }
 
+      console.log("Cruise booking added successfully");
       return {
         success: "Cruise booking added successfully",
       };
     }
+
+    const alreadyBooked = await getCruiseBookingByCustomerId(
+      customerExists.customer_id
+    );
+
+    if (alreadyBooked) {
+      return {
+        error: "Cruise booking already exists",
+      };
+    }
+
+    await sql.query(
+      "INSERT INTO cruise_bookings (customer_id, cruise_id, cruise_number_of_adults, cruise_number_of_kids, booked_by) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [
+        customerExists.customer_id,
+        cruiseId,
+        cruise_number_of_adults,
+        cruise_number_of_kids,
+        customerExists.customer_id,
+      ]
+    );
+
+    revalidatePath("/dashboard/admin");
+
+    return {
+      success: "Cruise booking added successfully",
+    };
   } catch (error) {
     console.log({ bookingError: error });
     return {
@@ -1121,26 +1156,264 @@ export async function addCruiseBookingAction(data: CruiseBookingType) {
       };
     }
 
-    const { cruise_name, phone_number, number_of_adults, number_of_kids } =
-      results.data;
+    const {
+      cruise_name,
+      phone_number,
+      cruise_number_of_adults,
+      cruise_number_of_kids,
+    } = results.data;
 
     const customer = await getCustomerByPhoneNumber(phone_number);
 
     const cruise = await getCruiseByName(cruise_name);
+
+    const alreadyBooked = await getCruiseBookingByCustomerId(
+      customer.customer_id
+    );
+
+    if (alreadyBooked) {
+      return {
+        error: "Cruise booking already exists",
+      };
+    }
 
     await sql.query(
       "INSERT INTO cruise_bookings (customer_id, cruise_id, cruise_number_of_adults, cruise_number_of_kids, booked_by) VALUES ($1, $2, $3, $4, $5) RETURNING *",
       [
         customer.customer_id,
         cruise.cruise_id,
-        number_of_adults,
-        number_of_kids,
+        cruise_number_of_adults,
+        cruise_number_of_kids,
         userId,
       ]
     );
 
+    revalidatePath("/dashboard/admin");
+
     return {
       success: "Cruise booking added successfully",
+    };
+  } catch (error) {
+    console.log({ bookingError: error });
+    return {
+      error: getErrorMessage(error),
+    };
+  }
+}
+
+export async function updateCruiseBookingAction(
+  data: CruiseBookingType,
+  id: string
+) {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    const cruiseBookingNumber = parseInt(id);
+
+    if (!cruiseBookingNumber) {
+      return {
+        error: "Cruise booking ID is required",
+      };
+    }
+
+    const userId = session?.user?.user_id;
+
+    const results = cruiseBookingSchema.safeParse(data);
+
+    if (!results.success) {
+      return {
+        error: results.error.errors[0].message,
+      };
+    }
+
+    const {
+      cruise_name,
+      phone_number,
+      cruise_number_of_adults,
+      cruise_number_of_kids,
+    } = results.data;
+
+    const customer = await getCustomerByPhoneNumber(phone_number);
+
+    const cruise = await getCruiseByName(cruise_name);
+
+    await sql.query(
+      "UPDATE cruise_bookings SET customer_id = $1, cruise_id = $2, cruise_number_of_adults = $3, cruise_number_of_kids = $4, booked_by = $5 WHERE cruise_booking_number = $6",
+      [
+        customer.customer_id,
+        cruise.cruise_id,
+        cruise_number_of_adults,
+        cruise_number_of_kids,
+        userId,
+        cruiseBookingNumber,
+      ]
+    );
+
+    return {
+      success: "Cruise booking updated successfully",
+    };
+  } catch (error) {
+    console.log({ bookingError: error });
+    return {
+      error: getErrorMessage(error),
+    };
+  }
+}
+
+export async function CruiseBookingPaymentAction(
+  data: CruiseBookingPaymentType,
+  id: string
+) {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    const cruiseBookingNumber = parseInt(id);
+
+    if (!cruiseBookingNumber) {
+      return {
+        error: "Cruise booking ID is required",
+      };
+    }
+
+    const userId = session?.user?.user_id;
+
+    const results = cruiseBookingPaymentSchema.safeParse(data);
+
+    if (!results.success) {
+      return {
+        error: results.error.errors[0].message,
+      };
+    }
+
+    const { cruise_payment_amount, cruise_payment_method } = results.data;
+
+    const booking = await getCruiseBookingByBookingNumber(cruiseBookingNumber);
+
+    if (!booking) {
+      return {
+        error: "Cruise booking not found",
+      };
+    }
+
+    const cruise = await getCruiseById(booking.cruise_id);
+
+    if (!cruise) {
+      return {
+        error: "Cruise not found",
+      };
+    }
+
+    if (parseFloat(cruise_payment_amount) > cruise.cruise_price) {
+      return {
+        error: "Cruise payment amount cannot be greater than cruise price",
+      };
+    }
+
+    let status = booking.status;
+
+    if (parseFloat(cruise_payment_amount) > 3000) {
+      status = "confirmed";
+    }
+
+    if (parseFloat(cruise_payment_amount) < cruise.cruise_price) {
+      status = "confirmed";
+    }
+
+    if (parseFloat(cruise_payment_amount) === cruise.cruise_price) {
+      status = "completed";
+    }
+
+    await sql.query(
+      "UPDATE cruise_bookings SET cruise_payment_amount = $1, cruise_payment_method = $2, status = $3, booked_by = $4 WHERE cruise_booking_number = $5",
+      [
+        cruise_payment_amount,
+        cruise_payment_method,
+        status,
+        userId,
+        cruiseBookingNumber,
+      ]
+    );
+
+    return {
+      success: "Cruise booking payment added successfully",
+    };
+  } catch (error) {
+    console.log({ paymentError: error });
+    return {
+      error: getErrorMessage(error),
+    };
+  }
+}
+
+export async function deleteCruiseBookingAction(id: string) {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    const cruiseBookingNumber = parseInt(id);
+
+    if (!cruiseBookingNumber) {
+      return {
+        error: "Cruise booking ID is required",
+      };
+    }
+
+    const userId = session?.user?.user_id;
+
+    const cruiseBooking = await getCruiseBookingByBookingNumber(
+      cruiseBookingNumber
+    );
+
+    console.log({ cruiseBooking });
+
+    if (!cruiseBooking) {
+      return {
+        error: "Cruise booking not found",
+      };
+    }
+
+    const notes = `Cruise booking deleted by ${userId} on ${new Date().toLocaleString()}`;
+
+    await sql.query(
+      "INSERT INTO cruise_booking_history (cruise_booking_number, msc_ref_number, customer_id, status, cruise_payment_amount, booked_by, deleted_by, notes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+      [
+        cruiseBooking.cruise_booking_number,
+        cruiseBooking.msc_ref_number,
+        cruiseBooking.customer_id,
+        cruiseBooking.status,
+        cruiseBooking.cruise_payment_amount,
+        cruiseBooking.booked_by,
+        userId,
+        notes,
+      ]
+    );
+
+    await sql.query(
+      "DELETE FROM cruise_bookings WHERE cruise_booking_number = $1",
+      [cruiseBookingNumber]
+    );
+
+    revalidatePath("/dashboard/admin/cruise-admin/cruise-bookings");
+
+    return {
+      success: "Cruise booking deleted successfully",
     };
   } catch (error) {
     console.log({ bookingError: error });

@@ -62,13 +62,13 @@ export const customerSchema = z.object({
     })
     .toLowerCase()
     .optional(),
-  number_of_adults: z
+  cruise_number_of_adults: z
     .string()
     .min(1, {
       message: "Number of adults is required",
     })
     .optional(),
-  number_of_kids: z
+  cruise_number_of_kids: z
     .string()
     .min(1, {
       message: "Number of kids is required",

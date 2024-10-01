@@ -45,15 +45,17 @@ import {
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 
-import { addCruiseBookingAction } from "@/actions/cruise.actions";
+import { updateCruiseBookingAction } from "@/actions/cruise.actions";
 import { CustomInput } from "@/components/custom-input";
 
-export function CruiseBookingForm({
+export function UpdateCruiseBookingForm({
   cruises,
   customers,
+  cruiseBooking,
 }: {
   cruises: CruisePropsType[];
   customers: CustomerPropsType[];
+  cruiseBooking: CruiseBookingPropsType;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -61,10 +63,18 @@ export function CruiseBookingForm({
 
   const form = useForm<CruiseBookingType>({
     resolver: zodResolver(cruiseBookingSchema),
+    defaultValues: {
+      phone_number: cruiseBooking?.phone_number,
+      cruise_name: cruiseBooking?.cruise_name,
+      cruise_number_of_adults: String(cruiseBooking?.cruise_number_of_adults),
+      cruise_number_of_kids: String(cruiseBooking?.cruise_number_of_kids),
+    },
   });
 
+  const cruiseBookingID = cruiseBooking?.cruise_booking_number;
+
   const processForm = async (data: CruiseBookingType) => {
-    const res = await addCruiseBookingAction(data);
+    const res = await updateCruiseBookingAction(data, cruiseBookingID);
     if (res?.error) {
       toast.error(res.error);
     } else if (res?.success) {
@@ -79,7 +89,7 @@ export function CruiseBookingForm({
 
   return (
     <div className="fixed inset-0 bg-background flex items-center justify-center">
-      <div className="space-y-4 max-sm-w-xl w-[450px]">
+      <div className="space-y-4 max-w-xl w-[450px]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(processForm)}>
             <div className="grid gap-4 py-4">
@@ -196,6 +206,7 @@ export function CruiseBookingForm({
                 />
               </div>
             </div>
+
             <div className="grid gap-4 py-3">
               <Button
                 disabled={form.formState.isSubmitting}

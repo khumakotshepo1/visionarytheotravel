@@ -13,8 +13,9 @@ import { MoreHorizontal } from "lucide-react";
 
 import { toast } from "sonner";
 
-import { deleteCustomerAction } from "@/actions/customer.action";
 import CruiseBooking from "./CruiseBooking";
+import Link from "next/link";
+import { deleteCruiseBookingAction } from "@/actions/cruise.actions";
 
 export const cruiseBookingColumns: ColumnDef<CruiseBookingPropsType>[] = [
   {
@@ -40,7 +41,7 @@ export const cruiseBookingColumns: ColumnDef<CruiseBookingPropsType>[] = [
       const cruise_booking_number = booking.cruise_booking_number;
 
       const processForm = async () => {
-        const res = await deleteCustomerAction(cruise_booking_number);
+        const res = await deleteCruiseBookingAction(cruise_booking_number);
 
         if (res?.error) {
           toast.error(res.error);
@@ -69,6 +70,13 @@ export const cruiseBookingColumns: ColumnDef<CruiseBookingPropsType>[] = [
             <span className="text-sm pl-2">
               <CruiseBooking cruise_booking={booking} />
             </span>
+
+            <Link
+              href={`/dashboard/admin/cruises-admin/cruise-bookings/${cruise_booking_number}`}
+              className="text-sm pl-2 block"
+            >
+              Edit Booking
+            </Link>
           </DropdownMenuContent>
         </DropdownMenu>
       );

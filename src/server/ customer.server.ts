@@ -58,3 +58,35 @@ export async function getAllBookings() {
     throw new Error("Failed to fetch customers.");
   }
 }
+
+export async function getCruiseBookingByBookingNumber(
+  cruiseBookingNumber: number
+) {
+  try {
+    const { rows } = await sql.query(
+      `SELECT cb.*, c.cruise_name, cu.phone_number
+       FROM cruise_bookings cb
+       JOIN cruises c ON c.cruise_id = cb.cruise_id
+       JOIN customers cu ON cu.customer_id = cb.customer_id
+       WHERE cb.cruise_booking_number = $1`,
+      [cruiseBookingNumber]
+    );
+
+    return rows[0] || null;
+  } catch (error) {
+    throw new Error("Failed to fetch booking by booking number.");
+  }
+}
+
+export async function getCruiseBookingByCustomerId(customerId: number) {
+  try {
+    const { rows } = await sql.query(
+      "SELECT * FROM cruise_bookings WHERE customer_id = $1",
+      [customerId]
+    );
+
+    return rows[0] || null;
+  } catch (error) {
+    throw new Error("Failed to fetch booking by customer id.");
+  }
+}

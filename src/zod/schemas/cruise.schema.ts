@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export const shipSchema = z.object({
-  ship_id: z.string().optional(),
   ship_name: z
     .string()
     .min(3, {
@@ -25,7 +24,6 @@ export const shipSchema = z.object({
 });
 
 export const cabinSchema = z.object({
-  cabin_id: z.string().optional(),
   ship_id: z.string(),
   cabin_name: z
     .string()
@@ -40,9 +38,7 @@ export const cabinSchema = z.object({
 });
 
 export const cruiseItinerarySchema = z.object({
-  cruise_itinerary_id: z.string().optional(),
   cruise_id: z.string(),
-
   day: z.string(),
   arrive: z.string().optional(),
   depart: z.string().optional(),
@@ -50,7 +46,6 @@ export const cruiseItinerarySchema = z.object({
 });
 
 export const cruiseSchema = z.object({
-  cruise_id: z.string().optional(),
   ship_id: z.string(),
   cruise_destination: z.string(),
   cruise_name: z
@@ -86,10 +81,15 @@ export const cruiseSchema = z.object({
 });
 
 export const cruiseBookingSchema = z.object({
-  cruise_booking_id: z.string().optional(),
   cruise_name: z.string(),
   phone_number: z.string(),
-  status: z.string().optional(),
-  number_of_adults: z.string(),
-  number_of_kids: z.string(),
+  cruise_payment_amount: z.string().optional(),
+  cruise_payment_method: z.string().optional(),
+  cruise_number_of_adults: z.string(),
+  cruise_number_of_kids: z.string(),
+});
+
+export const cruiseBookingPaymentSchema = z.object({
+  cruise_payment_amount: z.string(),
+  cruise_payment_method: z.string(),
 });

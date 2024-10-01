@@ -4,15 +4,6 @@ import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-
-import {
   Form,
   FormControl,
   FormField,
@@ -40,7 +31,7 @@ import { customerSchema } from "@/zod/schemas/customer.schema";
 import { addCustomerCruiseBookingAction } from "@/actions/cruise.actions";
 
 export function QuoteForm({ cruise }: { cruise: CruisePropsType }) {
-  const { refresh } = useRouter();
+  const { refresh, back } = useRouter();
 
   const form = useForm<CustomerType>({
     resolver: zodResolver(customerSchema),
@@ -57,23 +48,15 @@ export function QuoteForm({ cruise }: { cruise: CruisePropsType }) {
       toast.success(res.success);
       form.reset();
       refresh();
+      setTimeout(() => {
+        back();
+      }, 2000);
     }
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
-        >
-          Get A Quote
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>{cruise.cruise_name} Quote</DialogTitle>
-        </DialogHeader>
+    <div className="fixed inset-0 bg-background flex items-center justify-center">
+      <div className="space-y-4 max-sm-w-xl w-[450px]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(processForm)}>
             <div className="grid gap-4 py-4">
@@ -150,21 +133,21 @@ export function QuoteForm({ cruise }: { cruise: CruisePropsType }) {
               <div className="grid grid-cols-2 gap-2">
                 <CustomInput
                   control={form.control}
-                  name="number_of_adults"
+                  name="cruise_number_of_adults"
                   label="Number of Adults"
                   placeholder="Adults 18 years and above"
                   type="number"
                 />
                 <CustomInput
                   control={form.control}
-                  name="number_of_kids"
+                  name="cruise_number_of_kids"
                   label="Number of Kids"
                   placeholder="Kids under 18 years"
                   type="number"
                 />
               </div>
             </div>
-            <DialogClose asChild>
+            <div className="grid gap-4 py-3">
               <Button
                 disabled={form.formState.isSubmitting}
                 type="submit"
@@ -176,10 +159,20 @@ export function QuoteForm({ cruise }: { cruise: CruisePropsType }) {
                   "Save"
                 )}
               </Button>
-            </DialogClose>
+
+              <Button
+                disabled={form.formState.isSubmitting}
+                className="w-full"
+                onClick={() => {
+                  back();
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
           </form>
         </Form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }

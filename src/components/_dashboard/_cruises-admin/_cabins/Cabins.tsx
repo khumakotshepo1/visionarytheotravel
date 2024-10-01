@@ -1,17 +1,24 @@
-import { CabinForm } from "@/components/_dashboard/_cruises-admin/_cabins/CabinForm";
 import { cabinColumns } from "@/components/_dashboard/_cruises-admin/_cabins/cabins-columns";
 
-import { getAllCabins, getAllShips } from "@/server/cruises.server";
+import { getAllCabins } from "@/server/cruises.server";
 import { CabinsTable } from "./CabinsTable";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export async function Cabins() {
   const cabins = (await getAllCabins()) as CabinPropsType[];
-  const ships = (await getAllShips()) as ShipPropsType[];
 
   return (
     <>
       <section className="flex justify-end items-center p-4">
-        <CabinForm ships={ships} />
+        <Link href="/dashboard/admin/cruises-admin/cabins/add-cabin">
+          <Button
+            variant="outline"
+            className="bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
+          >
+            Add Cabin
+          </Button>
+        </Link>
       </section>
       <section>
         <CabinsTable columns={cabinColumns} data={cabins} />

@@ -1,8 +1,9 @@
 import { shipColumns } from "@/components/_dashboard/_cruises-admin/_ships/ship-columns";
-import { ShipForm } from "@/components/_dashboard/_cruises-admin/_ships/ShipForm";
 
 import { getAllShips } from "@/server/cruises.server";
 import { ShipsTable } from "./ShipsTable";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export async function Ships() {
   const ships = (await getAllShips()) as ShipPropsType[];
@@ -10,7 +11,14 @@ export async function Ships() {
   return (
     <>
       <section className="flex justify-end items-center p-4">
-        <ShipForm />
+        <Link href="/dashboard/admin/cruises-admin/ships/add-ship">
+          <Button
+            variant="outline"
+            className="bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
+          >
+            Add Ship
+          </Button>
+        </Link>
       </section>
       <section>
         <ShipsTable columns={shipColumns} data={ships} />

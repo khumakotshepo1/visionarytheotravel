@@ -7,7 +7,7 @@ import {
   getCabinsByShipId,
   getCruiseItinerariesByCruiseId,
 } from "@/server/cruises.server";
-import { QuoteForm } from "./QuoteForm";
+
 import { Button } from "../ui/button";
 
 export async function CruiseSlug({ cruise }: { cruise: CruisePropsType }) {
@@ -85,7 +85,14 @@ export async function CruiseSlug({ cruise }: { cruise: CruisePropsType }) {
 
           {/*quote div*/}
           <div className="flex flex-col gap-2 text-base">
-            <QuoteForm cruise={cruise} />
+            <Link href={`/cruises/${cruise.cruise_id}/add-quote`}>
+              <Button
+                variant="outline"
+                className="bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement w-full"
+              >
+                Get A Quote
+              </Button>
+            </Link>
             <Link href={"/"}>
               <Button
                 variant="outline"
