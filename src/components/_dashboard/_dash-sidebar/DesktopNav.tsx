@@ -49,8 +49,8 @@ export function DesktopNav({ session }: { session: Session | null }) {
           href={item.href}
           onClick={() => setOpenCruisesMenu(!openCruisesMenu)}
           className={cn(
-            "hover:text-orangeElement transition-all ease-in-out duration-300 uppercase font-semibold",
-            pathname === item.href && "text-orangeElement"
+            "hover:text-crimsonElement transition-all ease-in-out duration-300 uppercase font-semibold",
+            pathname === item.href && "text-crimsonElement"
           )}
         >
           <span className="flex items-center gap-2 text-sm">{item.name}</span>
@@ -71,8 +71,8 @@ export function DesktopNav({ session }: { session: Session | null }) {
           href={item.href}
           onClick={() => setOpenPackagesMenu(!openPackagesMenu)}
           className={cn(
-            "hover:text-orangeElement transition-all ease-in-out duration-300 uppercase font-semibold",
-            pathname === item.href && "text-orangeElement"
+            "hover:text-crimsonElement transition-all ease-in-out duration-300 uppercase font-semibold",
+            pathname === item.href && "text-crimsonElement"
           )}
         >
           <span className="flex items-center gap-2 text-sm">{item.name}</span>
@@ -90,8 +90,8 @@ export function DesktopNav({ session }: { session: Session | null }) {
       <Link
         href={`/dashboard/${urlRole}`}
         className={cn(
-          "hover:text-orangeElement transition-all ease-in-out duration-300 uppercase font-semibold",
-          pathname === `/dashboard/${urlRole}` && "text-orangeElement"
+          "hover:text-crimsonElement transition-all ease-in-out duration-300 uppercase font-semibold",
+          pathname === `/dashboard/${urlRole}` && "text-crimsonElement"
         )}
       >
         <span className="flex items-center gap-2 text-sm">
@@ -106,9 +106,9 @@ export function DesktopNav({ session }: { session: Session | null }) {
         <div>
           <button
             className={cn(
-              "hover:text-orangeElement transition-all ease-in-out duration-300 uppercase font-semibold",
+              "hover:text-crimsonElement transition-all ease-in-out duration-300 uppercase font-semibold",
               pathname === `/dashboard/${urlRole}/cruises-admin` &&
-                "text-orangeElement"
+              "text-crimsonElement"
             )}
             onClick={() => setOpenCruisesMenu(!openCruisesMenu)}
             aria-label="Toggle Cruises Menu"
@@ -128,9 +128,9 @@ export function DesktopNav({ session }: { session: Session | null }) {
         <div>
           <button
             className={cn(
-              "hover:text-orangeElement transition-all ease-in-out duration-300 uppercase font-semibold",
+              "hover:text-crimsonElement transition-all ease-in-out duration-300 uppercase font-semibold",
               pathname === `/dashboard/${urlRole}/packages-admin` &&
-                "text-orangeElement"
+              "text-crimsonElement"
             )}
             onClick={() => setOpenPackagesMenu(!openPackagesMenu)}
             aria-label="Toggle Packages Menu"
@@ -152,7 +152,7 @@ export function DesktopNav({ session }: { session: Session | null }) {
           href={item.href}
           className={cn(
             "hover:text-highlightPath transition-all ease-in-out duration-300 uppercase font-semibold",
-            pathname === item.href && "text-orangeElement"
+            pathname === item.href && "text-crimsonElement"
           )}
         >
           <span className="flex items-center gap-2 text-sm">

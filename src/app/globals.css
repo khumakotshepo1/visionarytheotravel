@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --orange-element: 353, 100%, 63%;
+ --crimson-element: 353, 100%, 63%;
   --dark-element: 249, 16%, 18%;
   --light-element: 0, 0%, 86%;
 

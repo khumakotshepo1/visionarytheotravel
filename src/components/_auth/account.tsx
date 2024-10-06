@@ -32,7 +32,7 @@ export const Account = async () => {
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer">
           <AvatarImage src={session?.user?.image || ""} />
-          <AvatarFallback className="font-anton bg-darkElement dark:bg-lightElement text-orangeElement font-semibold">
+          <AvatarFallback className="font-anton bg-darkElement dark:bg-lightElement text-crimsonElement font-semibold">
             {avatarName}
           </AvatarFallback>
         </Avatar>

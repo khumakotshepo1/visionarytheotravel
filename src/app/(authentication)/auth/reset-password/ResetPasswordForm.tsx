@@ -56,7 +56,7 @@ export const ResetPasswordForm = () => {
           role="submit"
           aria-label="Reset Password"
           disabled={form.formState.isSubmitting}
-          className="w-full bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
+          className="w-full bg-crimsonElement dark:bg-crimsonElement text-lightElement dark:text-lightElement"
         >
           {form.formState.isSubmitting ? "Resetting..." : "Reset"}
         </Button>

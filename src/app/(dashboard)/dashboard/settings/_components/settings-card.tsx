@@ -30,7 +30,7 @@ export const SettingsCard = ({
   email,
 }: SettingsCard) => {
   return (
-    <Card className="bg-white bg-orangeElement dark:bg-orangeElement">
+    <Card className="bg-white bg-crimsonElement dark:bg-crimsonElement">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
@@ -47,9 +47,8 @@ export const SettingsCard = ({
           )
         ) : (
           <p
-            className={`${
-              title === "Email Address" ? "lowercase" : "capitalize"
-            } p-3 bg-background rounded-xl`}
+            className={`${title === "Email Address" ? "lowercase" : "capitalize"
+              } p-3 bg-background rounded-xl`}
           >
             {content}
           </p>

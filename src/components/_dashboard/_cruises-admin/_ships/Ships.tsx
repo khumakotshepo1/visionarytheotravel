@@ -14,7 +14,7 @@ export async function Ships() {
         <Link href="/dashboard/admin/cruises-admin/ships/add-ship">
           <Button
             variant="outline"
-            className="bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
+            className="bg-crimsonElement dark:bg-crimsonElement text-lightElement dark:text-lightElement"
           >
             Add Ship
           </Button>

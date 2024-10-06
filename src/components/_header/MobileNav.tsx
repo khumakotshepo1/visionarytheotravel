@@ -32,7 +32,7 @@ export default function MobileNav({ session }: { session: Session | null }) {
               onClick={() => setIsOpen(!isOpen)}
               className={cn(
                 "text-xl tracking-wide font-bold",
-                pathname === item.href && "text-orangeElement"
+                pathname === item.href && "text-crimsonElement"
               )}
             >
               {item.name}

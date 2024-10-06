@@ -52,7 +52,7 @@ export default function MobileDashNav({
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
             "hover:text-highlightPath transition-all ease-in-out duration-300 uppercase font-semibold",
-            pathname === item.href && "text-orangeElement"
+            pathname === item.href && "text-crimsonElement"
           )}
         >
           <span className="flex items-center gap-2 text-xl">{item.name}</span>
@@ -64,7 +64,7 @@ export default function MobileDashNav({
   const dashMenu = openDash ? (
     <nav className="fixed inset-0 z-50 flex flex-col bg-background">
       <button
-        className="w-full py-4 font-anton text-3xl tracking-wide bg-orangeElement text-lightElement"
+        className="w-full py-4 font-anton text-3xl tracking-wide bg-crimsonElement text-lightElement"
         onClick={() => setOpenDash(!openDash)}
       >
         main menu
@@ -75,7 +75,7 @@ export default function MobileDashNav({
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
             "text-xl tracking-wide",
-            pathname === `/dashboard/${urlRole}` && "text-orangeElement"
+            pathname === `/dashboard/${urlRole}` && "text-crimsonElement"
           )}
         >
           <span className="flex items-center gap-2 font-bold">
@@ -91,7 +91,7 @@ export default function MobileDashNav({
             <button
               className={cn(
                 "text-xl tracking-wide font-bold",
-                pathname === `/dashboard/${urlRole}/cruises-admin` && "text-orangeElement"
+                pathname === `/dashboard/${urlRole}/cruises-admin` && "text-crimsonElement"
               )}
               onClick={() => setOpen(!open)}
             >
@@ -113,7 +113,7 @@ export default function MobileDashNav({
             onClick={() => setIsOpen(!isOpen)}
             className={cn(
               "text-xl tracking-wide font-bold",
-              pathname === item.href && "text-orangeElement"
+              pathname === item.href && "text-crimsonElement"
             )}
           >
             <span className="flex items-center gap-2">

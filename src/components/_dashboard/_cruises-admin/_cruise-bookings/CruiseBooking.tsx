@@ -29,7 +29,7 @@ export default function CruiseBooking({
             Booking Number: {cruise_booking?.cruise_booking_number}
           </DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-8 border-b-4 border-orangeElement">
+        <div className="grid gap-4 py-8 border-b-4 border-crimsonElement">
           <h2 className="text-xl font-bold underline">Customer details</h2>
           <div className="grid gap-4">
             <h4 className="font-semibold text-sm capitalize">
@@ -47,7 +47,7 @@ export default function CruiseBooking({
             </div>
           </div>
         </div>
-        <div className="grid gap-4 py-8 border-b-4 border-orangeElement">
+        <div className="grid gap-4 py-8 border-b-4 border-crimsonElement">
           <h2 className="text-xl font-bold underline">Booking details</h2>
           <div className="grid gap-4">
             <h4 className="font-semibold text-sm capitalize">
@@ -66,15 +66,15 @@ export default function CruiseBooking({
               </span>
               <span className="flex gap-2 items-center border-b-2 border-foreground p-3">
                 <p className="flex gap-2 items-center">
-                  <MapPinIcon className="h-4 w-4 text-orangeElement" />{" "}
+                  <MapPinIcon className="h-4 w-4 text-crimsonElement" />{" "}
                   {cruise_booking?.cruise_destination}
                 </p>
                 <p className="flex gap-2 items-center">
-                  <AnchorIcon className="h-4 w-4 text-orangeElement" />{" "}
+                  <AnchorIcon className="h-4 w-4 text-crimsonElement" />{" "}
                   {cruise_booking?.departure_port}
                 </p>
                 <p className="flex gap-2 items-center">
-                  <ClockIcon className="h-4 w-4 text-orangeElement" />{" "}
+                  <ClockIcon className="h-4 w-4 text-crimsonElement" />{" "}
                   {cruise_booking?.duration} Nights
                 </p>
               </span>

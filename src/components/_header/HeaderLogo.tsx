@@ -25,7 +25,7 @@ export function HeaderLogo() {
             priority
           />
 
-          <h1 className="hidden md:block text-orangeElement dark:text-foreground font-semibold text-4xl font-anton">
+          <h1 className="hidden md:block text-crimsonElement dark:text-foreground font-semibold text-4xl font-anton">
             travel
           </h1>
         </span>

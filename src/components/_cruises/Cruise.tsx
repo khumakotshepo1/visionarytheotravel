@@ -69,7 +69,7 @@ export function Cruise({ cruises, title }: cruiseProps) {
                     </p>
                   </span>
 
-                  <span className="py-3 text-orangeElement font-bold flex items-center justify-start rounded-xl w-full">
+                  <span className="py-3 text-crimsonElement font-bold flex items-center justify-start rounded-xl w-full">
                     R{cruise.cruise_price}
                   </span>
                 </div>
@@ -125,7 +125,7 @@ export function Cruise({ cruises, title }: cruiseProps) {
                 </p>
               </span>
 
-              <span className="py-3 text-orangeElement font-bold flex items-center justify-start rounded-xl w-full">
+              <span className="py-3 text-crimsonElement font-bold flex items-center justify-start rounded-xl w-full">
                 R{cruise.cruise_price}
               </span>
             </div>

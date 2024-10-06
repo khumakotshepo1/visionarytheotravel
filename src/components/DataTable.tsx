@@ -63,7 +63,7 @@ export function DataTable<TData, TValue>({
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow
               key={headerGroup.id}
-              className="border-orangeElement dark:border-orangeElement"
+              className="border-crimsonElement dark:border-crimsonElement"
             >
               {headerGroup.headers.map((header) => {
                 return (
@@ -74,9 +74,9 @@ export function DataTable<TData, TValue>({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 );
               })}
@@ -89,7 +89,7 @@ export function DataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
-                className="border-orangeElement dark:border-orangeElement border-b-4"
+                className="border-crimsonElement dark:border-crimsonElement border-b-4"
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
@@ -113,7 +113,7 @@ export function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
-      <div className="flex items-center justify-center space-x-2 py-4 bg-orangeElement">
+      <div className="flex items-center justify-center space-x-2 py-4 bg-crimsonElement">
         <Button
           variant="outline"
           size="sm"

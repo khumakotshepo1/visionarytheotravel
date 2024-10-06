@@ -110,8 +110,8 @@ export function UpdateCruiseBookingForm({
                           >
                             {field.value
                               ? customers.find(
-                                  (item) => item.phone_number === field.value
-                                )?.phone_number
+                                (item) => item.phone_number === field.value
+                              )?.phone_number
                               : "Select Phone Number..."}
                             <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
@@ -211,7 +211,7 @@ export function UpdateCruiseBookingForm({
               <Button
                 disabled={form.formState.isSubmitting}
                 type="submit"
-                className="w-full bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
+                className="w-full bg-crimsonElement dark:bg-crimsonElement text-lightElement dark:text-lightElement"
               >
                 {form.formState.isSubmitting ? (
                   <Icons.spinner className="h-4 w-4 animate-spin" />

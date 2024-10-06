@@ -15,7 +15,7 @@ export async function CruiseBookings() {
         <Link href="/dashboard/admin/cruises-admin/cruise-bookings/add-booking">
           <Button
             variant="outline"
-            className="bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
+            className="bg-crimsonElement dark:bg-crimsonElement text-lightElement dark:text-lightElement"
           >
             Add Cruise Booking
           </Button>

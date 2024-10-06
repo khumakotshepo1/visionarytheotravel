@@ -88,7 +88,7 @@ export async function CruiseSlug({ cruise }: { cruise: CruisePropsType }) {
             <Link href={`/cruises/${cruise.cruise_id}/add-quote`}>
               <Button
                 variant="outline"
-                className="bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement w-full"
+                className="bg-crimsonElement dark:bg-crimsonElement text-lightElement dark:text-lightElement w-full"
               >
                 Get A Quote
               </Button>

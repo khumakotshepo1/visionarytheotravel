@@ -180,7 +180,7 @@ export function CabinForm({ ships }: { ships: ShipPropsType[] }) {
               <Button
                 disabled={form.formState.isSubmitting}
                 type="submit"
-                className="w-full bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
+                className="w-full bg-crimsonElement dark:bg-crimsonElement text-lightElement dark:text-lightElement"
               >
                 {form.formState.isSubmitting ? (
                   <Icons.spinner className="h-4 w-4 animate-spin" />

@@ -16,8 +16,8 @@ export default function DesktopNav() {
           key={item.name}
           href={item.href}
           className={cn(
-            "hover:text-orangeElement transition-all ease-in-out duration-300 capitalize text-sm font-bold",
-            pathname === item.href && "text-orangeElement"
+            "hover:text-crimsonElement transition-all ease-in-out duration-300 capitalize text-sm font-bold",
+            pathname === item.href && "text-crimsonElement"
           )}
         >
           {item.name}

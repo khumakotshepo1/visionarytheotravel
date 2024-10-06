@@ -14,7 +14,7 @@ export async function Cabins() {
         <Link href="/dashboard/admin/cruises-admin/cabins/add-cabin">
           <Button
             variant="outline"
-            className="bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement"
+            className="bg-crimsonElement dark:bg-crimsonElement text-lightElement dark:text-lightElement"
           >
             Add Cabin
           </Button>
