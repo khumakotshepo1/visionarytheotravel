@@ -50,36 +50,35 @@ export const DashCruiseBookingsCard = ({
   }, [totalPrice, previousTotalPrice]); // Only depend on totalPrice
 
   return (
-    <Card className="w-[350px] flex justify-between bg-gray-400/15 dark:bg-gray-600/15">
-      <div className="flex flex-col justify-between items-start">
-        <CardHeader>
-          <CardTitle>{title}</CardTitle>
-        </CardHeader>
-        <CardFooter>
-          <Link href={link || ""} aria-label="Enter">
-            <Button className="tracking-widest">Enter</Button>
-          </Link>
-        </CardFooter>
-      </div>
-      <div className="flex flex-col justify-center items-end gap-2 p-3">
-        <Badge
-          variant={"outline"}
-          className="flex justify-center items-center relative font-black text-green-600"
-        >
-          {data.length < 1 ? 0 : data.length}
-        </Badge>
-        {/* Display the total price */}
-        <p
-          className={cn("text-sm", {
-            "text-green-600": hasIncreased,
-            "text-red-600": hasDecreased,
-          })}
-        >
-          {hasIncreased ? "+" : hasDecreased ? "-" : ""}R
-          {totalPrice > 0 ? Number(totalPrice).toFixed(2) : "0.00"}{" "}
-          {/* Show 0.00 if totalPrice is 0 */}
-        </p>
-      </div>
-    </Card>
+    <Link href={link || ""} aria-label="Enter">
+      <Card className="w-[350px] flex justify-between bg-gray-400/15 dark:bg-gray-600/15">
+        <div className="flex flex-col justify-between items-start">
+          <CardHeader>
+            <CardTitle>{title}</CardTitle>
+          </CardHeader>
+          <CardFooter>
+          </CardFooter>
+        </div>
+        <div className="flex flex-col justify-center items-end gap-2 p-3">
+          <Badge
+            variant={"outline"}
+            className="flex justify-center items-center relative font-black text-green-600"
+          >
+            {data.length < 1 ? 0 : data.length}
+          </Badge>
+          {/* Display the total price */}
+          <p
+            className={cn("text-sm", {
+              "text-green-600": hasIncreased,
+              "text-red-600": hasDecreased,
+            })}
+          >
+            {hasIncreased ? "+" : hasDecreased ? "-" : ""}R
+            {totalPrice > 0 ? Number(totalPrice).toFixed(2) : "0.00"}{" "}
+            {/* Show 0.00 if totalPrice is 0 */}
+          </p>
+        </div>
+      </Card>
+    </Link>
   );
 };
