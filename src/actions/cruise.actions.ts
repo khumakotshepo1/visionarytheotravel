@@ -3,7 +3,6 @@
 import { auth } from "@/auth";
 import { sql } from "@/database";
 import {
-  getCruiseBookingPaymentByCruiseBookingNumber,
   getCruiseByDestionation,
   getCruiseById,
   getCruiseByName,
@@ -82,7 +81,7 @@ export const addShipAction = async (data: FormData) => {
               return reject(error.message);
             }
             return resolve(result?.secure_url);
-          }
+          },
         )
         .end(buffer);
     });
@@ -92,7 +91,7 @@ export const addShipAction = async (data: FormData) => {
     if (imageUrl) {
       await sql.query(
         `INSERT INTO ships (ship_name, ship_image, ship_class) VALUES ($1, $2, $3) RETURNING *`,
-        [ship_name, imageUrl, ship_class]
+        [ship_name, imageUrl, ship_class],
       );
     }
 
@@ -181,7 +180,7 @@ export const updateShipAction = async (data: FormData, id: string) => {
               return reject(error.message);
             }
             return resolve(result?.secure_url);
-          }
+          },
         )
         .end(buffer);
     });
@@ -191,7 +190,7 @@ export const updateShipAction = async (data: FormData, id: string) => {
     if (imageUrl) {
       await sql.query(
         `UPDATE ships SET ship_name = $1, ship_image = $2, type = $3 WHERE ship_id = $4`,
-        [ship_name, imageUrl, ship_class, shipId]
+        [ship_name, imageUrl, ship_class, shipId],
       );
     }
 
@@ -296,7 +295,7 @@ export const addCabinAction = async (data: FormData) => {
 
     // Delete existing images in the folder
     await cloudinary.api.delete_resources_by_prefix(
-      `msc/${ship}/${cabin_name}`
+      `msc/${ship}/${cabin_name}`,
     );
 
     // Upload the new image
@@ -316,7 +315,7 @@ export const addCabinAction = async (data: FormData) => {
               return reject(error.message);
             }
             return resolve(result?.secure_url);
-          }
+          },
         )
         .end(buffer);
     });
@@ -326,7 +325,7 @@ export const addCabinAction = async (data: FormData) => {
     if (imageUrl) {
       await sql.query(
         `INSERT INTO cabins (cabin_name, cabin_image, ship_id) VALUES ($1, $2, $3) RETURNING *`,
-        [cabin_name, imageUrl, ship_id]
+        [cabin_name, imageUrl, ship_id],
       );
     }
 
@@ -399,7 +398,7 @@ export const updateCabinAction = async (data: FormData, id: string) => {
 
     // Delete existing images in the folder
     await cloudinary.api.delete_resources_by_prefix(
-      `msc/${ship}/${cabin_name}`
+      `msc/${ship}/${cabin_name}`,
     );
 
     // Upload the new image
@@ -419,7 +418,7 @@ export const updateCabinAction = async (data: FormData, id: string) => {
               return reject(error.message);
             }
             return resolve(result?.secure_url);
-          }
+          },
         )
         .end(buffer);
     });
@@ -429,7 +428,7 @@ export const updateCabinAction = async (data: FormData, id: string) => {
     if (imageUrl) {
       await sql.query(
         `UPDATE cabins SET cabin_name = $1, cabin_image = $2, ship_id = $3 WHERE cabin_id = $4 RETURNING *`,
-        [cabin_name, imageUrl, ship_id, cabinId]
+        [cabin_name, imageUrl, ship_id, cabinId],
       );
     }
 
@@ -513,7 +512,7 @@ export const addCruiseItineraryAction = async (data: CruiseItineraryType) => {
 
     await sql.query(
       `INSERT INTO cruise_itineraries (cruise_id, day, location, arrive, depart) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [cruiseId, day, location, arrive, depart]
+      [cruiseId, day, location, arrive, depart],
     );
 
     return {
@@ -529,7 +528,7 @@ export const addCruiseItineraryAction = async (data: CruiseItineraryType) => {
 
 export const updateCruiseItineraryAction = async (
   data: CruiseItineraryType,
-  id: string
+  id: string,
 ) => {
   try {
     const session = await auth();
@@ -570,7 +569,7 @@ export const updateCruiseItineraryAction = async (
 
     await sql.query(
       "UPDATE cruise_itineraries SET cruise_id = $1, day = $2, location = $3, arrive = $4, depart = $5 WHERE cruise_itinerary_id = $6 RETURNING *",
-      [cruiseId, day, location, arrive, depart, cruiseItineraryId]
+      [cruiseId, day, location, arrive, depart, cruiseItineraryId],
     );
 
     return {
@@ -610,7 +609,7 @@ export const deleteCruiseItineraryAction = async (id: string) => {
 
     await sql.query(
       "DELETE FROM cruise_itineraries WHERE cruise_itinerary_id = $1",
-      [cruiseItineraryId]
+      [cruiseItineraryId],
     );
 
     revalidatePath("/dashboard/admin/cruises-admin/itinerary");
@@ -752,7 +751,7 @@ export const addCruiseAction = async (data: FormData) => {
               return reject(error.message);
             }
             return resolve(result?.secure_url);
-          }
+          },
         )
         .end(mapBuffer);
     });
@@ -773,7 +772,7 @@ export const addCruiseAction = async (data: FormData) => {
               return reject(error.message);
             }
             return resolve(result?.secure_url);
-          }
+          },
         )
         .end(cruiseBuffer);
     });
@@ -797,7 +796,7 @@ export const addCruiseAction = async (data: FormData) => {
         departure_port,
         cruise_price,
         cruiseImageUrl,
-      ]
+      ],
     );
 
     return {
@@ -945,7 +944,7 @@ export const updateCruiseAction = async (data: FormData, id: string) => {
               return reject(error.message);
             }
             return resolve(result?.secure_url);
-          }
+          },
         )
         .end(mapBuffer);
     });
@@ -966,7 +965,7 @@ export const updateCruiseAction = async (data: FormData, id: string) => {
               return reject(error.message);
             }
             return resolve(result?.secure_url);
-          }
+          },
         )
         .end(cruiseBuffer);
     });
@@ -991,7 +990,7 @@ export const updateCruiseAction = async (data: FormData, id: string) => {
         cruise_price,
         cruiseImageUrl,
         cruiseId,
-      ]
+      ],
     );
 
     return {
@@ -1045,7 +1044,7 @@ export const deleteCruiseAction = async (id: string) => {
 
 export async function addCustomerCruiseBookingAction(
   data: CustomerType,
-  id: string
+  id: string,
 ) {
   try {
     const cruiseId = parseInt(id);
@@ -1082,7 +1081,7 @@ export async function addCustomerCruiseBookingAction(
     if (!customerExists) {
       const { rows: customer } = await sql.query(
         "INSERT INTO customers (first_name, last_name, customer_email, phone_number, date_of_birth, gender) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-        [first_name, last_name, email, phone_number, date_of_birth, gender]
+        [first_name, last_name, email, phone_number, date_of_birth, gender],
       );
 
       if (customer) {
@@ -1094,7 +1093,7 @@ export async function addCustomerCruiseBookingAction(
             cruise_number_of_adults,
             cruise_number_of_kids,
             customer[0].customer_id,
-          ]
+          ],
         );
       }
 
@@ -1105,7 +1104,7 @@ export async function addCustomerCruiseBookingAction(
     }
 
     const alreadyBooked = await getCruiseBookingByCustomerId(
-      customerExists.customer_id
+      customerExists.customer_id,
     );
 
     if (alreadyBooked) {
@@ -1122,7 +1121,7 @@ export async function addCustomerCruiseBookingAction(
         cruise_number_of_adults,
         cruise_number_of_kids,
         customerExists.customer_id,
-      ]
+      ],
     );
 
     revalidatePath("/dashboard/admin");
@@ -1138,39 +1137,38 @@ export async function addCustomerCruiseBookingAction(
   }
 }
 
-export async function addPreviousTotalCruiseBookingPriceAction(prevTotalPrice: number) {
-
+export async function addPreviousTotalCruiseBookingPriceAction(
+  prevTotalPrice: number,
+) {
   try {
-
     if (!prevTotalPrice) {
       return {
         error: "Previous total price is required",
-      }
+      };
     }
 
-    const { rows: previousTotalPrice } = await sql.query("SELECT * FROM prev_cruise_total_price")
+    const { rows: previousTotalPrice } = await sql.query(
+      "SELECT * FROM prev_cruise_total_price",
+    );
 
     if (previousTotalPrice.length !== 0) {
-
-      await sql.query("DELETE FROM prev_cruise_total_price")
-
+      await sql.query("DELETE FROM prev_cruise_total_price");
     }
 
-
-    await sql.query("INSERT INTO prev_cruise_total_price (prev_cruise_total_price) VALUES ($1)", [prevTotalPrice])
+    await sql.query(
+      "INSERT INTO prev_cruise_total_price (prev_cruise_total_price) VALUES ($1)",
+      [prevTotalPrice],
+    );
 
     return {
       success: "Previous total price added successfully",
     };
-
-
   } catch (error) {
-    console.log({ error })
+    console.log({ error });
     return {
       error: getErrorMessage(error),
     };
   }
-
 }
 
 export async function addCruiseBookingAction(data: CruiseBookingType) {
@@ -1205,7 +1203,7 @@ export async function addCruiseBookingAction(data: CruiseBookingType) {
     const cruise = await getCruiseByName(cruise_name);
 
     const alreadyBooked = await getCruiseBookingByCustomerId(
-      customer.customer_id
+      customer.customer_id,
     );
 
     if (alreadyBooked) {
@@ -1222,7 +1220,7 @@ export async function addCruiseBookingAction(data: CruiseBookingType) {
         cruise_number_of_adults,
         cruise_number_of_kids,
         userId,
-      ]
+      ],
     );
 
     revalidatePath("/dashboard/admin");
@@ -1240,7 +1238,7 @@ export async function addCruiseBookingAction(data: CruiseBookingType) {
 
 export async function updateCruiseBookingAction(
   data: CruiseBookingType,
-  id: string
+  id: string,
 ) {
   try {
     const session = await auth();
@@ -1289,7 +1287,7 @@ export async function updateCruiseBookingAction(
         cruise_number_of_kids,
         userId,
         cruiseBookingNumber,
-      ]
+      ],
     );
 
     return {
@@ -1305,7 +1303,7 @@ export async function updateCruiseBookingAction(
 
 export async function CruiseBookingPaymentAction(
   data: CruiseBookingPaymentType,
-  id: string
+  id: string,
 ) {
   try {
     const session = await auth();
@@ -1352,59 +1350,71 @@ export async function CruiseBookingPaymentAction(
       };
     }
 
-
     const cruisePrice = cruise.cruise_price;
-    const totalCruisePayments = await getTotalCruisePaymentsByCruiseBookingNumber(cruiseBookingNumber) as number;
+    const totalCruisePayments =
+      (await getTotalCruisePaymentsByCruiseBookingNumber(
+        cruiseBookingNumber,
+      )) as number;
 
+    console.log({ totalCruisePayments });
 
-    console.log({ totalCruisePayments })
-
-    if (totalCruisePayments + Number(cruise_payment_amount) > cruise.cruise_price) {
-      return { error: "Cruise payment amount cannot be greater than cruise price" };
+    if (
+      totalCruisePayments + Number(cruise_payment_amount) >
+      cruise.cruise_price
+    ) {
+      return {
+        error: "Cruise payment amount cannot be greater than cruise price",
+      };
     }
     let status = booking.status;
 
-    const { rows: payCruiseBooking } = await sql.query("INSERT INTO cruise_booking_payments (cruise_booking_number, cruise_payment_amount, cruise_payment_method, recieved_by) VALUES ($1, $2, $3, $4) RETURNING *", [cruiseBookingNumber, cruise_payment_amount, cruise_payment_method, userId])
+    const { rows: payCruiseBooking } = await sql.query(
+      "INSERT INTO cruise_booking_payments (cruise_booking_number, cruise_payment_amount, cruise_payment_method, recieved_by) VALUES ($1, $2, $3, $4) RETURNING *",
+      [
+        cruiseBookingNumber,
+        cruise_payment_amount,
+        cruise_payment_method,
+        userId,
+      ],
+    );
 
     if (payCruiseBooking.length !== 0) {
-
-      console.log({ payCruiseBooking })
+      console.log({ payCruiseBooking });
 
       if (parseFloat(payCruiseBooking[0].cruise_payment_amount) > 3000) {
         status = "confirmed";
       }
 
-      if (parseFloat(payCruiseBooking[0].cruise_payment_amount) < cruise.cruise_price) {
+      if (
+        parseFloat(payCruiseBooking[0].cruise_payment_amount) <
+        cruise.cruise_price
+      ) {
         status = "confirmed";
       }
 
-      if (parseFloat(payCruiseBooking[0].cruise_payment_amount) === cruise.cruise_price) {
+      if (
+        parseFloat(payCruiseBooking[0].cruise_payment_amount) ===
+        cruise.cruise_price
+      ) {
         status = "completed";
       }
 
-
-      const cruiseBalanceDue = totalCruisePayments + Number(payCruiseBooking[0].cruise_payment_amount) - Number(cruisePrice);
+      const cruiseBalanceDue =
+        totalCruisePayments +
+        Number(payCruiseBooking[0].cruise_payment_amount) -
+        Number(cruisePrice);
 
       const { rows: updateCruiseBooking } = await sql.query(
         "UPDATE cruise_bookings SET status = $1, cruise_balance_due = $2 WHERE cruise_booking_number = $3",
-        [
-          status,
-          cruiseBalanceDue,
-          payCruiseBooking[0].cruise_booking_number
-        ]
+        [status, cruiseBalanceDue, payCruiseBooking[0].cruise_booking_number],
       );
 
-
       if (updateCruiseBooking) {
-
         return {
           success: "Cruise booking payment added successfully",
         };
-
       }
-
     }
-
   } catch (error) {
     console.log({ paymentError: error });
     return {
@@ -1433,12 +1443,12 @@ export async function deleteCruiseBookingAction(id: string) {
 
     const userId = session?.user?.user_id;
 
-    const cruiseBooking = await getCruiseBookingByBookingNumber(
-      cruiseBookingNumber
-    );
+    const cruiseBooking =
+      await getCruiseBookingByBookingNumber(cruiseBookingNumber);
 
-
-    const totalAmount = await getTotalCruisePaymentsByCruiseBookingNumber(cruiseBookingNumber) as number;
+    const totalAmount = (await getTotalCruisePaymentsByCruiseBookingNumber(
+      cruiseBookingNumber,
+    )) as number;
 
     console.log({ totalAmount });
 
@@ -1461,12 +1471,12 @@ export async function deleteCruiseBookingAction(id: string) {
         cruiseBooking.booked_by,
         userId,
         notes,
-      ]
+      ],
     );
 
     await sql.query(
       "DELETE FROM cruise_bookings WHERE cruise_booking_number = $1",
-      [cruiseBookingNumber]
+      [cruiseBookingNumber],
     );
 
     revalidatePath("/dashboard/admin/cruise-admin/cruise-bookings");
