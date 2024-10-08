@@ -7,6 +7,7 @@ import {
   getCruiseById,
   getCruiseByName,
   getShipByName,
+  getTotalCruisePaymentsByCruiseBookingNumber,
 } from "@/server/cruises.server";
 import { getErrorMessage } from "@/utils/error-message";
 import { revalidatePath } from "next/cache";
@@ -30,7 +31,6 @@ import {
   getCustomerByEmail,
   getCustomerByPhoneNumber,
 } from "@/server/customer.server";
-import { getTotalCruisePaymentsByCruiseBookingNumber } from "@/utils/custom-utils";
 
 export const addShipAction = async (data: FormData) => {
   try {

@@ -17,7 +17,7 @@ export const getShipByName = cache(async (shipName: string) => {
   try {
     const { rows } = await sql.query(
       "SELECT * FROM ships WHERE ship_name = $1",
-      [shipName]
+      [shipName],
     );
 
     return rows[0] || null;
@@ -29,7 +29,7 @@ export const getShipByName = cache(async (shipName: string) => {
 export const getAllCabins = cache(async () => {
   try {
     const { rows } = await sql.query(
-      "SELECT c.*, s.ship_name as ship FROM cabins c JOIN ships s ON s.ship_id = c.ship_id"
+      "SELECT c.*, s.ship_name as ship FROM cabins c JOIN ships s ON s.ship_id = c.ship_id",
     );
 
     return rows || null;
@@ -42,7 +42,7 @@ export const getCabinsByShipId = cache(async (ship_id: number) => {
   try {
     const { rows } = await sql.query(
       "SELECT * FROM cabins WHERE ship_id = $1",
-      [ship_id]
+      [ship_id],
     );
 
     return rows || null;
@@ -54,7 +54,7 @@ export const getCabinsByShipId = cache(async (ship_id: number) => {
 export const getAllCruises = cache(async () => {
   try {
     const { rows } = await sql.query(
-      "SELECT c.*, s.* FROM cruises c JOIN ships s ON s.ship_id = c.ship_id"
+      "SELECT c.*, s.* FROM cruises c JOIN ships s ON s.ship_id = c.ship_id",
     );
 
     return rows || null;
@@ -67,7 +67,7 @@ export const getCruiseById = cache(async (cruiseId: number) => {
   try {
     const { rows } = await sql.query(
       "SELECT c.*, s.* FROM cruises c JOIN ships s ON s.ship_id = c.ship_id WHERE cruise_id = $1",
-      [cruiseId]
+      [cruiseId],
     );
 
     return rows[0] || null;
@@ -80,7 +80,7 @@ export const getCruiseByName = cache(async (cruiseName: string) => {
   try {
     const { rows } = await sql.query(
       "SELECT * FROM cruises WHERE cruise_name = $1",
-      [cruiseName]
+      [cruiseName],
     );
 
     return rows[0] || null;
@@ -94,20 +94,20 @@ export const getCruiseByDestionation = cache(
     try {
       const { rows } = await sql.query(
         "SELECT * FROM cruises WHERE cruise_destination = $1",
-        [cruiseDestination]
+        [cruiseDestination],
       );
 
       return rows[0] || null;
     } catch (error) {
       throw new Error("Failed to fetch cruise by name.");
     }
-  }
+  },
 );
 
 export const getAllCruiseItineraries = cache(async () => {
   try {
     const { rows } = await sql.query(
-      "SELECT ci.*, c.cruise_name as cruise FROM cruise_itineraries ci JOIN cruises c ON c.cruise_id = ci.cruise_id"
+      "SELECT ci.*, c.cruise_name as cruise FROM cruise_itineraries ci JOIN cruises c ON c.cruise_id = ci.cruise_id",
     );
 
     return rows || null;
@@ -121,14 +121,14 @@ export const getCruiseItinerariesByCruiseId = cache(
     try {
       const { rows } = await sql.query(
         "SELECT * FROM cruise_itineraries WHERE cruise_id = $1",
-        [cruise_id]
+        [cruise_id],
       );
 
       return rows || null;
     } catch (error) {
       throw new Error("Failed to fetch cruise itineraries by cruise id.");
     }
-  }
+  },
 );
 
 export const getAllCruiseBookings = cache(async () => {
@@ -151,7 +151,7 @@ export const getAllCruiseBookings = cache(async () => {
       `SELECT cb.*, c.*, cu.*
        FROM cruise_bookings cb
        JOIN cruises c ON c.cruise_id = cb.cruise_id
-       JOIN customers cu ON cu.customer_id = cb.customer_id`
+       JOIN customers cu ON cu.customer_id = cb.customer_id`,
     );
 
     return rows || null;
@@ -170,30 +170,57 @@ export const getPreviousCruiseTotalPrice = cache(async () => {
   }
 });
 
+export const getCruiseBookingPaymentByCruiseBookingNumber = cache(
+  async (cruiseBookingNumber: number) => {
+    try {
+      const session = await auth();
 
+      if (!session) {
+        return {
+          error: "Unauthorized",
+        };
+      }
 
-export const getCruiseBookingPaymentByCruiseBookingNumber = cache(async (cruiseBookingNumber: number) => {
-  try {
-    const session = await auth();
+      if (
+        session?.user?.role !== "ADMIN" &&
+        session?.user?.role !== "MANAGER"
+      ) {
+        return {
+          error: "Unauthorized",
+        };
+      }
 
-    if (!session) {
-      return {
-        error: "Unauthorized",
-      };
+      const { rows } = await sql.query(
+        "SELECT cruise_payment_amount FROM cruise_booking_payments WHERE cruise_booking_number = $1",
+        [cruiseBookingNumber],
+      );
+
+      return rows || null;
+    } catch (error) {
+      throw new Error(
+        "Failed to fetch cruise booking payment by cruise booking number",
+      );
     }
+  },
+);
 
-    if (session?.user?.role !== "ADMIN" && session?.user?.role !== "MANAGER") {
-      return {
-        error: "Unauthorized",
-      };
+export const getTotalCruisePaymentsByCruiseBookingNumber = cache(
+  async (cruiseBookingNumber: number) => {
+    try {
+      const cruiseBookingPayments =
+        (await getCruiseBookingPaymentByCruiseBookingNumber(
+          cruiseBookingNumber,
+        )) as { cruise_payment_amount: string }[];
+
+      const totalCruisePayments = cruiseBookingPayments.reduce(
+        (acc, cur) => acc + (Number(cur.cruise_payment_amount) || 0),
+        0,
+      );
+
+      return totalCruisePayments;
+    } catch (error) {
+      console.error("Error fetching total cruise payments:", error);
+      throw new Error("Failed to retrieve total cruise payments");
     }
-
-    const { rows } = await sql.query(
-      "SELECT cruise_payment_amount FROM cruise_booking_payments WHERE cruise_booking_number = $1", [cruiseBookingNumber]
-    );
-
-    return rows || null;
-  } catch (error) {
-    throw new Error("Failed to fetch cruise booking payment by cruise booking number");
-  }
-});
+  },
+);
