@@ -77,6 +77,14 @@ export const cruiseBookingColumns: ColumnDef<CruiseBookingPropsType>[] = [
             >
               Edit Booking
             </Link>
+
+
+            <Link
+              href={`/dashboard/admin/cruises-admin/cruise-bookings/${cruise_booking_number}/pay-cruise`}
+              className="text-sm pl-2 block"
+            >
+              Pay Booking
+            </Link>
           </DropdownMenuContent>
         </DropdownMenu>
       );

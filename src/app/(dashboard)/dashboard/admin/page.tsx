@@ -1,12 +1,14 @@
 import { DashCruiseBookingsCard } from "@/components/_dashboard/DashCruiseBookingsCard";
 // import { getAllCustomers } from "@/server/ customer.server";
-import { getAllCruiseBookings } from "@/server/cruises.server";
+import { getAllCruiseBookings, getPreviousCruiseTotalPrice } from "@/server/cruises.server";
 
 export default async function AdminDashboardPage() {
   const cruiseBookings =
     (await getAllCruiseBookings()) as CruiseBookingPropsType[];
 
-  console.log({ cruiseBookings });
+  const previousTotalPrice = await getPreviousCruiseTotalPrice();
+
+  console.log({ previousTotalPrice })
 
   // const customers = (await getAllCustomers()) as CustomerPropsType[];
 
@@ -16,6 +18,7 @@ export default async function AdminDashboardPage() {
         title="Cruise Bookings"
         link="/dashboard/admin/cruises-admin/cruise-bookings"
         data={cruiseBookings}
+        prev_cruise_total_price={previousTotalPrice}
       />
     </section>
   );

@@ -57,6 +57,14 @@ CREATE TABLE
     UNIQUE (cruise_id, day) -- Unique index on day for each cruise
   );
 
+
+CREATE TABLE prev_cruise_total_price(
+    id SERIAL PRIMARY KEY,
+    prev_cruise_total_price NUMERIC(10, 2) DEFAULT 0.00,  -- Previous total price, defaults to 0.00
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Timestamp for when the record was created
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Timestamp for when the record was last updated
+);
+
 -- Create optimized indexes for faster querying
 CREATE INDEX idx_cabins_ship_id ON cabins (ship_id);
 

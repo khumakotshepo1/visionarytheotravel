@@ -33,10 +33,9 @@ CREATE TABLE
         customer_id INTEGER NOT NULL REFERENCES customers (customer_id) ON DELETE CASCADE,
         package_id INTEGER NOT NULL REFERENCES packages (package_id) ON DELETE CASCADE,
         status VARCHAR(20) NOT NULL CHECK (status IN ('pending', 'confirmed', 'cancelled')) DEFAULT 'pending',
+        package_balance_due NUMERIC(10, 2) NOT NULL DEFAULT 0,
         cruise_number_of_adults INTEGER NOT NULL,
         cruise_number_of_kids INTEGER NOT NULL,
-        package_payment_amount NUMERIC(10, 2) NOT NULL DEFAULT 0,
-        package_payment_method VARCHAR(100) NOT NULL DEFAULT 'cash',
         booked_by INTEGER NOT NULL,
         created_at TIMESTAMP DEFAULT NOW (),
         updated_at TIMESTAMP DEFAULT NOW ()
@@ -52,14 +51,35 @@ CREATE TABLE
         status VARCHAR(20) NOT NULL CHECK (
             status IN ('pending', 'confirmed', 'completed', 'cancelled')
         ) DEFAULT 'pending',
+        cruise_balance_due NUMERIC(10, 2) NOT NULL DEFAULT 0,
         cruise_number_of_adults INTEGER NOT NULL,
         cruise_number_of_kids INTEGER NOT NULL,
-        cruise_payment_amount NUMERIC(10, 2) NOT NULL DEFAULT 0,
-        cruise_payment_method VARCHAR(100) NOT NULL DEFAULT 'cash',
         booked_by INTEGER NOT NULL,
         created_at TIMESTAMP DEFAULT NOW (),
         updated_at TIMESTAMP DEFAULT NOW ()
     );
+
+CREATE TABLE 
+    IF NOT EXISTS cruise_booking_payments (
+    cruise_booking_payment_id SERIAL PRIMARY KEY,
+    cruise_booking_number BIGINT NOT NULL REFERENCES cruise_bookings (cruise_booking_number) ON DELETE CASCADE,
+    cruise_payment_amount NUMERIC(10, 2) NOT NULL DEFAULT 0,
+    cruise_payment_method VARCHAR(100) NOT NULL DEFAULT 'cash',
+    recieved_by INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW (),
+    updated_at TIMESTAMP DEFAULT NOW ()
+)
+
+CREATE TABLE 
+    IF NOT EXISTS package_booking_payments (
+    package_booking_payment_id SERIAL PRIMARY KEY,
+    package_booking_number BIGINT NOT NULL REFERENCES package_bookings (package_booking_number) ON DELETE CASCADE,
+    package_payment_amount NUMERIC(10, 2) NOT NULL DEFAULT 0,
+    package_payment_method VARCHAR(100) NOT NULL DEFAULT 'cash',
+    recieved_by INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW (),
+    updated_at TIMESTAMP DEFAULT NOW ()
+)
 
 -- Create the cruise_booking_history table
 CREATE TABLE
@@ -69,7 +89,7 @@ CREATE TABLE
         msc_ref_number VARCHAR(100) NOT NULL DEFAULT '0',
         customer_id INTEGER NOT NULL REFERENCES customers (customer_id) ON DELETE CASCADE,
         status VARCHAR(20),
-        payment_amount NUMERIC(10, 2) NOT NULL DEFAULT 0,
+        cruise_payment_amount NUMERIC(10, 2) NOT NULL DEFAULT 0,
         booked_by INTEGER NOT NULL,
         deleted_by INTEGER NOT NULL,
         notes TEXT,
@@ -87,7 +107,7 @@ CREATE TABLE
         excursion_ref_number VARCHAR(100) NOT NULL DEFAULT '0',
         customer_id INTEGER NOT NULL REFERENCES customers (customer_id) ON DELETE CASCADE,
         status VARCHAR(20),
-        payment_amount NUMERIC(10, 2) NOT NULL DEFAULT 0,
+        package_payment_amount NUMERIC(10, 2) NOT NULL DEFAULT 0,
         booked_by INTEGER NOT NULL,
         deleted_by INTEGER NOT NULL,
         notes TEXT,

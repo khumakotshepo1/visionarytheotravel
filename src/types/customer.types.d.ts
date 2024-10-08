@@ -20,11 +20,12 @@ declare interface CustomerPropsType {
 
 declare interface CruiseBookingPropsType
   extends CustomerPropsType,
-    CruisePropsType {
+  CruisePropsType {
   cruise_booking_number: string;
   customer_id: string;
   cruise_id: string;
   status: string;
+  cruise_balance_due: string,
   cruise_number_of_adults: number;
   cruise_number_of_kids: number;
   booked_by: string;

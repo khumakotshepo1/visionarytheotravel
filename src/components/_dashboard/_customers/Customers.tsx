@@ -1,5 +1,5 @@
 import { customerColumns } from "./customer-columns";
-import { getAllCustomers } from "@/server/ customer.server";
+import { getAllCustomers } from "@/server/customer.server";
 import { CustomerForm } from "./CustomerForm";
 import { CustomersTable } from "./CustomersTable";
 

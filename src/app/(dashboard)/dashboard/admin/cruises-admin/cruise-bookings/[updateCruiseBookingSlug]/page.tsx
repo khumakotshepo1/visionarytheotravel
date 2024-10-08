@@ -2,7 +2,7 @@ import { UpdateCruiseBookingForm } from "@/components/_dashboard/_cruises-admin/
 import {
   getAllCustomers,
   getCruiseBookingByBookingNumber,
-} from "@/server/ customer.server";
+} from "@/server/customer.server";
 import { getAllCruises } from "@/server/cruises.server";
 
 export default async function UpdateCruiseBookingSlug({

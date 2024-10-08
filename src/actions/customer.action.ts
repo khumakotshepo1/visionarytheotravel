@@ -1,7 +1,7 @@
 "use server";
 
 import { sql } from "@/database";
-import { getCustomerByEmail } from "@/server/ customer.server";
+import { getCustomerByEmail } from "@/server/customer.server";
 import { getErrorMessage } from "@/utils/error-message";
 import { customerSchema } from "@/zod/schemas/customer.schema";
 import { CustomerType } from "@/zod/types/customer.type";

@@ -1,5 +1,5 @@
 import { CruiseBookingForm } from "@/components/_dashboard/_cruises-admin/_cruise-bookings/CruiseBookingForm";
-import { getAllCustomers } from "@/server/ customer.server";
+import { getAllCustomers } from "@/server/customer.server";
 import { getAllCruises } from "@/server/cruises.server";
 
 export default async function AddBookingPage() {

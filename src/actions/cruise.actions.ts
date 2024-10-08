@@ -3,6 +3,7 @@
 import { auth } from "@/auth";
 import { sql } from "@/database";
 import {
+  getCruiseBookingPaymentByCruiseBookingNumber,
   getCruiseByDestionation,
   getCruiseById,
   getCruiseByName,
@@ -29,7 +30,8 @@ import {
   getCruiseBookingByCustomerId,
   getCustomerByEmail,
   getCustomerByPhoneNumber,
-} from "@/server/ customer.server";
+} from "@/server/customer.server";
+import { getTotalCruisePaymentsByCruiseBookingNumber } from "@/utils/custom-utils";
 
 export const addShipAction = async (data: FormData) => {
   try {
@@ -1136,6 +1138,41 @@ export async function addCustomerCruiseBookingAction(
   }
 }
 
+export async function addPreviousTotalCruiseBookingPriceAction(prevTotalPrice: number) {
+
+  try {
+
+    if (!prevTotalPrice) {
+      return {
+        error: "Previous total price is required",
+      }
+    }
+
+    const { rows: previousTotalPrice } = await sql.query("SELECT * FROM prev_cruise_total_price")
+
+    if (previousTotalPrice.length !== 0) {
+
+      await sql.query("DELETE FROM prev_cruise_total_price")
+
+    }
+
+
+    await sql.query("INSERT INTO prev_cruise_total_price (prev_cruise_total_price) VALUES ($1)", [prevTotalPrice])
+
+    return {
+      success: "Previous total price added successfully",
+    };
+
+
+  } catch (error) {
+    console.log({ error })
+    return {
+      error: getErrorMessage(error),
+    };
+  }
+
+}
+
 export async function addCruiseBookingAction(data: CruiseBookingType) {
   try {
     const session = await auth();
@@ -1315,40 +1352,59 @@ export async function CruiseBookingPaymentAction(
       };
     }
 
-    if (parseFloat(cruise_payment_amount) > cruise.cruise_price) {
-      return {
-        error: "Cruise payment amount cannot be greater than cruise price",
-      };
-    }
 
+    const cruisePrice = cruise.cruise_price;
+    const totalCruisePayments = await getTotalCruisePaymentsByCruiseBookingNumber(cruiseBookingNumber) as number;
+
+
+    console.log({ totalCruisePayments })
+
+    if (totalCruisePayments + Number(cruise_payment_amount) > cruise.cruise_price) {
+      return { error: "Cruise payment amount cannot be greater than cruise price" };
+    }
     let status = booking.status;
 
-    if (parseFloat(cruise_payment_amount) > 3000) {
-      status = "confirmed";
+    const { rows: payCruiseBooking } = await sql.query("INSERT INTO cruise_booking_payments (cruise_booking_number, cruise_payment_amount, cruise_payment_method, recieved_by) VALUES ($1, $2, $3, $4) RETURNING *", [cruiseBookingNumber, cruise_payment_amount, cruise_payment_method, userId])
+
+    if (payCruiseBooking.length !== 0) {
+
+      console.log({ payCruiseBooking })
+
+      if (parseFloat(payCruiseBooking[0].cruise_payment_amount) > 3000) {
+        status = "confirmed";
+      }
+
+      if (parseFloat(payCruiseBooking[0].cruise_payment_amount) < cruise.cruise_price) {
+        status = "confirmed";
+      }
+
+      if (parseFloat(payCruiseBooking[0].cruise_payment_amount) === cruise.cruise_price) {
+        status = "completed";
+      }
+
+
+      const cruiseBalanceDue = totalCruisePayments + Number(payCruiseBooking[0].cruise_payment_amount) - Number(cruisePrice);
+
+      const { rows: updateCruiseBooking } = await sql.query(
+        "UPDATE cruise_bookings SET status = $1, cruise_balance_due = $2 WHERE cruise_booking_number = $3",
+        [
+          status,
+          cruiseBalanceDue,
+          payCruiseBooking[0].cruise_booking_number
+        ]
+      );
+
+
+      if (updateCruiseBooking) {
+
+        return {
+          success: "Cruise booking payment added successfully",
+        };
+
+      }
+
     }
 
-    if (parseFloat(cruise_payment_amount) < cruise.cruise_price) {
-      status = "confirmed";
-    }
-
-    if (parseFloat(cruise_payment_amount) === cruise.cruise_price) {
-      status = "completed";
-    }
-
-    await sql.query(
-      "UPDATE cruise_bookings SET cruise_payment_amount = $1, cruise_payment_method = $2, status = $3, booked_by = $4 WHERE cruise_booking_number = $5",
-      [
-        cruise_payment_amount,
-        cruise_payment_method,
-        status,
-        userId,
-        cruiseBookingNumber,
-      ]
-    );
-
-    return {
-      success: "Cruise booking payment added successfully",
-    };
   } catch (error) {
     console.log({ paymentError: error });
     return {
@@ -1381,7 +1437,10 @@ export async function deleteCruiseBookingAction(id: string) {
       cruiseBookingNumber
     );
 
-    console.log({ cruiseBooking });
+
+    const totalAmount = await getTotalCruisePaymentsByCruiseBookingNumber(cruiseBookingNumber) as number;
+
+    console.log({ totalAmount });
 
     if (!cruiseBooking) {
       return {
@@ -1398,7 +1457,7 @@ export async function deleteCruiseBookingAction(id: string) {
         cruiseBooking.msc_ref_number,
         cruiseBooking.customer_id,
         cruiseBooking.status,
-        cruiseBooking.cruise_payment_amount,
+        totalAmount,
         cruiseBooking.booked_by,
         userId,
         notes,

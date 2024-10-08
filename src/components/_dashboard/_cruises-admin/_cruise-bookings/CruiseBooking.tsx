@@ -83,9 +83,20 @@ export default function CruiseBooking({
                 <p>Kids: {cruise_booking?.cruise_number_of_kids}</p>
               </span>
             </div>
-            <div className="flex gap-4 items-center text-xs p-3 bg-gray-400/15 dark:bg-gray-600/15 rounded-xl">
-              <p className="font-semibold text-lg p-3">
+            <div className="flex flex-col items-center text-xs p-3 bg-gray-400/15 dark:bg-gray-600/15 rounded-xl">
+              <p className="font-bold text-xl capitalize p-3">
+                cruise amount
+              </p>
+              <p className="font-semibold text-sm p-3">
                 Price: R{cruise_booking?.cruise_price}
+              </p>
+            </div>
+            <div className="flex flex-col items-center text-xs p-3 bg-gray-400/15 dark:bg-gray-600/15 rounded-xl">
+              <p className="font-bold text-xl capitalize p-3">
+                balances due
+              </p>
+              <p className="font-semibold text-sm p-3">
+                R{cruise_booking?.cruise_balance_due}
               </p>
             </div>
           </div>

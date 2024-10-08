@@ -1,81 +1,98 @@
+
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { addPreviousTotalCruiseBookingPriceAction } from "@/actions/cruise.actions";
 
-// Define the type for Cruise Bookings
+// Define types
 interface CruiseBooking {
-  cruise_price: string; // Keep this as a string since it's in the data
+  cruise_price: string;
+}
+
+interface PreviousCruiseTotal {
+  id: number;
+  prev_cruise_total_price: string;
+  created_at: Date;
+  updated_at: Date;
 }
 
 export const DashCruiseBookingsCard = ({
   title,
   link,
   data,
+  prev_cruise_total_price,
 }: {
   title: string;
   link: string;
-  data: CruiseBooking[]; // Array of CruiseBooking objects
+  data: CruiseBooking[];
+  prev_cruise_total_price: PreviousCruiseTotal[];
 }) => {
-  // State to track previous totalPrice and trend
-  const [previousTotalPrice, setPreviousTotalPrice] = useState<number | null>(
-    null
-  );
   const [hasIncreased, setHasIncreased] = useState<boolean>(false);
   const [hasDecreased, setHasDecreased] = useState<boolean>(false);
 
-  // Calculate the current totalPrice for "Cruise Bookings"
-  const totalPrice = data.reduce(
-    (total, item) => total + (parseFloat(item.cruise_price) || 0),
-    0
-  );
+  // Use useMemo to calculate totalPrice and previousTotalPrice
+  const totalPrice = useMemo(() => {
+    return data.reduce(
+      (total, item) => total + (Number(item.cruise_price) || 0),
+      0
+    );
+  }, [data]);
 
-  // Effect to track and compare the current and previous total prices
+  const previousTotalPrice = useMemo(() => {
+    return Number(prev_cruise_total_price[0]?.prev_cruise_total_price) || 0;
+  }, [prev_cruise_total_price]);
+
+  const changedBasisPoints = totalPrice - previousTotalPrice;
+
+  // Memoized function to handle price comparison
+  const updatePriceTrend = useCallback(() => {
+    setHasIncreased(totalPrice > previousTotalPrice);
+    setHasDecreased(totalPrice < previousTotalPrice);
+  }, [totalPrice, previousTotalPrice]);
+
   useEffect(() => {
-    if (previousTotalPrice !== null) {
-      if (totalPrice > previousTotalPrice) {
-        setHasIncreased(true);
-        setHasDecreased(false);
-      } else if (totalPrice < previousTotalPrice) {
-        setHasIncreased(false);
-        setHasDecreased(true);
-      }
+    updatePriceTrend();
+
+    if (totalPrice !== previousTotalPrice) {
+      addPreviousTotalCruiseBookingPriceAction(totalPrice);
     }
-    // Update the previous total price to the current one
-    setPreviousTotalPrice(totalPrice);
-  }, [totalPrice, previousTotalPrice]); // Only depend on totalPrice
+  }, [totalPrice, previousTotalPrice, updatePriceTrend]);
+
+  if (!data || data.length === 0) {
+    return <div>No bookings available</div>;
+  }
 
   return (
-    <Link href={link || ""} aria-label="Enter">
-      <Card className="w-[350px] flex justify-between bg-gray-400/15 dark:bg-gray-600/15">
+    <Link href={link || ""} aria-label="Enter cruise bookings">
+      <Card className="w-[350px] flex flex-col justify-between items-center bg-gray-400/15 dark:bg-gray-600/15">
         <div className="flex flex-col justify-between items-start">
           <CardHeader>
             <CardTitle>{title}</CardTitle>
           </CardHeader>
-          <CardFooter>
-          </CardFooter>
         </div>
-        <div className="flex flex-col justify-center items-end gap-2 p-3">
+        <div className="flex justify-center items-center gap-4 p-6">
           <Badge
             variant={"outline"}
             className="flex justify-center items-center relative font-black text-green-600"
           >
-            {data.length < 1 ? 0 : data.length}
+            {data.length}
           </Badge>
-          {/* Display the total price */}
-          <p
-            className={cn("text-sm", {
+          <div className="relative flex justify-center items-center">
+            <p className={cn("text-sm")}>
+              R {totalPrice > 0 ? Number(totalPrice).toFixed(2) : "0.00"}
+            </p>
+            <p className={cn("text-xs text-gray-500 absolute -top-3 -right-10", {
               "text-green-600": hasIncreased,
               "text-red-600": hasDecreased,
-            })}
-          >
-            {hasIncreased ? "+" : hasDecreased ? "-" : ""}R
-            {totalPrice > 0 ? Number(totalPrice).toFixed(2) : "0.00"}{" "}
-            {/* Show 0.00 if totalPrice is 0 */}
-          </p>
+            })}>
+              {hasIncreased ? "+" : hasDecreased ? "-" : ""}
+              {previousTotalPrice ? changedBasisPoints.toFixed(2) : "0.00"}
+            </p>
+          </div>
         </div>
       </Card>
     </Link>

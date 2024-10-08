@@ -159,3 +159,41 @@ export const getAllCruiseBookings = cache(async () => {
     throw new Error("Failed to fetch cruise bookings.");
   }
 });
+
+export const getPreviousCruiseTotalPrice = cache(async () => {
+  try {
+    const { rows } = await sql.query("SELECT * FROM prev_cruise_total_price");
+
+    return rows || null;
+  } catch (error) {
+    throw new Error("Failed to fetch previous cruise total price.");
+  }
+});
+
+
+
+export const getCruiseBookingPaymentByCruiseBookingNumber = cache(async (cruiseBookingNumber: number) => {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    if (session?.user?.role !== "ADMIN" && session?.user?.role !== "MANAGER") {
+      return {
+        error: "Unauthorized",
+      };
+    }
+
+    const { rows } = await sql.query(
+      "SELECT cruise_payment_amount FROM cruise_booking_payments WHERE cruise_booking_number = $1", [cruiseBookingNumber]
+    );
+
+    return rows || null;
+  } catch (error) {
+    throw new Error("Failed to fetch cruise booking payment by cruise booking number");
+  }
+});
