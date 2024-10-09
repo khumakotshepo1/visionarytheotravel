@@ -1076,6 +1076,10 @@ export async function addCustomerCruiseBookingAction(
       cruise_number_of_kids,
     } = results.data;
 
+    const cruise = await getCruiseById(cruiseId);
+
+    console.log({ cruise })
+
     const customerExists = await getCustomerByEmail(email);
 
     if (!customerExists) {
@@ -1086,12 +1090,13 @@ export async function addCustomerCruiseBookingAction(
 
       if (customer) {
         await sql.query(
-          "INSERT INTO cruise_bookings (customer_id, cruise_id, cruise_number_of_adults, cruise_number_of_kids, booked_by) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+          "INSERT INTO cruise_bookings (customer_id, cruise_id, cruise_number_of_adults, cruise_number_of_kids, cruise_balance_due, booked_by) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
           [
             customer[0].customer_id,
             cruiseId,
             cruise_number_of_adults,
             cruise_number_of_kids,
+            cruise.cruise_price,
             customer[0].customer_id,
           ],
         );
@@ -1213,12 +1218,13 @@ export async function addCruiseBookingAction(data: CruiseBookingType) {
     }
 
     await sql.query(
-      "INSERT INTO cruise_bookings (customer_id, cruise_id, cruise_number_of_adults, cruise_number_of_kids, booked_by) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      "INSERT INTO cruise_bookings (customer_id, cruise_id, cruise_number_of_adults, cruise_number_of_kids, cruise_balance_due, booked_by) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [
         customer.customer_id,
         cruise.cruise_id,
         cruise_number_of_adults,
         cruise_number_of_kids,
+        cruise.cruise_price,
         userId,
       ],
     );
@@ -1381,7 +1387,7 @@ export async function CruiseBookingPaymentAction(
     if (payCruiseBooking.length !== 0) {
       console.log({ payCruiseBooking });
 
-      if (parseFloat(payCruiseBooking[0].cruise_payment_amount) > 3000) {
+      if (cruisePrice > 3000 && parseFloat(payCruiseBooking[0].cruise_payment_amount) >= 3000) {
         status = "confirmed";
       }
 
@@ -1392,17 +1398,11 @@ export async function CruiseBookingPaymentAction(
         status = "confirmed";
       }
 
-      if (
-        parseFloat(payCruiseBooking[0].cruise_payment_amount) ===
-        cruise.cruise_price
-      ) {
+      const cruiseBalanceDue = Number(cruisePrice) - (totalCruisePayments + Number(payCruiseBooking[0].cruise_payment_amount))
+
+      if (cruiseBalanceDue === 0) {
         status = "completed";
       }
-
-      const cruiseBalanceDue =
-        totalCruisePayments +
-        Number(payCruiseBooking[0].cruise_payment_amount) -
-        Number(cruisePrice);
 
       const { rows: updateCruiseBooking } = await sql.query(
         "UPDATE cruise_bookings SET status = $1, cruise_balance_due = $2 WHERE cruise_booking_number = $3",

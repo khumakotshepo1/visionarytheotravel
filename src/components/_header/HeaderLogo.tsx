@@ -7,7 +7,7 @@ export function HeaderLogo() {
       <Link href="/">
         <span className="flex items-center gap-2">
           <Image
-            className="block dark:hidden w-24 md:w-36 h-auto"
+            className="block dark:hidden w-24 h-auto"
             src="/logos/visionarytheo-logo-black.webp"
             alt="logo"
             width={144}
@@ -16,7 +16,7 @@ export function HeaderLogo() {
             priority
           />
           <Image
-            className="dark:block hidden w-24 md:w-36 h-auto"
+            className="dark:block hidden w-24 h-auto"
             src="/logos/visionarytheo-logo.webp"
             alt="logo"
             width={144}

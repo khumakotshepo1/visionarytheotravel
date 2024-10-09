@@ -89,7 +89,7 @@ export const DashCruiseBookingsCard = ({
               "text-green-600": hasIncreased,
               "text-red-600": hasDecreased,
             })}>
-              {hasIncreased ? "+" : hasDecreased ? "-" : ""}
+              {hasIncreased ? "+" : hasDecreased ? "" : ""}
               {previousTotalPrice ? changedBasisPoints.toFixed(2) : "0.00"}
             </p>
           </div>

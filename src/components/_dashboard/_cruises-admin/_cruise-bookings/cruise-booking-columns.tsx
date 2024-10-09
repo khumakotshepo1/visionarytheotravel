@@ -35,6 +35,10 @@ export const cruiseBookingColumns: ColumnDef<CruiseBookingPropsType>[] = [
     header: "Status",
   },
   {
+    accessorKey: "cruise_balance_due",
+    header: "Balance Due",
+  },
+  {
     id: "actions",
     cell: ({ row }) => {
       const booking = row.original;
@@ -60,20 +64,19 @@ export const cruiseBookingColumns: ColumnDef<CruiseBookingPropsType>[] = [
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuContent align="start" className="flex flex-col gap-3 py-4 px-8">
 
             <form action={processForm}>
-              <button className="text-sm pl-2">Delete</button>
+              <button className="text-sm">Delete</button>
             </form>
 
-            <span className="text-sm pl-2">
+            <span className="text-sm">
               <CruiseBooking cruise_booking={booking} />
             </span>
 
             <Link
               href={`/dashboard/admin/cruises-admin/cruise-bookings/${cruise_booking_number}`}
-              className="text-sm pl-2 block"
+              className="text-sm"
             >
               Edit Booking
             </Link>
@@ -81,7 +84,7 @@ export const cruiseBookingColumns: ColumnDef<CruiseBookingPropsType>[] = [
 
             <Link
               href={`/dashboard/admin/cruises-admin/cruise-bookings/${cruise_booking_number}/pay-cruise`}
-              className="text-sm pl-2 block"
+              className="text-sm"
             >
               Pay Booking
             </Link>

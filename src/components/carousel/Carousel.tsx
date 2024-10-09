@@ -6,6 +6,8 @@ import { useState, useCallback, useEffect, memo } from "react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+import { useIsOnline } from "../useIsOnline";
+import { useGeolocation } from "../useGeolocation";
 
 export type HeroCarouselType = {
   title: string;

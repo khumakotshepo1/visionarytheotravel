@@ -16,7 +16,7 @@ CREATE TABLE
         passport_expiry_date DATE,
         passport_country VARCHAR(50),
         customer_email VARCHAR(100) NOT NULL,
-        phone VARCHAR(20),
+        phone_number VARCHAR(20),
         address VARCHAR(100),
         date_of_birth DATE NOT NULL,
         created_at TIMESTAMP DEFAULT NOW (),

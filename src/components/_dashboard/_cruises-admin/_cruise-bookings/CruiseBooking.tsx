@@ -23,13 +23,13 @@ export default function CruiseBooking({
       <DialogTrigger asChild>
         <button>View Booking</button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] overflow-y-scroll lg:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="font-anton">
             Booking Number: {cruise_booking?.cruise_booking_number}
           </DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-8 border-b-4 border-crimsonElement">
+        <div className="grid gap-4 pt-4 border-b-4 border-crimsonElement">
           <h2 className="text-xl font-bold underline">Customer details</h2>
           <div className="grid gap-4">
             <h4 className="font-semibold text-sm capitalize">
@@ -47,7 +47,7 @@ export default function CruiseBooking({
             </div>
           </div>
         </div>
-        <div className="grid gap-4 py-8 border-b-4 border-crimsonElement">
+        <div className="grid gap-4 pt-4 border-b-4 border-crimsonElement">
           <h2 className="text-xl font-bold underline">Booking details</h2>
           <div className="grid gap-4">
             <h4 className="font-semibold text-sm capitalize">
@@ -83,7 +83,7 @@ export default function CruiseBooking({
                 <p>Kids: {cruise_booking?.cruise_number_of_kids}</p>
               </span>
             </div>
-            <div className="flex flex-col items-center text-xs p-3 bg-gray-400/15 dark:bg-gray-600/15 rounded-xl">
+            <div className="flex flex-col items-center text-xs bg-gray-400/15 dark:bg-gray-600/15 rounded-xl">
               <p className="font-bold text-xl capitalize p-3">
                 cruise amount
               </p>
@@ -91,7 +91,7 @@ export default function CruiseBooking({
                 Price: R{cruise_booking?.cruise_price}
               </p>
             </div>
-            <div className="flex flex-col items-center text-xs p-3 bg-gray-400/15 dark:bg-gray-600/15 rounded-xl">
+            <div className="flex flex-col items-center text-xs bg-gray-400/15 dark:bg-gray-600/15 rounded-xl">
               <p className="font-bold text-xl capitalize p-3">
                 balances due
               </p>
