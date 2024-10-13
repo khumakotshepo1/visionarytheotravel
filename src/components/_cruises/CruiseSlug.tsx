@@ -15,11 +15,11 @@ export async function CruiseSlug({ cruise }: { cruise: CruisePropsType }) {
   const cruiseId = parseInt(cruise.cruise_id);
 
   const cabins = (await getCabinsByShipId(shipId)) as CabinPropsType[];
-  const itinerary = await getCruiseItinerariesByCruiseId(cruiseId);
+  const itinerary = await getCruiseItinerariesByCruiseId(cruiseId) as CruiseItineraryPropsType[];
 
   return (
     <>
-      <section className="flex flex-col lg:flex-row justify-center md:items-center lg:items-start gap-2">
+      <section className="flex flex-col lg:flex-row justify-center md:items-center lg:items-startgap-2">
         <article className="h-96 w-full relative">
           <Image
             src={cruise.cruise_image}
@@ -88,7 +88,7 @@ export async function CruiseSlug({ cruise }: { cruise: CruisePropsType }) {
             <Link href={`/cruises/${cruise.cruise_id}/add-quote`}>
               <Button
                 variant="outline"
-                className="bg-crimsonElement dark:bg-crimsonElement text-lightElement dark:text-lightElement w-full"
+                className="bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement w-full"
               >
                 Get A Quote
               </Button>
