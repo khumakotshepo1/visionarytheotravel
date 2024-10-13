@@ -282,7 +282,7 @@ export const addCabinAction = async (data: FormData) => {
       };
     }
 
-    const { ship_id } = await getShipByName(ship);
+    const { ship_id } = await getShipByName(ship) as ShipPropsType;
 
     if (cabin_image.size > 3000000) {
       return {
@@ -385,7 +385,7 @@ export const updateCabinAction = async (data: FormData, id: string) => {
       };
     }
 
-    const { ship_id } = await getShipByName(ship);
+    const { ship_id } = await getShipByName(ship) as ShipPropsType;
 
     if (cabin_image.size > 3000000) {
       return {
@@ -508,7 +508,7 @@ export const addCruiseItineraryAction = async (data: CruiseItineraryType) => {
 
     const cruise = await getCruiseByDestionation(cruise_id);
 
-    const cruiseId = cruise.cruise_id;
+    const cruiseId = cruise?.cruise_id;
 
     await sql.query(
       `INSERT INTO cruise_itineraries (cruise_id, day, location, arrive, depart) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
@@ -565,7 +565,7 @@ export const updateCruiseItineraryAction = async (
 
     const cruise = await getCruiseByDestionation(cruise_id);
 
-    const cruiseId = cruise.cruise_id;
+    const cruiseId = cruise?.cruise_id;
 
     await sql.query(
       "UPDATE cruise_itineraries SET cruise_id = $1, day = $2, location = $3, arrive = $4, depart = $5 WHERE cruise_itinerary_id = $6 RETURNING *",
@@ -780,7 +780,7 @@ export const addCruiseAction = async (data: FormData) => {
     const mapImageUrl = await mapUpload;
     const cruiseImageUrl = await cruiseUpload;
 
-    const { ship_id } = await getShipByName(ship);
+    const { ship_id } = await getShipByName(ship) as ShipPropsType;
 
     await sql.query(
       "INSERT INTO cruises (cruise_destination, cruise_name, ship_id, map_image, description, embarkation_date, disembarkation_date, duration, departure_port, cruise_price, cruise_image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
@@ -973,7 +973,7 @@ export const updateCruiseAction = async (data: FormData, id: string) => {
     const mapImageUrl = await mapUpload;
     const cruiseImageUrl = await cruiseUpload;
 
-    const { ship_id } = await getShipByName(ship);
+    const { ship_id } = await getShipByName(ship) as ShipPropsType;
 
     await sql.query(
       "UPDATE cruises SET cruise_destination=$1, cruise_name=$2, ship_id=$3, map_image=$4, description=$5, embarkation_date=$6, disembarkation_date=$7, duration=$8, departure_port=$9, cruise_price=$10, cruise_image=$11 WHERE cruise_id = $12 RETURNING *",
@@ -1096,7 +1096,7 @@ export async function addCustomerCruiseBookingAction(
             cruiseId,
             cruise_number_of_adults,
             cruise_number_of_kids,
-            cruise.cruise_price,
+            cruise?.cruise_price,
             customer[0].customer_id,
           ],
         );
@@ -1221,10 +1221,10 @@ export async function addCruiseBookingAction(data: CruiseBookingType) {
       "INSERT INTO cruise_bookings (customer_id, cruise_id, cruise_number_of_adults, cruise_number_of_kids, cruise_balance_due, booked_by) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [
         customer.customer_id,
-        cruise.cruise_id,
+        cruise?.cruise_id,
         cruise_number_of_adults,
         cruise_number_of_kids,
-        cruise.cruise_price,
+        cruise?.cruise_price,
         userId,
       ],
     );
@@ -1288,7 +1288,7 @@ export async function updateCruiseBookingAction(
       "UPDATE cruise_bookings SET customer_id = $1, cruise_id = $2, cruise_number_of_adults = $3, cruise_number_of_kids = $4, booked_by = $5 WHERE cruise_booking_number = $6",
       [
         customer.customer_id,
-        cruise.cruise_id,
+        cruise?.cruise_id,
         cruise_number_of_adults,
         cruise_number_of_kids,
         userId,
@@ -1366,7 +1366,7 @@ export async function CruiseBookingPaymentAction(
 
     if (
       totalCruisePayments + Number(cruise_payment_amount) >
-      cruise.cruise_price
+      Number(cruisePrice)
     ) {
       return {
         error: "Cruise payment amount cannot be greater than cruise price",
@@ -1387,13 +1387,13 @@ export async function CruiseBookingPaymentAction(
     if (payCruiseBooking.length !== 0) {
       console.log({ payCruiseBooking });
 
-      if (cruisePrice > 3000 && parseFloat(payCruiseBooking[0].cruise_payment_amount) >= 3000) {
+      if (Number(cruisePrice) > 3000 && parseFloat(payCruiseBooking[0].cruise_payment_amount) >= 3000) {
         status = "confirmed";
       }
 
       if (
         parseFloat(payCruiseBooking[0].cruise_payment_amount) <
-        cruise.cruise_price
+        Number(cruisePrice)
       ) {
         status = "confirmed";
       }
