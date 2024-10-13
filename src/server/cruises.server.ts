@@ -1,4 +1,3 @@
-import { auth } from "@/auth";
 import { sql } from "@/database";
 
 import { cache } from "react";
