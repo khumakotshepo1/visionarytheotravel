@@ -13,13 +13,6 @@ interface CruiseBooking {
   cruise_price: string;
 }
 
-interface PreviousCruiseTotal {
-  id: number;
-  prev_cruise_total_price: string;
-  created_at: Date;
-  updated_at: Date;
-}
-
 export const DashCruiseBookingsCard = ({
   title,
   link,
@@ -29,7 +22,7 @@ export const DashCruiseBookingsCard = ({
   title: string;
   link: string;
   data: CruiseBooking[];
-  prev_cruise_total_price: PreviousCruiseTotal[];
+  prev_cruise_total_price: PreviousCruiseTotalPricePropsType[];
 }) => {
   const [hasIncreased, setHasIncreased] = useState<boolean>(false);
   const [hasDecreased, setHasDecreased] = useState<boolean>(false);

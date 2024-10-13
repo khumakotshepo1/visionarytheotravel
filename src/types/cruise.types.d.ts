@@ -52,7 +52,7 @@ declare interface CruisePropsType {
 
 declare interface PreviousCruiseTotalPricePropsType {
   id: string;
-  previous_cruise_total_price: string;
+  prev_cruise_total_price: string;
   created_at: Date;
   updated_at: Date;
 }

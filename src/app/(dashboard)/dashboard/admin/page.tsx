@@ -6,7 +6,7 @@ export default async function AdminDashboardPage() {
   const cruiseBookings =
     (await getAllCruiseBookings()) as CruiseBookingPropsType[];
 
-  const previousTotalPrice = await getPreviousCruiseTotalPrice();
+  const previousTotalPrice = await getPreviousCruiseTotalPrice() as PreviousCruiseTotalPricePropsType[];
 
   console.log({ previousTotalPrice })
 
