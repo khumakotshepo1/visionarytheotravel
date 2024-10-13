@@ -3,9 +3,9 @@ import { sql } from "@/database";
 
 import { cache } from "react";
 
-export const getAllShips = cache(async () => {
+export const getAllShips = cache(async (): Promise<ShipPropsType[] | undefined> => {
   try {
-    const { rows } = await sql.query("SELECT * FROM ships");
+    const { rows } = await sql.query<ShipPropsType>("SELECT * FROM ships");
 
     return rows || null;
   } catch (error) {
@@ -13,9 +13,9 @@ export const getAllShips = cache(async () => {
   }
 });
 
-export const getShipByName = cache(async (shipName: string) => {
+export const getShipByName = cache(async (shipName: string): Promise<ShipPropsType | undefined> => {
   try {
-    const { rows } = await sql.query(
+    const { rows } = await sql.query<ShipPropsType>(
       "SELECT * FROM ships WHERE ship_name = $1",
       [shipName],
     );
@@ -26,9 +26,9 @@ export const getShipByName = cache(async (shipName: string) => {
   }
 });
 
-export const getAllCabins = cache(async () => {
+export const getAllCabins = cache(async (): Promise<CabinPropsType[] | undefined> => {
   try {
-    const { rows } = await sql.query(
+    const { rows } = await sql.query<CabinPropsType>(
       "SELECT c.*, s.ship_name as ship FROM cabins c JOIN ships s ON s.ship_id = c.ship_id",
     );
 
@@ -38,9 +38,9 @@ export const getAllCabins = cache(async () => {
   }
 });
 
-export const getCabinsByShipId = cache(async (ship_id: number) => {
+export const getCabinsByShipId = cache(async (ship_id: number): Promise<CabinPropsType[] | undefined> => {
   try {
-    const { rows } = await sql.query(
+    const { rows } = await sql.query<CabinPropsType>(
       "SELECT * FROM cabins WHERE ship_id = $1",
       [ship_id],
     );
@@ -51,9 +51,9 @@ export const getCabinsByShipId = cache(async (ship_id: number) => {
   }
 });
 
-export const getAllCruises = cache(async () => {
+export const getAllCruises = cache(async (): Promise<CruisePropsType[] | undefined> => {
   try {
-    const { rows } = await sql.query(
+    const { rows } = await sql.query<CruisePropsType>(
       "SELECT c.*, s.* FROM cruises c JOIN ships s ON s.ship_id = c.ship_id",
     );
 
@@ -63,9 +63,9 @@ export const getAllCruises = cache(async () => {
   }
 });
 
-export const getCruiseById = cache(async (cruiseId: number) => {
+export const getCruiseById = cache(async (cruiseId: number): Promise<CruisePropsType | undefined> => {
   try {
-    const { rows } = await sql.query(
+    const { rows } = await sql.query<CruisePropsType>(
       "SELECT c.*, s.* FROM cruises c JOIN ships s ON s.ship_id = c.ship_id WHERE cruise_id = $1",
       [cruiseId],
     );
@@ -76,9 +76,9 @@ export const getCruiseById = cache(async (cruiseId: number) => {
   }
 });
 
-export const getCruiseByName = cache(async (cruiseName: string) => {
+export const getCruiseByName = cache(async (cruiseName: string): Promise<CruisePropsType | undefined> => {
   try {
-    const { rows } = await sql.query(
+    const { rows } = await sql.query<CruisePropsType>(
       "SELECT * FROM cruises WHERE cruise_name = $1",
       [cruiseName],
     );
@@ -90,9 +90,9 @@ export const getCruiseByName = cache(async (cruiseName: string) => {
 });
 
 export const getCruiseByDestionation = cache(
-  async (cruiseDestination: string) => {
+  async (cruiseDestination: string): Promise<CruisePropsType | undefined> => {
     try {
-      const { rows } = await sql.query(
+      const { rows } = await sql.query<CruisePropsType>(
         "SELECT * FROM cruises WHERE cruise_destination = $1",
         [cruiseDestination],
       );
@@ -104,9 +104,9 @@ export const getCruiseByDestionation = cache(
   },
 );
 
-export const getAllCruiseItineraries = cache(async () => {
+export const getAllCruiseItineraries = cache(async (): Promise<CruiseItineraryPropsType[] | undefined> => {
   try {
-    const { rows } = await sql.query(
+    const { rows } = await sql.query<CruiseItineraryPropsType>(
       "SELECT ci.*, c.cruise_name as cruise FROM cruise_itineraries ci JOIN cruises c ON c.cruise_id = ci.cruise_id",
     );
 
@@ -117,9 +117,9 @@ export const getAllCruiseItineraries = cache(async () => {
 });
 
 export const getCruiseItinerariesByCruiseId = cache(
-  async (cruise_id: number) => {
+  async (cruise_id: number): Promise<CruiseItineraryPropsType[] | undefined> => {
     try {
-      const { rows } = await sql.query(
+      const { rows } = await sql.query<CruiseItineraryPropsType>(
         "SELECT * FROM cruise_itineraries WHERE cruise_id = $1",
         [cruise_id],
       );
@@ -131,23 +131,9 @@ export const getCruiseItinerariesByCruiseId = cache(
   },
 );
 
-export const getAllCruiseBookings = cache(async () => {
+export const getAllCruiseBookings = cache(async (): Promise<CruiseBookingPropsType[] | undefined> => {
   try {
-    const session = await auth();
-
-    if (!session) {
-      return {
-        error: "Unauthorized",
-      };
-    }
-
-    if (session?.user?.role !== "ADMIN" && session?.user?.role !== "MANAGER") {
-      return {
-        error: "Unauthorized",
-      };
-    }
-
-    const { rows } = await sql.query(
+    const { rows } = await sql.query<CruiseBookingPropsType>(
       `SELECT cb.*, c.*, cu.*
        FROM cruise_bookings cb
        JOIN cruises c ON c.cruise_id = cb.cruise_id
@@ -160,9 +146,9 @@ export const getAllCruiseBookings = cache(async () => {
   }
 });
 
-export const getPreviousCruiseTotalPrice = cache(async () => {
+export const getPreviousCruiseTotalPrice = cache(async (): Promise<PreviousCruiseTotalPricePropsType[] | undefined> => {
   try {
-    const { rows } = await sql.query("SELECT * FROM prev_cruise_total_price");
+    const { rows } = await sql.query<PreviousCruiseTotalPricePropsType>("SELECT * FROM prev_cruise_total_price");
 
     return rows || null;
   } catch (error) {
@@ -171,26 +157,9 @@ export const getPreviousCruiseTotalPrice = cache(async () => {
 });
 
 export const getCruiseBookingPaymentByCruiseBookingNumber = cache(
-  async (cruiseBookingNumber: number) => {
+  async (cruiseBookingNumber: number): Promise<CruiseBookingPaymentPropsType[] | undefined> => {
     try {
-      const session = await auth();
-
-      if (!session) {
-        return {
-          error: "Unauthorized",
-        };
-      }
-
-      if (
-        session?.user?.role !== "ADMIN" &&
-        session?.user?.role !== "MANAGER"
-      ) {
-        return {
-          error: "Unauthorized",
-        };
-      }
-
-      const { rows } = await sql.query(
+      const { rows } = await sql.query<CruiseBookingPaymentPropsType>(
         "SELECT cruise_payment_amount FROM cruise_booking_payments WHERE cruise_booking_number = $1",
         [cruiseBookingNumber],
       );
@@ -205,12 +174,12 @@ export const getCruiseBookingPaymentByCruiseBookingNumber = cache(
 );
 
 export const getTotalCruisePaymentsByCruiseBookingNumber = cache(
-  async (cruiseBookingNumber: number) => {
+  async (cruiseBookingNumber: number): Promise<number | undefined> => {
     try {
       const cruiseBookingPayments =
         (await getCruiseBookingPaymentByCruiseBookingNumber(
           cruiseBookingNumber,
-        )) as { cruise_payment_amount: string }[];
+        )) as CruiseBookingPaymentPropsType[];
 
       const totalCruisePayments = cruiseBookingPayments.reduce(
         (acc, cur) => acc + (Number(cur.cruise_payment_amount) || 0),

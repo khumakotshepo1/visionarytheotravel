@@ -18,29 +18,3 @@ declare interface CustomerPropsType {
   passport_country: string;
 }
 
-declare interface CruiseBookingPropsType
-  extends CustomerPropsType,
-  CruisePropsType {
-  cruise_booking_number: string;
-  customer_id: string;
-  cruise_id: string;
-  status: string;
-  cruise_balance_due: string,
-  cruise_number_of_adults: number;
-  cruise_number_of_kids: number;
-  booked_by: string;
-  created_at: Date;
-  updated_at: Date;
-}
-
-declare interface PackageBookingPropsType extends CustomerPropsType {
-  package_booking_number: string;
-  customer_id: string;
-  package_id: string;
-  status: string;
-  number_of_adults: number;
-  number_of_kids: number;
-  booked_by: string;
-  created_at: Date;
-  updated_at: Date;
-}

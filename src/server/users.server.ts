@@ -1,26 +1,11 @@
 import { User } from "next-auth";
-
 import { sql } from "@/database";
 import { cache } from "react";
-import { auth } from "@/auth";
 
-export const getAllUsers = cache(async () => {
+export const getAllUsers = cache(async (): Promise<User[] | undefined> => {
   try {
-    const session = await auth();
 
-    if (!session) {
-      return {
-        error: "Unauthorized",
-      };
-    }
-
-    if (session?.user?.role !== "ADMIN") {
-      return {
-        error: "Unauthorized",
-      };
-    }
-
-    const { rows } = await sql.query("SELECT * FROM users ");
+    const { rows } = await sql.query<User>("SELECT * FROM users ");
 
     return rows || null;
   } catch (error) {
