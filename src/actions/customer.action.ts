@@ -5,6 +5,7 @@ import { getCustomerByEmail } from "@/server/customer.server";
 import { getErrorMessage } from "@/utils/error-message";
 import { customerSchema } from "@/zod/schemas/customer.schema";
 import { CustomerType } from "@/zod/types/customer.type";
+import { revalidatePath } from "next/cache";
 
 export async function addCustomerAction(data: CustomerType) {
   try {
@@ -152,6 +153,8 @@ export async function deleteCustomerAction(id: string) {
     await sql.query("DELETE FROM customers WHERE customer_id = $1", [
       customerId,
     ]);
+
+    revalidatePath("/dashboard/admin/customers");
 
     return {
       success: "Customer deleted successfully",
