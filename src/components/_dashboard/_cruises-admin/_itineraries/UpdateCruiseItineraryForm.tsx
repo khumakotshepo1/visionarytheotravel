@@ -48,7 +48,7 @@ export function UpdateCruiseItineraryForm({
   const form = useForm<CruiseItineraryType>({
     resolver: zodResolver(cruiseItinerarySchema),
     defaultValues: {
-      cruise_id: cruiseIti.cruise,
+      cruise_id: cruiseIti.cruise_id,
       day: cruiseIti.day,
       location: cruiseIti.location,
       arrive: cruiseIti.arrive,
