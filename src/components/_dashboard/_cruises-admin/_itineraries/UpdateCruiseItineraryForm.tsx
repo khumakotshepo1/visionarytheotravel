@@ -98,8 +98,8 @@ export function UpdateCruiseItineraryForm({
                             <SelectValue placeholder="Select Cruise" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value={cruiseIti.cruise}>
-                              {cruiseIti.cruise}
+                            <SelectItem value={cruiseIti.cruise_id}>
+                              {cruiseIti.cruise_id}
                             </SelectItem>
                           </SelectContent>
                         </Select>
