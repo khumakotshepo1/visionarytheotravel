@@ -68,7 +68,7 @@ CREATE TABLE
     recieved_by INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT NOW (),
     updated_at TIMESTAMP DEFAULT NOW ()
-)
+);
 
 CREATE TABLE 
     IF NOT EXISTS package_booking_payments (
@@ -79,7 +79,7 @@ CREATE TABLE
     recieved_by INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT NOW (),
     updated_at TIMESTAMP DEFAULT NOW ()
-)
+);
 
 -- Create the cruise_booking_history table
 CREATE TABLE
