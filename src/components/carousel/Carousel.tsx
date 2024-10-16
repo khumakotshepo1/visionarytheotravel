@@ -7,15 +7,8 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 
-export type HeroCarouselType = {
-  title: string;
-  image: string;
-  link: string;
-  cta: string;
-};
-
 type CarouselProps = {
-  slides: HeroCarouselType[];
+  slides: PromotionsPropsType[];
   autoSlideInterval?: number;
 };
 
@@ -54,8 +47,8 @@ const CarouselComponent = ({
         {slides.map((slide, i) => (
           <div key={i} className="w-full flex-shrink-0 relative">
             <Image
-              src={slide.image}
-              alt={slide.title}
+              src={slide.promotion_image}
+              alt={slide.promotion_name}
               fill
               className="object-cover"
               sizes="100vw"
@@ -64,27 +57,27 @@ const CarouselComponent = ({
             <div className="absolute inset-0 bg-gray-800/50 mix-blend-multiply" />
             <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
               <h2 className="text-white text-5xl md:text-7xl font-black font-anton">
-                {slide.title}
+                {slide.promotion_name}
               </h2>
               <Link
-                href={slide.link}
+                href={`http://${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}${slide.promotion_url}`}
                 className="mt-4 bg-background py-2 px-4 rounded-xl"
               >
-                {slide.cta}
+                see more
               </Link>
             </div>
 
             <button
               onClick={handlePrevious}
               aria-label="Previous slide"
-              className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:bg-gray-200"
+              className="hidden lg:block absolute top-1/2 left-4 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:bg-gray-200"
             >
               <ArrowLeftIcon />
             </button>
             <button
               onClick={handleNext}
               aria-label="Next slide"
-              className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:bg-gray-200"
+              className="hidden lg:block absolute top-1/2 right-4 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:bg-gray-200"
             >
               <ArrowRightIcon />
             </button>
