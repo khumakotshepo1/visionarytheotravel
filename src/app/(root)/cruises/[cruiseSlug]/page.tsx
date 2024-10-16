@@ -1,5 +1,5 @@
 import { CruiseSlug } from "@/components/_cruises/CruiseSlug";
-import { getCruiseById } from "@/server/cruises.server";
+import { getCruiseById, getCruiseDateById } from "@/server/cruises.server";
 
 export default async function CruiseSlugPage({
   params,
@@ -8,11 +8,14 @@ export default async function CruiseSlugPage({
 }) {
   const cruiseSlug = parseInt(params.cruiseSlug);
 
-  const cruise = (await getCruiseById(cruiseSlug)) as CruisePropsType;
+  const cruiseDate = (await getCruiseDateById(cruiseSlug)) as CruiseDatePropsType;
 
+  console.log('Cruise Date:', cruiseDate);
+
+  const cruise = (await getCruiseById(Number(cruiseDate.cruise_id))) as CruisePropsType;
   return (
     <>
-      <CruiseSlug cruise={cruise} />
+      <CruiseSlug cruise={cruise} cruiseDate={cruiseDate} />
     </>
   );
 }
