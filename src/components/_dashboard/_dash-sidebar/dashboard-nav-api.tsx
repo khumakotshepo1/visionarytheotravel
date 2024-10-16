@@ -1,7 +1,7 @@
 import {
-  BookOpenIcon,
   CreditCardIcon,
   MapPinHouseIcon,
+  MegaphoneIcon,
   SettingsIcon,
   ShoppingBasketIcon,
   ShoppingCartIcon,
@@ -17,24 +17,19 @@ export type dashboardNavApiType = {
 
 export const adminNavApi: dashboardNavApiType[] = [
   {
-    name: "Bookings",
-    href: "/dashboard/admin/bookings",
-    icon: <BookOpenIcon />,
+    name: "Merch",
+    href: "/dashboard/admin/merch-admin",
+    icon: <ShoppingCartIcon />,
+  },
+  {
+    name: "Promotions",
+    href: "/dashboard/admin/promotions",
+    icon: <MegaphoneIcon />,
   },
   {
     name: "Customers",
     href: "/dashboard/admin/customers",
     icon: <UserIcon />,
-  },
-  {
-    name: "Orders",
-    href: "/dashboard/admin/orders",
-    icon: <ShoppingBasketIcon />,
-  },
-  {
-    name: "Products",
-    href: "/dashboard/admin/products",
-    icon: <ShoppingCartIcon />,
   },
   {
     name: "Users",
