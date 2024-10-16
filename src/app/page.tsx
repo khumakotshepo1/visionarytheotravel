@@ -1,12 +1,16 @@
-import { homeHeroApi } from "@/components/_home/home-hero-api";
 import { Carousel } from "@/components/carousel/Carousel";
+import { getAllPromotions } from "@/server/promotions.server";
 
-export default function HomePage() {
+export default async function HomePage() {
+
+  const promotions = await getAllPromotions() as PromotionsPropsType[];
+
+  console.log({ promotions });
 
   return (
     <>
       <section>
-        <Carousel slides={homeHeroApi} />
+        <Carousel slides={promotions} />
       </section>
     </>
   );
