@@ -8,7 +8,6 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { addPreviousTotalCruiseBookingPriceAction } from "@/actions/cruise.actions";
 
-// Define types
 interface CruiseBooking {
   cruise_price: string;
 }
@@ -27,7 +26,6 @@ export const DashCruiseBookingsCard = ({
   const [hasIncreased, setHasIncreased] = useState<boolean>(false);
   const [hasDecreased, setHasDecreased] = useState<boolean>(false);
 
-  // Use useMemo to calculate totalPrice and previousTotalPrice
   const totalPrice = useMemo(() => {
     return data.reduce(
       (total, item) => total + (Number(item.cruise_price) || 0),
@@ -41,7 +39,6 @@ export const DashCruiseBookingsCard = ({
 
   const changedBasisPoints = totalPrice - previousTotalPrice;
 
-  // Memoized function to handle price comparison
   const updatePriceTrend = useCallback(() => {
     setHasIncreased(totalPrice > previousTotalPrice);
     setHasDecreased(totalPrice < previousTotalPrice);
@@ -78,13 +75,18 @@ export const DashCruiseBookingsCard = ({
             <p className={cn("text-sm")}>
               R {totalPrice > 0 ? Number(totalPrice).toFixed(2) : "0.00"}
             </p>
-            <p className={cn("text-xs text-gray-500 absolute -top-3 -right-10", {
-              "text-green-600": hasIncreased,
-              "text-red-600": hasDecreased,
-            })}>
-              {hasIncreased ? "+" : hasDecreased ? "" : ""}
-              {previousTotalPrice ? changedBasisPoints.toFixed(2) : "0.00"}
-            </p>
+
+            {
+              hasIncreased || hasDecreased &&
+              <p className={cn("text-xs text-gray-500 absolute -top-3 -right-10", {
+                "text-green-600": hasIncreased,
+                "text-red-600": hasDecreased,
+              })}>
+                {hasIncreased ? "+" : hasDecreased ? "" : ""}
+                {previousTotalPrice ? changedBasisPoints.toFixed(2) : "0.00"}
+              </p>
+            }
+
           </div>
         </div>
       </Card>
