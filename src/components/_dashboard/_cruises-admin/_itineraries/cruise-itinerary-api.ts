@@ -18,4 +18,8 @@ export const cruiseItineraryApi: cruiseItineraryApiType[] = [
     name: "portuguese island",
     location: ["durban", "portuguese island", "sea"],
   },
+  {
+    name: "cape town",
+    location: ["durban", "sea", "cape town"],
+  },
 ];
