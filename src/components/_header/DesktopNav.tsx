@@ -10,7 +10,7 @@ export default function DesktopNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="hidden md:flex gap-2">
+    <nav className="hidden lg:flex gap-2">
       {mainNavApi.map((item) => (
         <Link
           key={item.name}

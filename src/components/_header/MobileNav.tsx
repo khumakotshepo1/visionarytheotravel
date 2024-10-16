@@ -51,9 +51,9 @@ export default function MobileNav({ session }: { session: Session | null }) {
   }
 
   return (
-    <nav className="md:hidden">
+    <nav className="lg:hidden">
       <div
-        className="md:hidden cursor-pointer sticky bottom-0 left-0 right-0 z-50 py-6 rounded-xl flex items-center justify-center gap-2 bg-background backdrop:blur-lg"
+        className="lg:hidden cursor-pointer sticky bottom-0 left-0 right-0 z-50 py-6 rounded-xl flex items-center justify-center gap-2 bg-background backdrop:blur-lg"
         onClick={() => setIsOpen(!isOpen)}
       >
         <MenuIcon className="h-8 w-8" />
