@@ -13,7 +13,7 @@ import { MoreHorizontal } from "lucide-react";
 
 import { deleteCruiseAction } from "@/actions/cruise.actions";
 import { toast } from "sonner";
-import { UpdateCruisesForm } from "./UpdateCruiseForm";
+import Link from "next/link";
 
 export const cruiseColumns: ColumnDef<CruisePropsType>[] = [
   {
@@ -35,10 +35,6 @@ export const cruiseColumns: ColumnDef<CruisePropsType>[] = [
   {
     accessorKey: "duration",
     header: "Duration",
-  },
-  {
-    accessorKey: "ship_name",
-    header: "Ship Name",
   },
   {
     id: "actions",
@@ -73,9 +69,9 @@ export const cruiseColumns: ColumnDef<CruisePropsType>[] = [
               <button className="text-sm pl-2">Delete</button>
             </form>
 
-            <span className="text-sm pl-2">
-              <UpdateCruisesForm cruise={cruise} />
-            </span>
+            <Link href={`/dashboard/admin/cruises-admin/manage-cruises/${cruise.cruise_date_id}`} className="text-sm pl-2">
+              update cruise
+            </Link>
           </DropdownMenuContent>
         </DropdownMenu>
       );

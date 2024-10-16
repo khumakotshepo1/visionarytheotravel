@@ -10,9 +10,12 @@ import {
 
 import { Button } from "../ui/button";
 
-export async function CruiseSlug({ cruise }: { cruise: CruisePropsType }) {
+export async function CruiseSlug({ cruise, cruiseDate }: { cruise: CruisePropsType, cruiseDate: CruiseDatePropsType }) {
   const shipId = parseInt(cruise.ship_id);
   const cruiseId = parseInt(cruise.cruise_id);
+
+  console.log('Cruise:', cruise);
+  console.log('Cruise Date:', cruiseDate);
 
   const cabins = (await getCabinsByShipId(shipId)) as CabinPropsType[];
   const itinerary = await getCruiseItinerariesByCruiseId(cruiseId) as CruiseItineraryPropsType[];
@@ -35,7 +38,7 @@ export async function CruiseSlug({ cruise }: { cruise: CruisePropsType }) {
         </article>
         <article className="w-full lg:w-1/2 px-4">
           <h1 className="text-3xl font-bold pb-4 capitalize">
-            {cruise.departure_port} port
+            {cruiseDate.departure_port} port
           </h1>
 
           {/*cruise info div*/}
@@ -44,14 +47,14 @@ export async function CruiseSlug({ cruise }: { cruise: CruisePropsType }) {
               <span className="flex items-center gap-2">
                 <CalendarIcon className="h-4 w-4" />
                 <p>
-                  {cruise.embarkation_date.toDateString()} -{" "}
-                  {cruise.disembarkation_date.toDateString()}
+                  {cruiseDate.embarkation_date.toDateString()} -{" "}
+                  {cruiseDate.disembarkation_date.toDateString()}
                 </p>
               </span>
               <span className="flex items-center gap-2">
                 <MoonIcon className="h-4 w-4" />
                 <p>
-                  {cruise.duration} nights, {parseInt(cruise.duration) + 1} days
+                  {cruiseDate.duration} nights, {parseInt(cruiseDate.duration) + 1} days
                 </p>
               </span>
               <span className="flex items-center gap-2">
@@ -109,7 +112,7 @@ export async function CruiseSlug({ cruise }: { cruise: CruisePropsType }) {
         <div className="flex flex-col lg:flex-row lg:justify-between gap-16 items-center lg:h-80">
           <ItineraryTable itenerary={itinerary} />
           <Image
-            src={cruise.map_image}
+            src={cruiseDate.map_image}
             alt={`${cruise.cruise_name} map`}
             width={500}
             height={200}

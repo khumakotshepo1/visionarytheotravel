@@ -17,35 +17,38 @@ declare interface CabinPropsType {
   updated_at: Date;
 }
 
-declare interface CruiseItineraryPropsType {
+declare interface CruiseItineraryPropsType extends CruisePropsType {
   cruise_itinerary_id: string;
   cruise_id: string;
   day: string;
   location: string;
   arrive: string; // Time in "HH:mm:ss" format
   depart: string; // Time in "HH:mm:ss" format
-  cruise: string;
   created_at: Date;
   updated_at: Date;
 }
 
-declare interface CruisePropsType {
+declare interface CruiseDatePropsType {
+  cruise_date_id: string;
   cruise_id: string;
   ship_id: string;
-  cruise_destination: string;
-  cruise_name: string;
-  description: string;
-  duration: string;
   embarkation_date: Date;
   disembarkation_date: Date;
+  duration: string;
   departure_port: string;
+  cruise_destination: string;
   cruise_price: string;
   map_image: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+declare interface CruisePropsType extends CruiseDatePropsType, CruiseItineraryPropsType, ShipPropsType {
+  cruise_id: string;
+  ship_id: string;
+  cruise_name: string;
+  description: string;
   cruise_image: string;
-  ship_name: string;
-  ship_class: string;
-  ship_image: string;
-  cruiseItenerary: CruiseItineraryPropsType[];
   created_at: Date;
   updated_at: Date;
 }

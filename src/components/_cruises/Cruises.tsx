@@ -1,25 +1,40 @@
+
 import { Cruise } from "./Cruise";
 import { HeroNoButton } from "../carousel/HeroNoButton";
-import { getAllCruises } from "@/server/cruises.server";
+import { getAllCruises, getCruiseDateByCruiseId } from "@/server/cruises.server";
 import { format } from "date-fns";
 
 export async function Cruises() {
   const cruises = (await getAllCruises()) as CruisePropsType[];
 
   // Group cruises by embarkation month and year
-  const groupedCruises: { [key: string]: CruisePropsType[] } = {};
+  const groupedCruises: { [key: string]: { cruise: CruisePropsType; cruiseDates: CruiseDatePropsType[] }[] } = {};
 
-  cruises.forEach((cruise) => {
-    const embarkationDate = cruise.embarkation_date; // Assuming this is already a Date object
-    const monthYear = format(embarkationDate, "MMMM yyyy"); // e.g., "October 2024"
+  for (const cruise of cruises) {
+    const cruiseDates = await getCruiseDateByCruiseId(Number(cruise.cruise_id)) as CruiseDatePropsType[];
 
-    // Initialize the array if it doesn't exist
-    if (!groupedCruises[monthYear]) {
-      groupedCruises[monthYear] = [];
+    // Flatten if cruiseDates is nested
+    const flatCruiseDates = Array.isArray(cruiseDates) && Array.isArray(cruiseDates[0]) ? cruiseDates.flat() : cruiseDates;
+
+    console.log({ flatCruiseDates }); // Debugging
+
+    for (const cruiseDate of flatCruiseDates) {
+      const embarkationDate = new Date(cruiseDate.embarkation_date);
+      if (isNaN(embarkationDate.getTime())) {
+        continue; // Skip if it's not a valid date
+      }
+
+      const monthYear = format(embarkationDate, "MMMM yyyy");
+
+      // Initialize the array if it doesn't exist
+      if (!groupedCruises[monthYear]) {
+        groupedCruises[monthYear] = [];
+      }
+
+      // Push the cruise and its corresponding dates into the array
+      groupedCruises[monthYear].push({ cruise, cruiseDates: flatCruiseDates.filter(date => date.cruise_date_id === cruiseDate.cruise_date_id) });
     }
-    // Push the cruise into the corresponding month/year array
-    groupedCruises[monthYear].push(cruise);
-  });
+  }
 
   return (
     <>
@@ -30,7 +45,8 @@ export async function Cruises() {
         {Object.keys(groupedCruises).map((monthYear) => (
           <div key={monthYear} className="border-b-4 border-foreground py-4">
             <Cruise
-              cruises={groupedCruises[monthYear]}
+              cruises={groupedCruises[monthYear].map(item => item.cruise)} // Pass the cruises
+              cruiseDates={groupedCruises[monthYear].flatMap(item => item.cruiseDates)} // Flatten and pass the cruiseDates
               title={`Cruises for ${monthYear}`}
             />
           </div>

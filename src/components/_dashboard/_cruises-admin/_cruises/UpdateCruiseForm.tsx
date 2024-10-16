@@ -1,16 +1,8 @@
+
 "use client";
 
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -21,7 +13,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
 import {
   Select,
   SelectContent,
@@ -29,9 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { CruiseType } from "@/zod/types/cruises.type";
@@ -41,60 +30,58 @@ import { updateCruiseAction } from "@/actions/cruise.actions";
 import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import { cruiseItineraryApi } from "../_itineraries/cruise-itinerary-api";
+import { CloudUploadIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 
-export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
-  const { refresh } = useRouter();
+export function UpdateCruisesForm({ cruise, cruiseDate, ship }: { cruise: CruisePropsType, cruiseDate: CruiseDatePropsType, ship: ShipPropsType }) {
+  const { refresh, back } = useRouter();
+  const [mapImagePreview, setMapImagePreview] = useState<string | null>(null);
+  const [cruiseImagePreview, setCruiseImagePreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    setMapImagePreview(cruiseDate?.map_image)
+    setCruiseImagePreview(cruise?.cruise_image)
+  }, [cruiseDate?.map_image, cruise?.cruise_image]
+
+  )
 
   const form = useForm<CruiseType>({
     resolver: zodResolver(cruiseSchema),
     defaultValues: {
-      ship_id: cruise.ship_name,
-      cruise_name: cruise.cruise_name,
-      description: cruise.description,
-      embarkation_date: cruise.embarkation_date,
-      disembarkation_date: cruise.disembarkation_date,
-      duration: cruise.duration,
-      departure_port: cruise.departure_port,
-      cruise_price: cruise.cruise_price,
+      ship_id: ship?.ship_name,
+      cruise_name: cruise?.cruise_name,
+      description: cruise?.description,
+      embarkation_date: cruiseDate?.embarkation_date,
+      disembarkation_date: cruiseDate?.disembarkation_date,
+      duration: cruiseDate?.duration,
+      departure_port: cruiseDate?.departure_port,
+      cruise_price: cruiseDate?.cruise_price,
+      cruise_destination: cruiseDate?.cruise_destination,
     },
   });
-
-  console.log({ cruise });
 
   const validateFile = (fileList: FileList) => {
     const file = fileList[0];
     if (!file) return true; // No file selected
+
     const isImage = file.type.startsWith("image/");
     return isImage || "Please select a valid image file.";
   };
 
   const ports: string[] = ["durban", "cape town"];
-
-  const cruiseId = cruise.cruise_id;
+  const cruiseId = cruise?.cruise_id;
+  const cruiseDateId = cruiseDate?.cruise_date_id;
 
   const processForm = async (data: CruiseType) => {
-    console.log({ data });
-
-    const map_image = data.map_image[0] as File;
-    const cruise_image = data.cruise_image[0] as File;
-    const cruise_destination = data.cruise_destination;
-    const cruise_name = data.cruise_name;
-    const ship = data.ship_id;
-    const description = data.description;
-    const embarkation_date = data.embarkation_date;
-    const disembarkation_date = data.disembarkation_date;
-
-    const duration = data.duration;
-    const departure_port = data.departure_port;
-    const cruise_price = data.cruise_price;
-
     const formData = new FormData();
+    const { map_image, cruise_image, cruise_destination, cruise_name, ship_id, description, embarkation_date, disembarkation_date, duration, departure_port, cruise_price } = data;
 
-    formData.append("map_image", map_image);
-    formData.append("cruise_image", cruise_image);
+    formData.append("map_image", map_image[0]);
+    formData.append("cruise_image", cruise_image[0]);
     formData.append("cruise_destination", cruise_destination);
     formData.append("cruise_name", cruise_name);
-    formData.append("ship_id", ship);
+    formData.append("ship_id", ship_id);
     formData.append("description", description);
     formData.append("embarkation_date", embarkation_date.toISOString());
     formData.append("disembarkation_date", disembarkation_date.toISOString());
@@ -102,29 +89,29 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
     formData.append("departure_port", departure_port);
     formData.append("cruise_price", cruise_price);
 
-    const res = await updateCruiseAction(formData, cruiseId);
+    const res = await updateCruiseAction(formData, cruiseId, cruiseDateId);
 
     if (res?.error) {
       toast.error(res.error);
-    }
-
-    if (res?.success) {
+    } else if (res?.success) {
       toast.success(res.success);
-
       form.reset();
       refresh();
+      setTimeout(() => back(), 2000);
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, setPreview: (url: string | null) => void) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const fileURL = URL.createObjectURL(file);
+      setPreview(fileURL);
     }
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <button>Edit Cruise</button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Edit Cruise</DialogTitle>
-        </DialogHeader>
+    <div className="fixed inset-0 bg-background flex items-center justify-center">
+      <div className="space-y-4 max-w-xl w-[450px]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(processForm)}>
             <div className="grid gap-4 py-4">
@@ -137,15 +124,10 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
                       <FormItem>
                         <FormLabel>Destination Name</FormLabel>
                         <FormControl>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="select a destination" />
-                              </SelectTrigger>
-                            </FormControl>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a destination" />
+                            </SelectTrigger>
                             <SelectContent>
                               {cruiseItineraryApi.map((item) => (
                                 <SelectItem key={item.name} value={item.name}>
@@ -155,7 +137,6 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
                             </SelectContent>
                           </Select>
                         </FormControl>
-
                         <FormMessage />
                       </FormItem>
                     )}
@@ -179,23 +160,15 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
                     <FormItem>
                       <FormLabel>Ship</FormLabel>
                       <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="w-full border-0 border-b-2 rounded-none">
-                              <SelectValue placeholder="select ship" />
-                            </SelectTrigger>
-                          </FormControl>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select ship" />
+                          </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value={cruise.ship_name}>
-                              {cruise.ship_name}
-                            </SelectItem>
+                            <SelectItem value={ship.ship_name}>{ship.ship_name}</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
-
                       <FormMessage />
                     </FormItem>
                   )}
@@ -215,7 +188,6 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
                           {...field}
                         />
                       </FormControl>
-
                       <FormMessage />
                     </FormItem>
                   )}
@@ -229,15 +201,10 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
                     <FormItem>
                       <FormLabel>Departure Port</FormLabel>
                       <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="select port" />
-                            </SelectTrigger>
-                          </FormControl>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select port" />
+                          </SelectTrigger>
                           <SelectContent>
                             {ports.map((item) => (
                               <SelectItem key={item} value={item}>
@@ -247,7 +214,6 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
                           </SelectContent>
                         </Select>
                       </FormControl>
-
                       <FormMessage />
                     </FormItem>
                   )}
@@ -262,7 +228,6 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
                   type="date"
                 />
               </div>
-
               <div className="flex flex-col space-y-1.5">
                 <CustomInput
                   control={form.control}
@@ -272,7 +237,6 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
                   type="date"
                 />
               </div>
-
               <div className="flex flex-col space-y-1.5">
                 <CustomInput
                   control={form.control}
@@ -283,20 +247,49 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
                 />
               </div>
 
-              <div className="grid flex-1 gap-2">
-                <Label htmlFor="link" className="sr-only">
-                  Image
-                </Label>
-                <Input
-                  id="link"
-                  type="file"
-                  {...form.register("map_image", { validate: validateFile })}
-                  className="block w-full border-slate-400 rounded focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  required
-                />
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="map_image">
+                    <span className="flex gap-2 items-center justify-center py-3 border-2 border-dashed border-foreground">
+                      <CloudUploadIcon className="h-4 w-4" /> Map Image
+                    </span>
+                  </Label>
+                  <Input
+                    id="map_image"
+                    type="file"
+                    {...form.register("map_image", { validate: validateFile })}
+                    className="sr-only"
+                    onChange={(e) => handleFileChange(e, setMapImagePreview)}
+                    required
+                  />
+                  {mapImagePreview && (
+                    <Image src={mapImagePreview} width={200} height={200} alt="Map Preview" />
+                  )}
+                  <FormMessage />
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="cruise_image">
+                    <span className="flex gap-2 items-center justify-center py-3 border-2 border-dashed border-foreground">
+                      <CloudUploadIcon className="h-4 w-4" /> Cruise Image
+                    </span>
+                  </Label>
+                  <Input
+                    id="cruise_image"
+                    type="file"
+                    {...form.register("cruise_image", { validate: validateFile })}
+                    className="sr-only"
+                    onChange={(e) => handleFileChange(e, setCruiseImagePreview)}
+                    required
+                  />
+                  {cruiseImagePreview && (
+                    <Image src={cruiseImagePreview} width={200} height={200} alt="Cruise Preview" />
+                  )}
+                  <FormMessage />
+                </div>
               </div>
             </div>
-            <DialogClose asChild>
+
+            <div className="grid gap-4 py-3">
               <Button
                 disabled={form.formState.isSubmitting}
                 type="submit"
@@ -308,10 +301,18 @@ export function UpdateCruisesForm({ cruise }: { cruise: CruisePropsType }) {
                   "Save"
                 )}
               </Button>
-            </DialogClose>
+
+              <Button
+                disabled={form.formState.isSubmitting}
+                className="w-full"
+                onClick={() => back()}
+              >
+                Cancel
+              </Button>
+            </div>
           </form>
         </Form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }

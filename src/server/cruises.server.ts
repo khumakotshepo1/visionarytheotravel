@@ -25,6 +25,19 @@ export const getShipByName = cache(async (shipName: string): Promise<ShipPropsTy
   }
 });
 
+export const getShipById = cache(async (shipId: number): Promise<ShipPropsType | undefined> => {
+  try {
+    const { rows } = await sql.query<ShipPropsType>(
+      "SELECT * FROM ships WHERE ship_id = $1",
+      [shipId],
+    );
+
+    return rows[0] || null;
+  } catch (error) {
+    throw new Error("Failed to fetch ship by id.");
+  }
+});
+
 export const getAllCabins = cache(async (): Promise<CabinPropsType[] | undefined> => {
   try {
     const { rows } = await sql.query<CabinPropsType>(
@@ -53,7 +66,7 @@ export const getCabinsByShipId = cache(async (ship_id: number): Promise<CabinPro
 export const getAllCruises = cache(async (): Promise<CruisePropsType[] | undefined> => {
   try {
     const { rows } = await sql.query<CruisePropsType>(
-      "SELECT c.*, s.* FROM cruises c JOIN ships s ON s.ship_id = c.ship_id",
+      "SELECT cd.*, c.* FROM cruise_dates cd JOIN cruises c ON c.cruise_id = cd.cruise_id",
     );
 
     return rows || null;
@@ -62,16 +75,17 @@ export const getAllCruises = cache(async (): Promise<CruisePropsType[] | undefin
   }
 });
 
-export const getCruiseById = cache(async (cruiseId: number): Promise<CruisePropsType | undefined> => {
+export const getCruiseById = cache(async (cruiseId: number): Promise<CruisePropsType | null> => {
   try {
     const { rows } = await sql.query<CruisePropsType>(
-      "SELECT c.*, s.* FROM cruises c JOIN ships s ON s.ship_id = c.ship_id WHERE cruise_id = $1",
+      "SELECT cd.*, c.* FROM cruise_dates cd JOIN cruises c ON c.cruise_id = cd.cruise_id WHERE c.cruise_id = $1",
       [cruiseId],
     );
 
-    return rows[0] || null;
+    return rows.length > 0 ? rows[0] : null; // Return null if no rows are found
   } catch (error) {
-    throw new Error("Failed to fetch cruise by id.");
+    console.error("Error fetching cruise by id:", error); // Log the error for debugging
+    throw new Error("Failed to fetch cruise by id."); // Re-throw with a generic message
   }
 });
 
@@ -88,6 +102,33 @@ export const getCruiseByName = cache(async (cruiseName: string): Promise<CruiseP
   }
 });
 
+export const getCruiseDateByCruiseId = cache(async (cruiseId: number): Promise<CruiseDatePropsType[] | undefined> => {
+  try {
+    const { rows } = await sql.query<CruiseDatePropsType>(
+      "SELECT cd.*, c.* FROM cruise_dates cd JOIN cruises c ON c.cruise_id = cd.cruise_id WHERE cd.cruise_id = $1",
+      [cruiseId],
+    );
+
+    return rows || null;
+  } catch (error) {
+    console.error("Error fetching cruise date by id:", error);
+    throw new Error("Failed to fetch cruise date by cruise id");
+  }
+});
+
+export const getCruiseDateById = cache(async (cruiseDateId: number): Promise<CruiseDatePropsType | undefined> => {
+  try {
+    const { rows } = await sql.query<CruiseDatePropsType>(
+      "SELECT * FROM cruise_dates WHERE cruise_date_id = $1",
+      [cruiseDateId],
+    );
+
+    return rows[0] || null;
+  } catch (error) {
+    console.error("Error fetching cruise date by id:", error);
+    throw new Error("Failed to fetch cruise date by id");
+  }
+});
 export const getCruiseByDestionation = cache(
   async (cruiseDestination: string): Promise<CruisePropsType | undefined> => {
     try {
