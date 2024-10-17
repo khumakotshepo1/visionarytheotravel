@@ -133,7 +133,7 @@ export const getCruiseByDestionation = cache(
   async (cruiseDestination: string): Promise<CruisePropsType | undefined> => {
     try {
       const { rows } = await sql.query<CruisePropsType>(
-        "SELECT * FROM cruises WHERE cruise_destination = $1",
+        "SELECT * FROM cruise_dates WHERE cruise_destination = $1",
         [cruiseDestination],
       );
 
@@ -147,7 +147,7 @@ export const getCruiseByDestionation = cache(
 export const getAllCruiseItineraries = cache(async (): Promise<CruiseItineraryPropsType[] | undefined> => {
   try {
     const { rows } = await sql.query<CruiseItineraryPropsType>(
-      "SELECT ci.*, c.cruise_name as cruise FROM cruise_itineraries ci JOIN cruises c ON c.cruise_id = ci.cruise_id",
+      "SELECT ci.*, cd.* FROM cruise_itineraries ci JOIN cruise_dates cd ON cd.cruise_date_id = ci.cruise_date_id",
     );
 
     return rows || null;
@@ -156,12 +156,12 @@ export const getAllCruiseItineraries = cache(async (): Promise<CruiseItineraryPr
   }
 });
 
-export const getCruiseItinerariesByCruiseId = cache(
-  async (cruise_id: number): Promise<CruiseItineraryPropsType[] | undefined> => {
+export const getCruiseItinerariesByCruiseDateId = cache(
+  async (cruiseDateId: number): Promise<CruiseItineraryPropsType[] | undefined> => {
     try {
       const { rows } = await sql.query<CruiseItineraryPropsType>(
-        "SELECT * FROM cruise_itineraries WHERE cruise_id = $1",
-        [cruise_id],
+        "SELECT * FROM cruise_itineraries WHERE cruise_date_id = $1",
+        [cruiseDateId],
       );
 
       return rows || null;

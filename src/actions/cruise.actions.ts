@@ -511,7 +511,7 @@ export const addCruiseItineraryAction = async (data: CruiseItineraryType) => {
     const cruiseId = cruise?.cruise_id;
 
     await sql.query(
-      `INSERT INTO cruise_itineraries (cruise_id, day, location, arrive, depart) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      `INSERT INTO cruise_itineraries (cruise_date_id, day, location, arrive, depart) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
       [cruiseId, day, location, arrive, depart],
     );
 
@@ -568,7 +568,7 @@ export const updateCruiseItineraryAction = async (
     const cruiseId = cruise?.cruise_id;
 
     await sql.query(
-      "UPDATE cruise_itineraries SET cruise_id = $1, day = $2, location = $3, arrive = $4, depart = $5 WHERE cruise_itinerary_id = $6 RETURNING *",
+      "UPDATE cruise_itineraries SET cruise_date_id = $1, day = $2, location = $3, arrive = $4, depart = $5 WHERE cruise_itinerary_id = $6 RETURNING *",
       [cruiseId, day, location, arrive, depart, cruiseItineraryId],
     );
 

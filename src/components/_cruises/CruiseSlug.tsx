@@ -5,20 +5,20 @@ import { ItineraryTable } from "../ItineraryTable";
 import { Cabins } from "./Cabins";
 import {
   getCabinsByShipId,
-  getCruiseItinerariesByCruiseId,
+  getCruiseItinerariesByCruiseDateId,
 } from "@/server/cruises.server";
 
 import { Button } from "../ui/button";
 
 export async function CruiseSlug({ cruise, cruiseDate }: { cruise: CruisePropsType, cruiseDate: CruiseDatePropsType }) {
   const shipId = parseInt(cruise.ship_id);
-  const cruiseId = parseInt(cruise.cruise_id);
+  const cruiseDateId = parseInt(cruiseDate.cruise_date_id);
 
   console.log('Cruise:', cruise);
   console.log('Cruise Date:', cruiseDate);
 
   const cabins = (await getCabinsByShipId(shipId)) as CabinPropsType[];
-  const itinerary = await getCruiseItinerariesByCruiseId(cruiseId) as CruiseItineraryPropsType[];
+  const itinerary = await getCruiseItinerariesByCruiseDateId(cruiseDateId) as CruiseItineraryPropsType[];
 
   return (
     <>
@@ -91,7 +91,7 @@ export async function CruiseSlug({ cruise, cruiseDate }: { cruise: CruisePropsTy
             <Link href={`/cruises/${cruise.cruise_id}/add-quote`}>
               <Button
                 variant="outline"
-                className="bg-orangeElement dark:bg-orangeElement text-lightElement dark:text-lightElement w-full"
+                className="bg-crimsonElement dark:bg-crimsonElement text-lightElement dark:text-lightElement w-full"
               >
                 Get A Quote
               </Button>
