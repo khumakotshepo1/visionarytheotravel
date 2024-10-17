@@ -6,7 +6,11 @@ type cruiseItineraryApiType = {
 export const cruiseItineraryApi: cruiseItineraryApiType[] = [
   {
     name: "pomene",
-    location: ["durban", "sea", "portuguese island", "pomene"],
+    location: ["durban", "sea", "pomene"],
+  },
+  {
+    name: "portuguese & pomene",
+    location: ["durban", "portuguese island", "pomene", "sea"],
   },
 
   {
