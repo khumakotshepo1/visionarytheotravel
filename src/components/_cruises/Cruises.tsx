@@ -1,4 +1,3 @@
-
 import { Cruise } from "./Cruise";
 import { HeroNoButton } from "../carousel/HeroNoButton";
 import { getAllCruises, getCruiseDateByCruiseId } from "@/server/cruises.server";
