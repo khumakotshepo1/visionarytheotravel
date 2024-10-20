@@ -10,12 +10,9 @@ import {
 
 import { Button } from "../ui/button";
 
-export async function CruiseSlug({ cruise, cruiseDate }: { cruise: CruisePropsType, cruiseDate: CruiseDatePropsType }) {
+export async function CruiseSlug({ cruise, cruiseDate, ship }: { cruise: CruisePropsType, cruiseDate: CruiseDatePropsType, ship: ShipPropsType }) {
   const shipId = parseInt(cruise.ship_id);
   const cruiseDateId = parseInt(cruiseDate.cruise_date_id);
-
-  console.log('Cruise:', cruise);
-  console.log('Cruise Date:', cruiseDate);
 
   const cabins = (await getCabinsByShipId(shipId)) as CabinPropsType[];
   const itinerary = await getCruiseItinerariesByCruiseDateId(cruiseDateId) as CruiseItineraryPropsType[];
@@ -63,7 +60,7 @@ export async function CruiseSlug({ cruise, cruiseDate }: { cruise: CruisePropsTy
               </span>
               <span className="flex items-center gap-2">
                 <ShipIcon className="h-4 w-4" />
-                <p>{cruise.ship_name}</p>
+                <p>{ship.ship_name}</p>
               </span>
             </div>
 
