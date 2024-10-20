@@ -14,8 +14,28 @@ import { MoreHorizontal } from "lucide-react";
 import { deleteCruiseAction } from "@/actions/cruise.actions";
 import { toast } from "sonner";
 import Link from "next/link";
+import Image from "next/image"
+import { format } from "date-fns";
 
 export const cruiseColumns: ColumnDef<CruisePropsType>[] = [
+  {
+    accessorKey: "cruise_image",
+    header: "Cruise Image",
+    cell: ({ row }) => {
+      const cruise_image = row.getValue("cruise_image") as string;
+
+      return (
+        <Image
+          src={cruise_image}
+          alt="Ship image"
+          width={100}
+          height={100}
+          className="w-20 h-20 object-cover"
+        />
+      );
+
+    },
+  },
   {
     accessorKey: "cruise_name",
     header: "Cruise Name",
@@ -27,10 +47,23 @@ export const cruiseColumns: ColumnDef<CruisePropsType>[] = [
   {
     accessorKey: "embarkation_date",
     header: "Embarkation Date",
+    cell: ({ row }) => {
+      const embarkation_date = new Date(row.getValue("embarkation_date"));
+      return (
+        <p>{format(embarkation_date, "yyyy MMMM dd")}</p>
+      );
+    },
   },
+
   {
     accessorKey: "disembarkation_date",
     header: "Disembarkation Date",
+    cell: ({ row }) => {
+      const disembarkation_date = new Date(row.getValue("disembarkation_date"));
+      return (
+        <p>{format(disembarkation_date, "yyyy MMMM dd")}</p>
+      );
+    },
   },
   {
     accessorKey: "duration",
@@ -39,6 +72,9 @@ export const cruiseColumns: ColumnDef<CruisePropsType>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
+
+      console.log('Row:', row);
+
       const cruise = row.original;
       const cruise_id = cruise.cruise_id;
 
