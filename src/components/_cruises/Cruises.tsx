@@ -15,8 +15,6 @@ export async function Cruises() {
     // Flatten if cruiseDates is nested
     const flatCruiseDates = Array.isArray(cruiseDates) && Array.isArray(cruiseDates[0]) ? cruiseDates.flat() : cruiseDates;
 
-    console.log({ flatCruiseDates }); // Debugging
-
     for (const cruiseDate of flatCruiseDates) {
       const embarkationDate = new Date(cruiseDate.embarkation_date);
       if (isNaN(embarkationDate.getTime())) {
