@@ -17,7 +17,7 @@ export function HeroNoButton({ title, image }: heroNoButtonType) {
             className="object-cover"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gray-800/50 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-gray-800/20 mix-blend-multiply" />
         </div>
       </div>
     </div>
