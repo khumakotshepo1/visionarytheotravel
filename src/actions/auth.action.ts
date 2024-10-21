@@ -160,6 +160,7 @@ export const resetPasswordAction = async (data: ResetPasswordType) => {
       }
     }
   } catch (error) {
+    console.error("Error during passwordResetAction:", error);
     redirect("/auth/login");
   }
 };
@@ -226,6 +227,7 @@ export const newPasswordAction = async (
       }
     }
   } catch (error) {
+    console.error("Error during passwordUpdateAction:", error);
     return null;
   }
 };

@@ -8,6 +8,7 @@ export const getAllShips = cache(async (): Promise<ShipPropsType[] | undefined> 
 
     return rows || null;
   } catch (error) {
+    console.log("Error fetching ships:", error);
     throw new Error("Failed to fetch ships.");
   }
 });
@@ -21,6 +22,7 @@ export const getShipByName = cache(async (shipName: string): Promise<ShipPropsTy
 
     return rows[0] || null;
   } catch (error) {
+    console.log("Error fetching ship by name:", error);
     throw new Error("Failed to fetch ship by name.");
   }
 });
@@ -34,6 +36,7 @@ export const getShipById = cache(async (shipId: number): Promise<ShipPropsType |
 
     return rows[0] || null;
   } catch (error) {
+    console.log("Error fetching ship by id:", error);
     throw new Error("Failed to fetch ship by id.");
   }
 });
@@ -46,6 +49,7 @@ export const getAllCabins = cache(async (): Promise<CabinPropsType[] | undefined
 
     return rows || null;
   } catch (error) {
+    console.log("Error fetching cabins:", error);
     throw new Error("Failed to fetch cabins.");
   }
 });
@@ -59,6 +63,7 @@ export const getCabinsByShipId = cache(async (ship_id: number): Promise<CabinPro
 
     return rows || null;
   } catch (error) {
+    console.log("Error fetching cabins:", error);
     throw new Error("Failed to fetch cabins.");
   }
 });
@@ -71,6 +76,7 @@ export const getAllCruises = cache(async (): Promise<CruisePropsType[] | undefin
 
     return rows || null;
   } catch (error) {
+    console.log("Error fetching cruises:", error);
     throw new Error("Failed to fetch cruises.");
   }
 });
@@ -98,6 +104,7 @@ export const getCruiseByName = cache(async (cruiseName: string): Promise<CruiseP
 
     return rows[0] || null;
   } catch (error) {
+    console.log("Error fetching cruise by name:", error);
     throw new Error("Failed to fetch cruise by name.");
   }
 });
@@ -139,6 +146,7 @@ export const getCruiseByDestionation = cache(
 
       return rows[0] || null;
     } catch (error) {
+      console.log("Error fetching cruise by destination:", error);
       throw new Error("Failed to fetch cruise by name.");
     }
   },
@@ -152,6 +160,7 @@ export const getAllCruiseItineraries = cache(async (): Promise<CruiseItineraryPr
 
     return rows || null;
   } catch (error) {
+    console.log("Error fetching cruise itineraries:", error);
     throw new Error("Failed to fetch cruise itineraries.");
   }
 });
@@ -166,6 +175,7 @@ export const getCruiseItinerariesByCruiseDateId = cache(
 
       return rows || null;
     } catch (error) {
+      console.log("Error fetching cruise itineraries by cruise date id:", error);
       throw new Error("Failed to fetch cruise itineraries by cruise id.");
     }
   },
@@ -182,6 +192,7 @@ export const getAllCruiseBookings = cache(async (): Promise<CruiseBookingPropsTy
 
     return rows || null;
   } catch (error) {
+    console.log("Error fetching cruise bookings:", error);
     throw new Error("Failed to fetch cruise bookings.");
   }
 });
@@ -192,6 +203,7 @@ export const getPreviousCruiseTotalPrice = cache(async (): Promise<PreviousCruis
 
     return rows || null;
   } catch (error) {
+    console.log("Error fetching previous cruise total price:", error);
     throw new Error("Failed to fetch previous cruise total price.");
   }
 });
@@ -206,6 +218,9 @@ export const getCruiseBookingPaymentByCruiseBookingNumber = cache(
 
       return rows || null;
     } catch (error) {
+
+      console.log("Error fetching cruise booking payment by cruise booking number:", error);
+
       throw new Error(
         "Failed to fetch cruise booking payment by cruise booking number",
       );

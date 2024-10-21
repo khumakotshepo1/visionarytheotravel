@@ -6,6 +6,7 @@ export async function getAllCustomers() {
 
     return rows || null;
   } catch (error) {
+    console.log("Error fetching customers", error);
     throw new Error("Failed to fetch customers.");
   }
 }
@@ -19,6 +20,7 @@ export async function getCustomerById(id: number) {
 
     return rows[0] || null;
   } catch (error) {
+    console.log("Error fetching customer by id", error);
     throw new Error("Failed to fetch customer by id.");
   }
 }
@@ -32,6 +34,7 @@ export async function getCustomerByEmail(email: string) {
 
     return rows[0] || null;
   } catch (error) {
+    console.log("Error fetching customer by email", error);
     throw new Error("Failed to fetch customer by id.");
   }
 }
@@ -45,6 +48,7 @@ export async function getCustomerByPhoneNumber(phoneNumber: string) {
 
     return rows[0] || null;
   } catch (error) {
+    console.log("Error fetching customer by phone number", error);
     throw new Error("Failed to fetch customer by id.");
   }
 }
@@ -55,6 +59,7 @@ export async function getAllBookings() {
 
     return rows || null;
   } catch (error) {
+    console.log("Error fetching bookings", error);
     throw new Error("Failed to fetch customers.");
   }
 }
@@ -74,6 +79,7 @@ export async function getCruiseBookingByBookingNumber(
 
     return rows[0] || null;
   } catch (error) {
+    console.log("Error fetching booking by booking number", error);
     throw new Error("Failed to fetch booking by booking number.");
   }
 }
@@ -87,6 +93,7 @@ export async function getCruiseBookingByCustomerId(customerId: number) {
 
     return rows[0] || null;
   } catch (error) {
+    console.log("Error fetching booking by customer id", error);
     throw new Error("Failed to fetch booking by customer id.");
   }
 }

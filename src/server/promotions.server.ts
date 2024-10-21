@@ -10,6 +10,7 @@ export const getAllPromotions = cache(async (): Promise<PromotionsPropsType[]> =
     return rows || null
 
   } catch (e) {
+    console.log("Error fetching promotions", e)
     throw new Error("Could not fetch promotions")
   }
 
@@ -24,6 +25,7 @@ export const getPromotionByName = cache(async (promotion_name: string): Promise<
     return rows[0] || null
 
   } catch (e) {
+    console.log("Error fetching promotion by name", e)
     throw new Error("Could not fetch promotio by name")
   }
 
@@ -38,6 +40,7 @@ export const getPromotionById = cache(async (promotionId: number): Promise<Promo
     return rows[0] || null
 
   } catch (e) {
+    console.log("Error fetching promotion by id", e)
     throw new Error("Could not fetch promotion by id")
   }
 

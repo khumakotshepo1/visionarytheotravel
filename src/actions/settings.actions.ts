@@ -288,6 +288,7 @@ export const newVerificationTokenAction = async (token: string) => {
       };
     }
   } catch (error) {
+    console.error("Error during emailVerificationAction:", error);
     return null;
   }
 };
