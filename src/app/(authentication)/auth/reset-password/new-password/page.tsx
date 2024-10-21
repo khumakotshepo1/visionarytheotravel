@@ -1,13 +1,14 @@
+
 import { NewPasswordForm } from "./NewPasswordForm";
 import { redirect } from "next/navigation";
 import { getVerificationTokenByToken } from "@/server/users.server";
 
-const NewPassword = async ({
-  searchParams,
-}: {
-  searchParams: URLSearchParams; // Use URLSearchParams
-}) => {
-  const token = searchParams.get("token"); // Use .get() method
+interface NewPasswordProps {
+  searchParams: { token?: string }; // Use optional chaining for safety
+}
+
+const NewPassword = async ({ searchParams }: NewPasswordProps) => {
+  const token = searchParams.token; // Directly access the token
 
   if (!token) {
     redirect("/auth/login");
