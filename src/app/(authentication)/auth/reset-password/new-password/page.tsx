@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React from "react";
 import { NewPasswordForm } from "./NewPasswordForm";
 
@@ -5,11 +7,11 @@ import { redirect } from "next/navigation";
 import { getVerificationTokenByToken } from "@/server/users.server";
 
 const NewPassword = async ({
-  params,
+  searchParams,
 }: {
-  params: { token: string };
+  searchParams: { token: string };
 }) => {
-  const token = params.token;
+  const { token } = searchParams;
 
   const userToken = await getVerificationTokenByToken(token);
 
