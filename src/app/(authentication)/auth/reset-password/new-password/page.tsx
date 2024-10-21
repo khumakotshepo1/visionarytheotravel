@@ -1,15 +1,17 @@
-import React from "react";
 import { NewPasswordForm } from "./NewPasswordForm";
-
 import { redirect } from "next/navigation";
 import { getVerificationTokenByToken } from "@/server/users.server";
 
 const NewPassword = async ({
   searchParams,
 }: {
-  searchParams: { token: string | undefined };
+  searchParams: URLSearchParams; // Use URLSearchParams
 }) => {
-  const { token } = searchParams;
+  const token = searchParams.get("token"); // Use .get() method
+
+  if (!token) {
+    redirect("/auth/login");
+  }
 
   const userToken = await getVerificationTokenByToken(token);
 
@@ -17,11 +19,7 @@ const NewPassword = async ({
     redirect("/auth/login");
   }
 
-  return (
-    <>
-      <NewPasswordForm token={token} />
-    </>
-  );
+  return <NewPasswordForm token={token} />;
 };
 
 export default NewPassword;
