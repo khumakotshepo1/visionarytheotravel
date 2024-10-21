@@ -166,7 +166,7 @@ export const resetPasswordAction = async (data: ResetPasswordType) => {
 };
 
 export const newPasswordAction = async (
-  token: URLSearchParams,
+  token: string | undefined,
   data: NewPasswordType,
 ) => {
   try {

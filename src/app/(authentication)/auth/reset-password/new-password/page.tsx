@@ -4,14 +4,12 @@ import { NewPasswordForm } from "./NewPasswordForm";
 import { redirect } from "next/navigation";
 import { getVerificationTokenByToken } from "@/server/users.server";
 
-interface TokenProps {
-  params: { token: string };
-}
-
 const NewPassword = async ({
-  params
-}: TokenProps) => {
-  const token = params.token;
+  searchParams,
+}: {
+  searchParams: { token: string | undefined };
+}) => {
+  const { token } = searchParams;
 
   const userToken = await getVerificationTokenByToken(token);
 

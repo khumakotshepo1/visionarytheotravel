@@ -62,7 +62,7 @@ export const getVerificationTokenByEmail = cache(async (email: string) => {
   }
 });
 
-export const getVerificationTokenByToken = cache(async (token: string) => {
+export const getVerificationTokenByToken = cache(async (token: string | undefined) => {
   try {
     const { rows } = await sql.query(
       `SELECT * FROM verification_token WHERE token = $1`,

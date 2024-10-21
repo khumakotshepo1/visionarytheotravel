@@ -23,7 +23,7 @@ import { newPasswordSchema } from "@/zod/schemas/auth.schema";
 import { newPasswordAction } from "@/actions/auth.action";
 import { CustomInput } from "@/components/custom-input";
 
-export const NewPasswordForm = ({ token }: { token: string }) => {
+export const NewPasswordForm = ({ token }: { token: string | undefined }) => {
   const { push, refresh } = useRouter();
 
   const form = useForm<NewPasswordType>({
