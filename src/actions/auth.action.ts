@@ -17,7 +17,7 @@ import {
   userLoginSchema,
   userRegisterSchema,
 } from "@/zod/schemas/auth.schema";
-import { hash } from "bcrypt";
+import { hash } from "bcryptjs";
 import { generateVerificationToken } from "@/utils/token";
 import { sendPasswordReset } from "@/utils/mail";
 import { getErrorMessage } from "@/utils/error-message";
@@ -49,7 +49,7 @@ export const registerAction = async (data: UserRegisterType) => {
 
       const { rows: userExists } = await sql.query(
         `SELECT * FROM users WHERE email = $1`,
-        [email]
+        [email],
       );
 
       if (userExists.length > 0) {
@@ -61,7 +61,7 @@ export const registerAction = async (data: UserRegisterType) => {
 
       const { rows: phoneExists } = await sql.query(
         `SELECT FROM users WHERE phone = $1`,
-        [phone]
+        [phone],
       );
 
       if (phoneExists.length > 0) {
@@ -73,7 +73,7 @@ export const registerAction = async (data: UserRegisterType) => {
 
       const res = await sql.query(
         "INSERT INTO users (first_name, last_name, email, phone, password) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-        [first_name, last_name, email, phone, hashedPassword]
+        [first_name, last_name, email, phone, hashedPassword],
       );
 
       if (res) {
@@ -166,7 +166,7 @@ export const resetPasswordAction = async (data: ResetPasswordType) => {
 
 export const newPasswordAction = async (
   token: string,
-  data: NewPasswordType
+  data: NewPasswordType,
 ) => {
   try {
     const results = newPasswordSchema.safeParse(data);
@@ -190,7 +190,7 @@ export const newPasswordAction = async (
 
       const { rows: existingToken } = await sql.query(
         `SELECT * FROM verification_token WHERE token = $1`,
-        [token]
+        [token],
       );
 
       if (existingToken) {
@@ -204,7 +204,7 @@ export const newPasswordAction = async (
 
         const { rows: existingUser } = await sql.query(
           `SELECT * FROM users WHERE email = $1`,
-          [existingToken[0].email]
+          [existingToken[0].email],
         );
 
         if (!existingUser) {
@@ -215,7 +215,7 @@ export const newPasswordAction = async (
 
         await sql.query(
           `UPDATE users SET password = $1, updated_at = NOW() WHERE id = $2 RETURNING *`,
-          [hashedPassword, existingUser[0].id]
+          [hashedPassword, existingUser[0].id],
         );
 
         await sql.query(`DELETE FROM verification_token WHERE t = $1`, [token]);

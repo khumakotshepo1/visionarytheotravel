@@ -5,8 +5,6 @@ export default async function HomePage() {
 
   const promotions = await getAllPromotions() as PromotionsPropsType[];
 
-  console.log({ promotions });
-
   return (
     <>
       <section>

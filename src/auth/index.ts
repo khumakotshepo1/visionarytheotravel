@@ -5,7 +5,7 @@ import { authConfig } from "./config";
 
 import { getUserByEmail } from "@/server/users.server";
 import { userLoginSchema } from "@/zod/schemas/auth.schema";
-import { compare } from "bcrypt";
+import { compare } from "bcryptjs";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
