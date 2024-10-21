@@ -42,7 +42,7 @@ export const sendEmailVerification = async (email: string, token: string) => {
 
 export const sendPasswordReset = async (email: string, token: string) => {
   try {
-    const resetUrl = `http://${process.env.VERCEL_PROJECT_PRODUCTION_URL}/auth/reset-password/new-password?token=${token}`;
+    const resetUrl = `http://${process.env.VERCEL_PROJECT_PRODUCTION_URL}/auth/reset-password/new-password/${token}`;
 
     const resetHtml = await render(<ResetPasswordTemplate url={resetUrl} />);
 
