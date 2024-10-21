@@ -4,11 +4,11 @@ import { redirect } from "next/navigation";
 import { getVerificationTokenByToken } from "@/server/users.server";
 
 interface NewPasswordProps {
-  searchParams: { token?: string }; // Use optional chaining for safety
+  params: { newPassword: string }; // Use optional chaining for safety
 }
 
-const NewPassword = async ({ searchParams }: NewPasswordProps) => {
-  const token = searchParams.token; // Directly access the token
+const NewPassword = async ({ params }: NewPasswordProps) => {
+  const token = params.newPassword; // Directly access the token
 
   if (!token) {
     redirect("/auth/login");
