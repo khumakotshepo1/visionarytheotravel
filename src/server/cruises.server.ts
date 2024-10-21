@@ -218,9 +218,7 @@ export const getCruiseBookingPaymentByCruiseBookingNumber = cache(
 
       return rows || null;
     } catch (error) {
-
       console.log("Error fetching cruise booking payment by cruise booking number:", error);
-
       throw new Error(
         "Failed to fetch cruise booking payment by cruise booking number",
       );
