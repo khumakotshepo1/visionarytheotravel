@@ -2,23 +2,19 @@ import { redirect } from "next/navigation";
 import { getVerificationTokenByToken } from "@/server/users.server";
 import { NewPasswordForm } from "../NewPasswordForm";
 
-interface NewPasswordSlugProps {
-  params: { newPasswordSlug: string };
-}
-
-const NewPasswordSlug = async ({ params }: NewPasswordSlugProps) => {
-  const token = params.newPasswordSlug;
+const NewPasswordSlug = async ({ params }: { params: { newPasswordSlug: string } }) => {
+  const { newPasswordSlug: token } = params;
 
   if (!token) {
     redirect("/auth/login");
-    return; // Early return after redirect
+    return;
   }
 
   const userToken = await getVerificationTokenByToken(token);
 
   if (!userToken) {
     redirect("/auth/login");
-    return; // Early return after redirect
+    return;
   }
 
   return <NewPasswordForm token={token} />;
