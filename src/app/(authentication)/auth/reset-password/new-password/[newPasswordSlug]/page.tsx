@@ -1,22 +1,23 @@
 import { redirect } from "next/navigation";
-//import { getVerificationTokenByToken } from "@/server/users.server";
+import { getVerificationTokenByToken } from "@/server/users.server";
 import { NewPasswordForm } from "../NewPasswordForm";
 
-const NewPasswordSlug = async ({ params }: { params: { newPasswordSlug: string } }) => {
+export default async function NewPasswordSlug({
+  params,
+}: {
+  params: { newPasswordSlug: string };
+}) {
   const token = params.newPasswordSlug;
 
   if (!token) {
     redirect("/auth/login");
   }
 
-  //const userToken = await getVerificationTokenByToken(token);
+  const userToken = await getVerificationTokenByToken(token);
 
-  //if (!userToken) {
-  //redirect("/auth/login");
-  //return;
-  //}
+  if (!userToken) {
+    redirect("/auth/login");
+  }
 
   return <NewPasswordForm token={token} />;
-};
-
-export default NewPasswordSlug;
+}
