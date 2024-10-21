@@ -3,11 +3,7 @@ import { NewPasswordForm } from "./NewPasswordForm";
 import { redirect } from "next/navigation";
 import { getVerificationTokenByToken } from "@/server/users.server";
 
-interface NewPasswordProps {
-  params: { newPassword: string }; // Use optional chaining for safety
-}
-
-const NewPassword = async ({ params }: NewPasswordProps) => {
+const NewPassword = async ({ params }: { params: { newPassword: string } }) => {
   const token = params.newPassword; // Directly access the token
 
   if (!token) {
