@@ -23,7 +23,8 @@ const Command = React.forwardRef<
 ))
 Command.displayName = CommandPrimitive.displayName
 
-interface CommandDialogProps extends DialogProps {}
+
+interface CommandDialogProps extends DialogProps { } // eslint-disable-line
 
 const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
   return (
