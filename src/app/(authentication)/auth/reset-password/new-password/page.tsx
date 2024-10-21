@@ -1,14 +1,15 @@
-import React from "react";
 import { NewPasswordForm } from "./NewPasswordForm";
 
 import { redirect } from "next/navigation";
 import { getVerificationTokenByToken } from "@/server/users.server";
 
+type Props = {
+  searchParams: { token: string };
+};
+
 const NewPassword = async ({
   searchParams,
-}: {
-  searchParams: { token: string };
-}) => {
+}: Props) => {
   const { token } = searchParams;
 
   const userToken = await getVerificationTokenByToken(token);
