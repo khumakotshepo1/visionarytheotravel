@@ -5,11 +5,10 @@ import {
 } from "@/server/customer.server";
 import { getAllCruises } from "@/server/cruises.server";
 
-export default async function UpdateCruiseBookingSlug({
-  params,
-}: {
-  params: { updateCruiseBookingSlug: string };
-}) {
+type Params = Promise<{ updateCruiseBookingSlug: string }>;
+
+export default async function UpdateCruiseBookingSlug(props: { params: Params }) {
+  const params = await props.params;
   const cruiseBookingID = parseInt(params.updateCruiseBookingSlug);
 
   console.log({ cruiseBookingID });

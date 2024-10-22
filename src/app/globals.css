@@ -6,6 +6,15 @@
  --crimson-element: 353, 100%, 63%;
   --dark-element: 249, 16%, 18%;
   --light-element: 0, 0%, 86%;
+  --background: hsl(var(--light-element));
+  --foreground: hsl(var(--dark-element));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: hsl(var(--dark-element));
+    --foreground: hsl(var(--light-element));
+  }
 }
 
 body {

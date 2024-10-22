@@ -1,9 +1,12 @@
 import { UpdateCruisesForm } from "@/components/_dashboard/_cruises-admin/_cruises/UpdateCruiseForm";
 import { getCruiseById, getCruiseDateById, getShipById } from "@/server/cruises.server";
 
-export default async function UpdateCruisePage({ params }: { params: { updateCruiseSlug: string } }) {
+type Params = Promise<{ updateCruiseSlug: string }>;
 
+export default async function UpdateCruisePage(props: { params: Params }) {
+  const params = await props.params;
   const cruiseDateSlug = parseInt(params.updateCruiseSlug);
+
   const cruiseDate = await getCruiseDateById(cruiseDateSlug) as CruiseDatePropsType;
 
   console.log({ cruiseDate })

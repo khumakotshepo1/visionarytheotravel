@@ -1,11 +1,10 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
-export default async function ErrorPage({
-  searchParams,
-}: {
-  searchParams: { error?: string };
-}) {
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+
+export default async function ErrorPage(props: { searchParams: SearchParams }) {
+  const searchParams = await props.searchParams;
   const session = await auth();
   const error = searchParams.error;
 

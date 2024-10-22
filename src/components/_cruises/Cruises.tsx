@@ -36,7 +36,7 @@ export async function Cruises() {
   return (
     <>
       <section>
-        <HeroNoButton image="/images/cruises/msc-hero.jpg" title="Cruises" />
+        <HeroNoButton image="/images/musica.webp" title="Cruises" />
       </section>
       <section className="flex flex-col gap-12 p-4">
         {Object.keys(groupedCruises).map((monthYear) => (

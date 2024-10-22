@@ -1,11 +1,10 @@
 import { CruiseSlug } from "@/components/_cruises/CruiseSlug";
 import { getCruiseById, getCruiseDateById, getShipById } from "@/server/cruises.server";
 
-export default async function CruiseSlugPage({
-  params,
-}: {
-  params: { cruiseSlug: string };
-}) {
+type Params = Promise<{ cruiseSlug: string }>;
+
+export default async function CruiseSlugPage(props: { params: Params }) {
+  const params = await props.params;
   const cruiseSlug = parseInt(params.cruiseSlug);
 
   const cruiseDate = (await getCruiseDateById(cruiseSlug)) as CruiseDatePropsType;
