@@ -9,6 +9,7 @@ import {
 } from "@/server/cruises.server";
 
 import { Button } from "../ui/button";
+import { formatCurrency } from "@/utils/custom-utils";
 
 export async function CruiseSlug({ cruise, cruiseDate, ship }: { cruise: CruisePropsType, cruiseDate: CruiseDatePropsType, ship: ShipPropsType }) {
   const shipId = parseInt(cruise.ship_id);
@@ -78,7 +79,7 @@ export async function CruiseSlug({ cruise, cruiseDate, ship }: { cruise: CruiseP
             <div className="flex gap-2 justify-between">
               <span>
                 <p className="text-sm capitalize">from</p>
-                <p>{cruise.cruise_price}/per person</p>
+                <p>{formatCurrency(Number(cruise.cruise_price), "ZAR")} / per person</p>
               </span>
             </div>
           </div>
@@ -107,7 +108,13 @@ export async function CruiseSlug({ cruise, cruiseDate, ship }: { cruise: CruiseP
       <section className="py-20 px-4">
         <h2 className="text-4xl py-4 font-semibold">Itenerary</h2>
         <div className="flex flex-col lg:flex-row lg:justify-between gap-16 items-center lg:h-80">
-          <ItineraryTable itenerary={itinerary} />
+          {
+
+            itinerary.length > 0 ? <ItineraryTable itenerary={itinerary} />
+              :
+              (<p className="font-semibold">No itinerary found</p>)
+
+          }
           <Image
             src={cruiseDate.map_image}
             alt={`${cruise.cruise_name} map`}

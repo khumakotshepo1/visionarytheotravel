@@ -9,8 +9,6 @@ export default async function AdminDashboardPage() {
 
   const previousTotalPrice = await getPreviousCruiseTotalPrice() as PreviousCruiseTotalPricePropsType[];
 
-  console.log({ previousTotalPrice })
-
   const customers = (await getAllCustomers()) as CustomerPropsType[];
 
   return (

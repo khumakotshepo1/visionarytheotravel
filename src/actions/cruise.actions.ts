@@ -732,7 +732,8 @@ export const addCruiseAction = async (data: FormData) => {
     const cruiseBuffer = Buffer.from(cruiseArrayBuffer);
 
     // Delete existing images in the folder
-    await cloudinary.api.delete_resources_by_prefix(`msc/${cruise_name}`);
+    await cloudinary.api.delete_resources_by_prefix(`msc/${cruise_name}/${embarkation_date}`);
+    await cloudinary.api.delete_resources_by_prefix(`msc/${cruise_name}/map/${embarkation_date}`);
 
     // Upload the new image
     const mapUpload = new Promise(async (resolve, reject) => {
@@ -761,10 +762,10 @@ export const addCruiseAction = async (data: FormData) => {
         .upload_stream(
           {
             resource_type: "image",
-            folder: `msc/${cruise_name}`,
-            width: 1920, // Set the desired width
-            height: 1080, // Set the desired height
-            crop: "fill", // Crop the image to fit the specified dimensions
+            folder: `msc/${cruise_name}/${embarkation_date}`,
+            //  width: 1920, // Set the desired width
+            //  height: 1080, // Set the desired height
+            //  crop: "fill", // Crop the image to fit the specified dimensions
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           async (error: any, result: any) => {
@@ -964,7 +965,8 @@ export const updateCruiseAction = async (data: FormData, cruise_id: string, crui
     const cruiseBuffer = Buffer.from(cruiseArrayBuffer);
 
     // Delete existing images in the folder
-    await cloudinary.api.delete_resources_by_prefix(`msc/${cruise_name}`);
+    await cloudinary.api.delete_resources_by_prefix(`msc/${cruise_name}/${embarkation_date}`);
+    await cloudinary.api.delete_resources_by_prefix(`msc/${cruise_name}/map/${embarkation_date}`);
 
     // Upload the new image
     const mapUpload = new Promise(async (resolve, reject) => {
@@ -993,10 +995,10 @@ export const updateCruiseAction = async (data: FormData, cruise_id: string, crui
         .upload_stream(
           {
             resource_type: "image",
-            folder: `msc/${cruise_name}`,
-            width: 1920, // Set the desired width
-            height: 1080, // Set the desired height
-            crop: "fill", // Crop the image to fit the specified dimensions
+            folder: `msc/${cruise_name}/${embarkation_date}`,
+            // width: 1920, // Set the desired width
+            // height: 1080, // Set the desired height
+            // crop: "fill", // Crop the image to fit the specified dimensions
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           async (error: any, result: any) => {
@@ -1103,8 +1105,6 @@ export async function addCustomerCruiseBookingAction(
 
     const results = customerSchema.safeParse(data);
 
-    console.log({ results });
-
     if (!results.success) {
       return {
         error: results.error.errors[0].message,
@@ -1123,8 +1123,6 @@ export async function addCustomerCruiseBookingAction(
     } = results.data;
 
     const cruise = await getCruiseById(cruiseId);
-
-    console.log({ cruise })
 
     const customerExists = await getCustomerByEmail(email);
 
@@ -1148,7 +1146,6 @@ export async function addCustomerCruiseBookingAction(
         );
       }
 
-      console.log("Cruise booking added successfully");
       return {
         success: "Cruise booking added successfully",
       };
@@ -1181,7 +1178,7 @@ export async function addCustomerCruiseBookingAction(
       success: "Cruise booking added successfully",
     };
   } catch (error) {
-    console.log({ bookingError: error });
+    console.error({ bookingError: error });
     return {
       error: getErrorMessage(error),
     };
@@ -1215,7 +1212,7 @@ export async function addPreviousTotalCruiseBookingPriceAction(
       success: "Previous total price added successfully",
     };
   } catch (error) {
-    console.log({ error });
+    console.error({ error });
     return {
       error: getErrorMessage(error),
     };
@@ -1281,7 +1278,7 @@ export async function addCruiseBookingAction(data: CruiseBookingType) {
       success: "Cruise booking added successfully",
     };
   } catch (error) {
-    console.log({ bookingError: error });
+    console.error({ bookingError: error });
     return {
       error: getErrorMessage(error),
     };
@@ -1346,7 +1343,7 @@ export async function updateCruiseBookingAction(
       success: "Cruise booking updated successfully",
     };
   } catch (error) {
-    console.log({ bookingError: error });
+    console.error({ bookingError: error });
     return {
       error: getErrorMessage(error),
     };
@@ -1408,8 +1405,6 @@ export async function CruiseBookingPaymentAction(
         cruiseBookingNumber,
       )) as number;
 
-    console.log({ totalCruisePayments });
-
     if (
       totalCruisePayments + Number(cruise_payment_amount) >
       Number(cruisePrice)
@@ -1431,7 +1426,6 @@ export async function CruiseBookingPaymentAction(
     );
 
     if (payCruiseBooking.length !== 0) {
-      console.log({ payCruiseBooking });
 
       if (Number(cruisePrice) > 3000 && parseFloat(payCruiseBooking[0].cruise_payment_amount) >= 3000) {
         status = "confirmed";
@@ -1462,7 +1456,7 @@ export async function CruiseBookingPaymentAction(
       }
     }
   } catch (error) {
-    console.log({ paymentError: error });
+    console.error({ paymentError: error });
     return {
       error: getErrorMessage(error),
     };
@@ -1495,8 +1489,6 @@ export async function deleteCruiseBookingAction(id: string) {
     const totalAmount = (await getTotalCruisePaymentsByCruiseBookingNumber(
       cruiseBookingNumber,
     )) as number;
-
-    console.log({ totalAmount });
 
     if (!cruiseBooking) {
       return {
@@ -1531,7 +1523,7 @@ export async function deleteCruiseBookingAction(id: string) {
       success: "Cruise booking deleted successfully",
     };
   } catch (error) {
-    console.log({ bookingError: error });
+    console.error({ bookingError: error });
     return {
       error: getErrorMessage(error),
     };

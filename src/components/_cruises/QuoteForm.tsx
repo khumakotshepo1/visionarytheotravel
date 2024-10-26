@@ -105,7 +105,7 @@ export function QuoteForm({ cruise }: { cruise: CruisePropsType }) {
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
-                          <SelectTrigger className="w-full border-0 border-b-2 rounded-none">
+                          <SelectTrigger className="w-full border-0 border-b-2 rounded-none border-foreground dark:border-foreground">
                             <SelectValue placeholder="Select gender" />
                           </SelectTrigger>
                           <SelectContent>

@@ -36,14 +36,11 @@ export const registerAction = async (data: UserRegisterType) => {
         confirm_password,
       } = results.data;
 
-      console.log({
-        last_name,
-        first_name,
-        email,
-        phone,
-        password,
-        confirm_password,
-      });
+      if (password !== confirm_password) {
+        return {
+          error: "Passwords do not match",
+        };
+      }
 
       const hashedPassword = await hash(password, 10);
 
@@ -53,7 +50,6 @@ export const registerAction = async (data: UserRegisterType) => {
       );
 
       if (userExists.length > 0) {
-        console.log("User already exists");
         return {
           error: "User already exists",
         };
@@ -65,7 +61,6 @@ export const registerAction = async (data: UserRegisterType) => {
       );
 
       if (phoneExists.length > 0) {
-        console.log("Cellphone number already exists");
         return {
           error: "Cellphone number already exists",
         };

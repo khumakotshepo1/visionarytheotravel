@@ -19,7 +19,7 @@ export function Cabins({ cabins }: { cabins: CabinPropsType[] }) {
     );
   }, [cabins.length]);
 
-  if (cabins.length === 0) return <p>No cabins available.</p>;
+  if (cabins.length === 0) return <p className="font-bold">No cabins found</p>;
 
   return (
     <>

@@ -62,7 +62,7 @@ export async function addCustomerAction(data: CustomerType) {
       success: "Customer added successfully",
     };
   } catch (error) {
-    console.log({ bookingError: error });
+    console.error({ bookingError: error });
     return {
       error: getErrorMessage(error),
     };
@@ -133,7 +133,7 @@ export async function updateCustomerAction(data: CustomerType, id: string) {
       success: "Customer updated successfully",
     };
   } catch (error) {
-    console.log({ bookingError: error });
+    console.error({ bookingError: error });
     return {
       error: getErrorMessage(error),
     };
@@ -160,7 +160,7 @@ export async function deleteCustomerAction(id: string) {
       success: "Customer deleted successfully",
     };
   } catch (error) {
-    console.log({ bookingError: error });
+    console.error({ bookingError: error });
     return {
       error: getErrorMessage(error),
     };

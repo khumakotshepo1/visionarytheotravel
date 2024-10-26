@@ -61,7 +61,7 @@ const CarouselComponent = ({
               </h2>
               <Link
                 href={`http://${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}${slide.promotion_url}`}
-                className="mt-4 bg-background py-2 px-4 rounded-xl"
+                className="mt-4 bg-background py-2 px-4 rounded-xl font-anton"
               >
                 see more
               </Link>

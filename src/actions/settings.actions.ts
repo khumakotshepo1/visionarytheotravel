@@ -221,7 +221,6 @@ export const userImageAction = async (formData: FormData) => {
       success: "Image uploaded successfully",
     };
   } catch (error) {
-    console.log(getErrorMessage(error));
 
     return {
       error: getErrorMessage(error),
