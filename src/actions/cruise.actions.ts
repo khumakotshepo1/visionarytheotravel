@@ -52,9 +52,9 @@ export const addShipAction = async (data: FormData) => {
     const ship_class = data.get("ship_class") as string;
     const ship_image = data.get("ship_image") as File;
 
-    if (ship_image.size > 3000000) {
+    if (ship_image.size > 1000000) {
       return {
-        error: "File size exceeds 3mb",
+        error: "File size exceeds 1mb",
       };
     }
 
@@ -151,9 +151,9 @@ export const updateShipAction = async (data: FormData, id: string) => {
       };
     }
 
-    if (ship_image.size > 3000000) {
+    if (ship_image.size > 1000000) {
       return {
-        error: "File size exceeds 3mb",
+        error: "File size exceeds 1mb",
       };
     }
 
@@ -284,9 +284,9 @@ export const addCabinAction = async (data: FormData) => {
 
     const { ship_id } = await getShipByName(ship) as ShipPropsType;
 
-    if (cabin_image.size > 3000000) {
+    if (cabin_image.size > 1000000) {
       return {
-        error: "File size exceeds 3mb",
+        error: "File size exceeds 1mb",
       };
     }
 
@@ -387,9 +387,9 @@ export const updateCabinAction = async (data: FormData, id: string) => {
 
     const { ship_id } = await getShipByName(ship) as ShipPropsType;
 
-    if (cabin_image.size > 3000000) {
+    if (cabin_image.size > 1000000) {
       return {
-        error: "File size exceeds 3mb",
+        error: "File size exceeds 1mb",
       };
     }
 
@@ -719,9 +719,9 @@ export const addCruiseAction = async (data: FormData) => {
       };
     }
 
-    if (map_image.size > 3000000) {
+    if (map_image.size > 1000000) {
       return {
-        error: "File size exceeds 3mb",
+        error: "File size exceeds 1mb",
       };
     }
 
@@ -952,9 +952,9 @@ export const updateCruiseAction = async (data: FormData, cruise_id: string, crui
       };
     }
 
-    if (map_image.size > 3000000) {
+    if (map_image.size > 1000000) {
       return {
-        error: "File size exceeds 3mb",
+        error: "File size exceeds 1mb",
       };
     }
 
